@@ -101,7 +101,7 @@ return array(
 		
 
 		'db'=>array(
-			'connectionString' => 'mysql://127.2.144.129:3306;dbname=topolor',
+			'connectionString' => 'mysql:host=127.2.144.129;dbname=topolor',
 			'emulatePrepare' => true,
 			'username' => 'admin',
 			'password' => 'wIjt3DRXvHR4',
