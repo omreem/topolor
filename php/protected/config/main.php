@@ -7,36 +7,89 @@
 // CWebApplication properties can be configured here.
 return array(
 	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
-	'name'=>'My Web Application',
+	'name'=>'Topolor',
 
 	// preloading 'log' component
 	'preload'=>array('log'),
-
+	'defaultController' => 'feed',
+		
 	// autoloading model and component classes
 	'import'=>array(
 		'application.models.*',
 		'application.components.*',
+
+		'ext.giix-components.*', // giix components
+	
+		'application.modules.user.models.*', // yii-user
+        'application.modules.user.components.*', // yii-user
 	),
 
 	'modules'=>array(
-		// uncomment the following to enable the Gii tool
-
+	
 		'gii'=>array(
 			'class'=>'system.gii.GiiModule',
-			'password'=>'giiadmin',
-		 	// If removed, Gii defaults to localhost only. Edit carefully to taste.
-			'ipFilters'=>false,
+			'password'=>'gii',
+			'generatorPaths' => array(
+				'ext.giix-core', // giix generators
+			),
+			// If removed, Gii defaults to localhost only. Edit carefully to taste.
+			'ipFilters'=>array('127.0.0.1','::1'),
 		),
+		
+		// yii-user
+		'user'=>array(
+            # encrypting method (php hash function)
+            'hash' => 'md5',
+
+            # send activation email
+            'sendActivationMail' => true,
+
+            # allow access for non-activated users
+            'loginNotActiv' => false,
+
+            # activate user on registration (only sendActivationMail = false)
+            'activeAfterRegister' => false,
+
+            # automatically login from registration
+            'autoLogin' => true,
+
+            # registration path
+            'registrationUrl' => array('/user/registration'),
+
+            # recovery password path
+            'recoveryUrl' => array('/user/recovery'),
+
+            # login form path
+            'loginUrl' => array('/user/login'),
+
+            # page after login
+            'returnUrl' => array('/user/profile'),
+
+            # page after logout
+            'returnLogoutUrl' => array('/user/login'),
+        ),
+        
 	),
 
 	// application components
 	'components'=>array(
+/*		'clientScript'=>array(
+			'packages'=>array(
+				'jquery'=>array(
+					'baseUrl'=>'//ajax.googleapis.com/ajax/libs/jquery/1.7/',
+					'js'=>array('jquery.min.js'),
+				)
+			),
+		),
+*/					
 		'user'=>array(
 			// enable cookie-based authentication
 			'allowAutoLogin'=>true,
+	
+			'class' => 'WebUser', // yii-user
+            'loginUrl' => array('/user/login'), // yii-user
 		),
-		// uncomment the following to enable URLs in path-format
-		/*
+		
 		'urlManager'=>array(
 			'urlFormat'=>'path',
 			'rules'=>array(
@@ -45,21 +98,21 @@ return array(
 				'<controller:\w+>/<action:\w+>'=>'<controller>/<action>',
 			),
 		),
-		*/
+		
+
 		'db'=>array(
-			'connectionString' => 'sqlite:'.dirname(__FILE__).'/../data/testdrive.db',
-		),
-		'db'=>array(
-			'connectionString' => 'mysql:host='.$_ENV['OPENSHIFT_DB_HOST'].';dbname='.$_ENV['OPENSHIFT_APP_NAME'],
+			'connectionString' => 'mysql://127.2.144.129:3306;dbname=topolor',
 			'emulatePrepare' => true,
-			'username' => $_ENV['OPENSHIFT_DB_USERNAME'],
-			'password' => $_ENV['OPENSHIFT_DB_PASSWORD'],
+			'username' => 'admin',
+			'password' => 'wIjt3DRXvHR4',
 			'charset' => 'utf8',
+			'tablePrefix' => 'tpl_',
 		),
+		
 		'errorHandler'=>array(
 			// use 'site/error' action to display errors
-            'errorAction'=>'site/error',
-        ),
+			'errorAction'=>'site/error',
+		),
 		'log'=>array(
 			'class'=>'CLogRouter',
 			'routes'=>array(

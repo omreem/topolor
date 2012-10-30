@@ -1,0 +1,252 @@
+@CHARSET "UTF-8";
+
+body {
+  padding: 60px 0;
+  background: #eee url('bg.png');
+  line-height: 1.5em;
+}
+
+textarea {
+    border:1px solid #ccc;
+    width:98%;
+    margin:5px 0;
+    padding:1%;
+}
+
+.transparent50 {
+	zoom: 1;
+	filter: alpha(opacity=50);
+	opacity: 0.5;
+}
+
+.transparent30 {
+	zoom: 1;
+	filter: alpha(opacity=30);
+	opacity: 0.3;
+}
+
+.left-main-menu {
+	padding: 10px 0;
+	margin-top: 5px;
+}
+
+.well {
+	background-color: #fff;
+}
+
+.well-title {
+	color: #666;
+	font-size: 18px;
+	font-weight:bold;
+	border-bottom: solid 1px #eee;
+	padding-bottom: 20px;
+	margin-bottom: 20px;
+}
+
+.top-panel-fix {
+	margin-top: 6px;
+}
+
+.date-time {
+	color: #999;
+}
+
+.user-name {
+	color: #888;
+}
+
+.post-triangle {
+    background-image: url("triangle_l.png");
+    height: 22px;
+    width: 22px;
+    margin: -50px 0 0 92px;
+    position: relative;
+}
+
+.post-content {
+	margin-left: 112px;
+	margin-top: -48px;
+	background-color: #fff;
+	z-index: -1;
+}
+
+.content-details {
+	display: none;
+	margin: 0 -20px;
+	padding: 8px 0;
+	border-bottom: solid 1px #eee;
+	margin-bottom: 8px;
+}
+
+.content-title {
+    color: #333;
+    font-size: 16px;
+    font-weight: normal;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    word-wrap: break-word;
+}
+
+.content-description {
+	border-top: solid 1px #eee;
+	margin-top: -8px;
+	padding-top: 8px;
+    color: #444444;
+	font-weight: normal;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    word-wrap: break-word;
+    margin: 0 20px;
+}
+
+.content-description-feed {
+    color: #333;
+    font-size: 16px;
+    font-weight: normal;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    word-wrap: break-word;
+}
+
+.content-metadata {
+	border-top: solid 1px #eee;
+	margin: 8px 20px;
+	padding: 8px 0;
+}
+
+.content-tag {
+	margin: 0 20px;
+}
+
+.post-comment {
+	background-color: #fdfdfd;
+	margin: -20px 4px 20px 116px;
+	padding: 20px;
+	border: 1px solid #eee;
+  -webkit-border-radius: 0 0 6px 6px;
+     -moz-border-radius: 0 0 6px 6px;
+          border-radius: 0 0 6px 6px;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+     -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+          box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+}
+
+.comment-count {
+	font-size: 18px;
+	color: #555;
+}
+
+.comment-list {
+	display:none;
+}
+
+.comment-item {
+	border-top: solid 1px #eee;
+	padding-top: 12px;
+}
+
+.comment-item .user-avatar {
+	padding-right: 20px;
+	vertical-align: top;
+	float: left;
+}
+
+.comment .description {
+	padding-bottom: 20px;
+    color: #444444;
+	font-weight: normal;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    word-wrap: break-word;
+}
+
+.module-structure-tree {
+	display: none;
+    max-height:400px;
+    _height:expression(this.scrollHeight>399?"400px":"auto");
+    overflow:auto;
+    overflow-x:hidden;
+    width: 100%;
+}
+
+.module-structure-panel .module-title {
+	font-size: 18px;
+	vertical-align: middle;
+}
+
+.tree-table {
+    border: solid 1px #f4f4f4;
+    table-layout:fixed;
+    width: 100%;
+}
+
+.tree-table .description {
+	color: #666;
+	padding-left: 20px;
+	display: none;
+}
+
+.tree-table tr {
+	vertical-align: middle;
+	height: 40px;
+	font-size: 16px;
+}
+
+.tree-table tr:nth-child(even) {
+	background: #FFF;
+}
+
+.tree-table tr:nth-child(odd) {
+	background: #FAFAFA;
+}
+
+.tree-table .title {
+	width: 100%;
+	text-overflow:ellipsis;
+	overflow:hidden;
+	white-space:nowrap;
+}
+
+.tree-table .legend {
+	width: 70px;
+}
+
+.tree-table .action {
+	width: 50px;
+}
+
+.concept-description-panel {
+}
+
+.quiz-form .error-msg {
+	color: red;
+}
+
+.item-description {
+	font-weight: normal;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    word-wrap: break-word;
+}
+
+.fake-input {
+	color: #999;
+	height: 24px;
+	margin-bottom: 16px;
+	padding: 0 4px;
+}
+
+.shared-content {
+	border: solid #eee 1px;
+	color: #333;
+	background-color: #efefef;
+	margin: 12px 0 8px 0;
+	padding: 3px 8px;
+	border: 1px solid #eee;
+  -webkit-border-radius: 6px 6px 6px 6px;
+     -moz-border-radius: 6px 6px 6px 6px;
+          border-radius: 6px 6px 6px 6px;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+     -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+          box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+}
