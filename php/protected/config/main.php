@@ -68,6 +68,26 @@ return array(
             # page after logout
             'returnLogoutUrl' => array('/user/login'),
         ),
+			
+		'opauth' => array(
+			'opauthParams' => array(
+				'Security.salt' => 'LDFmiilYf8Fyw5W10rx4W1KsVrieQCnpBzzpTBWA5vJidQKDx8pMJbmw28R1C4m',
+				'Strategy' => array(
+					'Facebook' => array(
+						'app_id' => '287934914658104',
+						'app_secret' => 'e57518c2fb355808601962b97d6a2513',
+					),
+					'LinkedIn' => array(
+						'api_key' => 'v3erksao4f80',
+						'secret_key' => 'CJesGscPgLDtgB4h'
+					),
+					'Twitter' => array(
+						'key' => '1QhyT1JkncJhmfxVtbYGA',
+						'secret' => 'sjHEWQ7Ajpm7rKLaAfS4pRLVC91XynyH9G6bVVTsc'
+					)
+				),
+			),
+		),
         
 	),
 
@@ -101,13 +121,13 @@ return array(
 		
 
 		'db'=>array(
-			'connectionString' => 'mysql:host=127.0.0.1;dbname=topolor',
-//			'connectionString' => 'mysql:host=127.2.144.129;dbname=topolor',
+//			'connectionString' => 'mysql:host=127.0.0.1;dbname=topolor',
+			'connectionString' => 'mysql:host=127.2.144.129;dbname=topolor',
 			'emulatePrepare' => true,
-			'username' => 'root',
-			'password' => '123456',
-//			'username' => 'admin',
-//			'password' => 'wIjt3DRXvHR4',
+//			'username' => 'root',
+//			'password' => '123456',
+			'username' => 'admin',
+			'password' => 'wIjt3DRXvHR4',
 			'charset' => 'utf8',
 			'tablePrefix' => 'tpl_',
 		),
