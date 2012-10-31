@@ -101,10 +101,13 @@ return array(
 		
 
 		'db'=>array(
-			'connectionString' => 'mysql:host=127.2.144.129;dbname=topolor',
+			'connectionString' => 'mysql:host=127.0.0.1;dbname=topolor',
+//			'connectionString' => 'mysql:host=127.2.144.129;dbname=topolor',
 			'emulatePrepare' => true,
-			'username' => 'admin',
-			'password' => 'wIjt3DRXvHR4',
+			'username' => 'root',
+			'password' => '123456',
+//			'username' => 'admin',
+//			'password' => 'wIjt3DRXvHR4',
 			'charset' => 'utf8',
 			'tablePrefix' => 'tpl_',
 		),
