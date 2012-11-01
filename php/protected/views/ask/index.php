@@ -67,6 +67,7 @@
 		<a href="#" class="btn btn-small btn-share-cancel" data-dismiss="modal">Cancel</a>
 	</div>
 </div>
+<div style="display: none;">
 <?php
 	$model = new Feed;
 	$form = $this->beginWidget('GxActiveForm', array(
@@ -77,6 +78,7 @@
 	<?php echo $form->textField($model, 'of')?>
 	<?php echo $form->textField($model, 'of_id')?>
 <?php $this->endWidget(); ?>
+</div>
 <?php $this->widget('zii.widgets.CListView', array(
 	'dataProvider'=>$dataProvider,
 	'itemView'=>'_view',
@@ -86,6 +88,8 @@
 ));
 
 Yii::app()->clientScript->registerScript('ask-index-js', "
+		
+	$('[rel=tooltip]').tooltip();
 
 //********* create ask
 	
@@ -693,10 +697,6 @@ Yii::app()->clientScript->registerScript('ask-index-js', "
 
 //********* share
 		
-	$(document).ready(function() {
-		$('#share-form').hide();
-	});
-	
 	$('.btn-share').live('click', function() {
 		var id = $(this).closest('.post').find('#data_id').val();
 		var str = '@' + $(this).closest('.post').find('.user-name').html() + $(this).closest('.post-content').find('.content-title').text();

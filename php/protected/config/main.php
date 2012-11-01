@@ -22,6 +22,8 @@ return array(
 	
 		'application.modules.user.models.*', // yii-user
         'application.modules.user.components.*', // yii-user
+        
+        'application.modules.user.UserModule', // yii-user
 	),
 
 	'modules'=>array(
@@ -42,13 +44,13 @@ return array(
             'hash' => 'md5',
 
             # send activation email
-            'sendActivationMail' => true,
+            'sendActivationMail' => false,
 
             # allow access for non-activated users
             'loginNotActiv' => false,
 
             # activate user on registration (only sendActivationMail = false)
-            'activeAfterRegister' => false,
+            'activeAfterRegister' => true,
 
             # automatically login from registration
             'autoLogin' => true,
@@ -68,32 +70,12 @@ return array(
             # page after logout
             'returnLogoutUrl' => array('/user/login'),
         ),
-			
-		'opauth' => array(
-			'opauthParams' => array(
-				'Security.salt' => 'LDFmiilYf8Fyw5W10rx4W1KsVrieQCnpBzzpTBWA5vJidQKDx8pMJbmw28R1C4m',
-				'Strategy' => array(
-					'Facebook' => array(
-						'app_id' => '287934914658104',
-						'app_secret' => 'e57518c2fb355808601962b97d6a2513',
-					),
-					'LinkedIn' => array(
-						'api_key' => 'v3erksao4f80',
-						'secret_key' => 'CJesGscPgLDtgB4h'
-					),
-					'Twitter' => array(
-						'key' => '1QhyT1JkncJhmfxVtbYGA',
-						'secret' => 'sjHEWQ7Ajpm7rKLaAfS4pRLVC91XynyH9G6bVVTsc'
-					)
-				),
-			),
-		),
         
 	),
 
 	// application components
 	'components'=>array(
-/*		'clientScript'=>array(
+		'clientScript'=>array(
 			'packages'=>array(
 				'jquery'=>array(
 					'baseUrl'=>'//ajax.googleapis.com/ajax/libs/jquery/1.7/',
@@ -101,7 +83,7 @@ return array(
 				)
 			),
 		),
-*/					
+					
 		'user'=>array(
 			// enable cookie-based authentication
 			'allowAutoLogin'=>true,
@@ -118,7 +100,6 @@ return array(
 				'<controller:\w+>/<action:\w+>'=>'<controller>/<action>',
 			),
 		),
-		
 
 		'db'=>array(
 //			'connectionString' => 'mysql:host=127.0.0.1;dbname=topolor',
@@ -157,6 +138,6 @@ return array(
 	// using Yii::app()->params['paramName']
 	'params'=>array(
 		// this is used in contact page
-		'adminEmail'=>'webmaster@example.com',
+		'adminEmail'=>'aslan.shek@gmail.com',
 	),
 );

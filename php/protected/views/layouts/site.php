@@ -32,6 +32,18 @@
           <li<?php echo Yii::app()->controller->id == 'feed' ? ' class="active"' : ' '; ?>><a href="<?php echo Yii::app()->homeUrl;?>">Home</a></li>
           <li<?php echo Yii::app()->controller->id == 'module' ? ' class="active"' : ' '; ?>><a href="<?php echo Yii::app()->homeUrl.'/module';?>">Module Center</a></li>
           <li<?php echo Yii::app()->controller->id == 'ask' ? ' class="active"' : ' '; ?>><a href="<?php echo Yii::app()->homeUrl.'/ask';?>">Q&amp;A Center</a></li>
+          
+        </ul>
+        <ul class="nav pull-right">
+          <li><a rel="tooltip" data-placement="bottom" title="My profile">
+          	<?php echo GxHtml::image(
+			Yii::app()->baseUrl.'/uploads/images/profile-avatar/0.png','',
+			array(
+				'width'=>'20px',
+				'height'=>'20px',
+			));?>
+          	&nbsp;<?php echo Yii::app()->getModule('user')->user();?></a></li>
+          <li><a rel="tooltip" data-placement="bottom" title="Log out" href="<?php echo Yii::app()->homeUrl.'/user/logout';?>">Log out</a></li>
         </ul>
       </div>
     </div>
@@ -50,8 +62,6 @@
           <li <?php echo $this->id == 'ask' ? ' class="active"' : '';?>><a href="<?php echo Yii::app()->createUrl('ask');?>"><i class="icon-comment"></i> Q&amp;As</a></li>
           <li <?php echo $this->id == 'note' ? ' class="active"' : '';?>><a href="<?php echo Yii::app()->createUrl('note');?>"><i class="icon-edit"></i> Notes</a></li>
           <li <?php echo $this->id == 'todo' ? ' class="active"' : '';?>><a href="<?php echo Yii::app()->createUrl('todo');?>"><i class="icon-check"></i> To-Do</a></li>
-          <li <?php echo $this->getAction()->id == 'event' ? ' class="active"' : '';?>><a href="<?php echo Yii::app()->createUrl('site/event');?>"><i class="icon-calendar"></i> Events</a></li>
-          <li <?php echo $this->getAction()->id == 'circle' ? ' class="active"' : '';?>><a href="<?php echo Yii::app()->createUrl('site/circle');?>"><i class="icon-globe"></i> Circles</a></li>
           <li class="nav-header">My Modules</li>
           <li><a href="<?php echo Yii::app()->homeUrl.'/module/3';?>"><i class="icon-fire"></i> PHP Tutorial</a></li>
           <li><a href="<?php echo Yii::app()->homeUrl.'/module/4';?>"><i class="icon-bullhorn"></i> HTML5 Tutorial</a></li>

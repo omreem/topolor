@@ -37,6 +37,40 @@
 		<a href="#" class="btn btn-small btn-share-cancel" data-dismiss="modal">Cancel</a>
 	</div>
 </div>
+
+<?php if (Yii::app()->user->isGuest):
+$model=new UserLogin;?>
+<div id="login-modal" class="modal hide">
+	<div class="modal-header"><b>Login</b></div>
+	<div class="modal-body">
+		<?php echo CHtml::beginForm(Yii::app()->homeUrl.'/user/login', 'POST', array('class'=>'form-horizontal')); ?>
+			<div class="control-group">
+				<label class="control-label" for="inputEmail">
+					<?php echo CHtml::activeLabelEx($model,'username'); ?>
+				</label>
+				<div class="controls">
+	    			<?php echo CHtml::activeTextField($model,'username', array('id'=>'inputEmail', 'placeholder'=>'Email or Username')) ?>
+	    		</div>
+	    	</div>
+			<div class="control-group">
+				<label class="control-label" for="inputPassword"><?php echo CHtml::activeLabelEx($model,'password'); ?></label>
+				<div class="controls">
+					<?php echo CHtml::activePasswordField($model,'password', array('id'=>'inputPassword', 'placeholder'=>'Password')) ?>
+				</div>
+			</div>
+			<div class="control-group">
+	    		<div class="controls">
+	   				<label class="checkbox">
+						<?php echo CHtml::activeCheckBox($model,'rememberMe'); ?> <?php echo CHtml::activeLabelEx($model,'rememberMe'); ?>
+					</label>
+					<?php echo CHtml::submitButton(UserModule::t("Sign in"), array('class'=>'btn')); ?>
+				</div>
+			</div>
+		<?php echo CHtml::endForm(); ?><!-- form -->
+	</div>
+</div>
+<?php endif;?>
+
 <div style="display: none;">
 <?php
 	$model = new Feed;
@@ -58,10 +92,11 @@
 	'id'=>'feed-list',
 ));
 
-Yii::app()->clientScript->registerScript('site-index-js', "
-	$(document).ready(function() {
-		$('[rel=tooltip]').tooltip();
-	});
+Yii::app()->clientScript->registerScript('feed-index-js', "
+	$('[rel=tooltip]').tooltip();
+	var isguest = ".Yii::app()->user->id.";
+	if (isguest == 0)
+		$('#login-modal').modal({show: true, backdrop: 'static'});
 		
 //********* change create-panel
 				

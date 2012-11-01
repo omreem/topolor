@@ -39,7 +39,7 @@ Thumbs.db
 
 # yii #
 ######################
-
+assets/
 protected/runtime/
 themes/classic/views/
 

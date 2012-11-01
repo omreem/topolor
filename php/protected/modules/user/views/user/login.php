@@ -52,7 +52,6 @@ $this->breadcrumbs=array(
 <?php echo CHtml::endForm(); ?>
 </div><!-- form -->
 
-
 <?php
 $form = new CForm(array(
     'elements'=>array(
