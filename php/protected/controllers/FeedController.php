@@ -122,5 +122,13 @@ class FeedController extends GxController {
 			'model' => $model,
 		));
 	}
+	
+	public function actionFeedCount() {
+		$sql = 'select count(*) from tpl_feed';
+		$count = Yii::app()->db->createCommand($sql)->queryScalar();
+		
+		echo $count;
+		Yii::app()->end();
+	}
 
 }

@@ -34,6 +34,7 @@
           <li<?php echo Yii::app()->controller->id == 'ask' ? ' class="active"' : ' '; ?>><a href="<?php echo Yii::app()->homeUrl.'/ask';?>">Q&amp;A Center</a></li>
           
         </ul>
+        <?php if (!Yii::app()->user->isGuest):?>
         <ul class="nav pull-right">
           <li><a rel="tooltip" data-placement="bottom" title="My profile">
           	<?php echo GxHtml::image(
@@ -45,6 +46,7 @@
           	&nbsp;<?php echo Yii::app()->getModule('user')->user();?></a></li>
           <li><a rel="tooltip" data-placement="bottom" title="Log out" href="<?php echo Yii::app()->homeUrl.'/user/logout';?>">Log out</a></li>
         </ul>
+        <?php endif;?>
       </div>
     </div>
   </div>

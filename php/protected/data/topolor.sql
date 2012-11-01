@@ -436,21 +436,25 @@ CREATE TABLE IF NOT EXISTS `topolor`.`tpl_favorite` (
 ) ENGINE=InnoDB;
 
 -- -----------------------------------------------------
--- Table `topolor`.`authentications`
--- for hybridauth
+-- Table `topolor`.`tpl_message`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `authentications` (
-  `id` int(10) NOT NULL AUTO_INCREMENT,
-  `user_id` int(10) NOT NULL COMMENT 'refer to users.id',
-  `provider` varchar(100) NOT NULL,
-  `provider_uid` varchar(255) NOT NULL,
-  `email` varchar(200) NOT NULL,
-  `display_name` varchar(150) NOT NULL,
-  `first_name` varchar(100) NOT NULL,
-  `last_name` varchar(100) NOT NULL,
-  `profile_url` varchar(300) NOT NULL,
-  `website_url` varchar(300) NOT NULL,
-  `created_at` datetime NOT NULL,
+CREATE TABLE IF NOT EXISTS `topolor`.`tpl_message` (
+  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `user_id` INT(10) UNSIGNED NOT NULL COMMENT 'message from',
+  `to_id` INT(10) UNSIGNED NOT NULL COMMENT 'message to',
+  `title` TEXT NOT NULL,
+  `content` TEXT NULL,
+  `status` INT(1) NOT NULL DEFAULT 0 COMMENT '0: unread; 1: read; 2: deleted',
+  `create_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `provider_uid` (`provider_uid`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ;
+  KEY `message_user_id` (`user_id`),
+  KEY `message_to_id` (`to_id`),
+  CONSTRAINT `message_user_id_fk`
+    FOREIGN KEY (`user_id`)
+    REFERENCES `topolor`.`tpl_user` (`id`)
+    ON DELETE CASCADE,
+  CONSTRAINT `message_to_id_fk`
+    FOREIGN KEY (`to_id`)
+    REFERENCES `topolor`.`tpl_user` (`id`)
+    ON DELETE CASCADE
+) ENGINE=InnoDB;

@@ -84,6 +84,11 @@ $model=new UserLogin;?>
 	<?php echo $form->textField($model, 'from_id')?>
 <?php $this->endWidget(); ?>
 </div>
+
+<div id="new-feed-count" class="alert alert-info" style="display: none;">
+	<div class="btn-show-new-feed btn-link" style="text-align:center;"></div>
+</div>
+
 <?php $this->widget('zii.widgets.CListView', array(
 	'dataProvider'=>$dataProvider,
 	'itemView'=>'_view',
@@ -97,6 +102,42 @@ Yii::app()->clientScript->registerScript('feed-index-js', "
 	var isguest = ".Yii::app()->user->id.";
 	if (isguest == 0)
 		$('#login-modal').modal({show: true, backdrop: 'static'});
+	
+//********* if there are any new news
+
+	var oldCount = ".$dataProvider->totalItemCount.";
+	var newCount = oldCount;
+	
+	setInterval(function(){getNewFeedCount()},60000);
+	
+	function getNewFeedCount() {
+		$.ajax({
+			type: 'post',
+			url: '".$this->createUrl('feedCount')."',
+			success: function (count) {
+				newCount = count;
+				var diffCount = newCount - oldCount;
+				if (diffCount > 0) {
+					var str = diffCount + ' new feed';
+					if (diffCount > 1)
+						str += 's';
+					str += '. Click to refresh the list.';
+					$('.btn-show-new-feed').text(str);
+					$('#new-feed-count').attr('style', 'display: block;');
+				}
+			}
+		});
+	}
+
+	$('.btn-show-new-feed').click(function(){
+		oldCount = newCount;
+		setTimeout(function() {
+			$.fn.yiiListView.update('feed-list', {
+				data: $(this).serialize()
+			});
+			$('#new-feed-count').attr('style','display: none;');
+		}, 400);
+	});
 		
 //********* change create-panel
 				
@@ -204,10 +245,12 @@ Yii::app()->clientScript->registerScript('feed-index-js', "
 					$.fn.yiiListView.update('feed-list', {
 						data: $(this).serialize()
 					});
-					$('#ask-form').find('textarea').val('');
+					$('#feed-form').find('textarea').val('');
 					$('#Feed_description').attr('placeholder','What \'s up?');
 					$('#feed-form .btn-create').addClass('disabled');
                 }, 400);
+				
+				oldCount++;
 			}
 		});
 		return false;
@@ -216,7 +259,7 @@ Yii::app()->clientScript->registerScript('feed-index-js', "
 	
 	$('#feed-form .btn-cancel').click(function (){
 		$('#feed-form .form-rest').slideUp();
-		$('#feed-form .btn-create').addClass('disabled')
+		$('#feed-form .btn-create').addClass('disabled');
 		$('#feed-form').find('textarea').val('');
 		$('#feed-form').find('#Feed_description').attr('placeholder','What\'s up?');
 	});
@@ -273,6 +316,8 @@ Yii::app()->clientScript->registerScript('feed-index-js', "
 				setTimeout(function() {
 					$('.left-main-menu').find('.icon-comment').parent().removeAttr('style');
 				}, 600);
+				
+				oldCount++;
 			}
 		});
 		return false;
@@ -540,7 +585,7 @@ Yii::app()->clientScript->registerScript('feed-index-js', "
 						+ '<span class=\"btn btn-link pull-right btn-comment-delete\" style=\"color: #ddd; margin: -10px -10px 0 0\">x</span>'
 						+ '<i class=\"icon-pencil transparent30 pull-right btn-comment-edit\" style=\"margin-top: -2px\"></i>'
 						+ '<div class=\"user-avatar\">'
-							+ '<img width=\"40px\" height=\"40px\" class=\"img-polaroid\" src=\"/topolor/uploads/images/profile-avatar/0.png\"/>'
+							+ '<img width=\"40px\" height=\"40px\" class=\"img-polaroid\" src=\"".Yii::app()->baseUrl."/uploads/images/profile-avatar/0.png\"/>'
 						+ '</div>'
 						+ '<div class=\"content\" style=\"margin-left: 70px;\">'
 							+ '<div class=\"description\" style=\"display: inline;\">'

@@ -79,6 +79,11 @@
 	<?php echo $form->textField($model, 'of_id')?>
 <?php $this->endWidget(); ?>
 </div>
+
+<div id="new-ask-count" class="alert alert-info" style="display: none;">
+	<div class="btn-show-new-ask btn-link" style="text-align:center;"></div>
+</div>
+
 <?php $this->widget('zii.widgets.CListView', array(
 	'dataProvider'=>$dataProvider,
 	'itemView'=>'_view',
@@ -90,7 +95,43 @@
 Yii::app()->clientScript->registerScript('ask-index-js', "
 		
 	$('[rel=tooltip]').tooltip();
+	
+//********* if there are any new news
 
+	var oldCount = ".$dataProvider->totalItemCount.";
+	var newCount = oldCount;
+	
+	setInterval(function(){getNewAskCount()},60000);
+	
+	function getNewAskCount() {
+		$.ajax({
+			type: 'post',
+			url: '".$this->createUrl('askCount')."',
+			success: function (count) {
+				newCount = count;
+				var diffCount = newCount - oldCount;
+				if (diffCount > 0) {
+					var str = diffCount + ' new question';
+					if (diffCount > 1)
+						str += 's';
+					str += '. Click to refresh the list.';
+					$('.btn-show-new-ask').text(str);
+					$('#new-ask-count').attr('style', 'display: block;');
+				}
+			}
+		});
+	}
+
+	$('.btn-show-new-ask').click(function(){
+		oldCount = newCount;
+		setTimeout(function() {
+			$.fn.yiiListView.update('ask-list', {
+				data: $(this).serialize()
+			});
+			$('#new-ask-count').attr('style','display: none;');
+		}, 400);
+	});
+		
 //********* create ask
 	
 	$('#Ask_title').focus(function () {
@@ -140,6 +181,8 @@ Yii::app()->clientScript->registerScript('ask-index-js', "
 					$('#Ask_title').attr('placeholder','Ask a question');
 					$('#ask-form .btn-create').addClass('disabled');
                 }, 400);
+				
+				oldCount++;
 			}
 		});
 		return false;
@@ -362,7 +405,7 @@ Yii::app()->clientScript->registerScript('ask-index-js', "
 					\$commentCount.addClass('btn-link');
 					\$commentCount.attr('onclick', '$(this).next().slideToggle();');
 				}
-				$('#answer-list .items').prepend('<div class=\"comment-item clearfix\"><div class=\"user-avatar\"><img width=\"48px\" height=\"48px\" class=\"img-polaroid\" src=\"/topolor/uploads/images/profile-avatar/0.png\"/></div><div class=\"content\"><span class=\"user-name\">admin</span>:<span class=\"pull-right owner\" style=\"display:none;\"><input type=\"hidden\" id=\"answer_id\" value=\"'.concat(data).concat('\"><span class=\"btn-link btn-edit\">edit</span><span style=\"color:grey;\">&nbsp;/&nbsp;</span><span class=\"btn-link btn-delete\">delete</span></span><br><span class=\"description\">').concat(newAnswerDescription).concat('</span></div></div>'));
+				$('#answer-list .items').prepend('<div class=\"comment-item clearfix\"><div class=\"user-avatar\"><img width=\"48px\" height=\"48px\" class=\"img-polaroid\" src=\"".Yii::app()->baseUrl."/uploads/images/profile-avatar/0.png\"/></div><div class=\"content\"><span class=\"user-name\">admin</span>:<span class=\"pull-right owner\" style=\"display:none;\"><input type=\"hidden\" id=\"answer_id\" value=\"'.concat(data).concat('\"><span class=\"btn-link btn-edit\">edit</span><span style=\"color:grey;\">&nbsp;/&nbsp;</span><span class=\"btn-link btn-delete\">delete</span></span><br><span class=\"description\">').concat(newAnswerDescription).concat('</span></div></div>'));
 			}
 		});
 		
