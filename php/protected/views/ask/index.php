@@ -218,7 +218,7 @@ Yii::app()->clientScript->registerScript('ask-index-js', "
 				var elem_comment = elem_post.next();
 				$.ajax({
 					type: 'POST',
-					url: '/topolor/index.php/ask/delete/'.concat(\$this.closest('.post').find('#data_id').val()),
+					url: '".$this->createUrl('delete')."/'+\$this.closest('.post').find('#data_id').val(),
 				});
 				elem_post.slideUp();
 				elem_comment.slideUp();

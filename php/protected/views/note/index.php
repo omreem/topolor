@@ -215,7 +215,7 @@ Yii::app()->clientScript->registerScript('note-index-js', "
 		    if (result) {
 				$.ajax({
 					type: 'POST',
-					url: '/topolor/index.php/note/delete/'+\$this.closest('.post').find('#data_id').val(),
+					url: '".$this->createUrl('delete')."/'+\$this.closest('.post').find('#data_id').val(),
 					success: function(data) {
 						setTimeout(function() {
 							elem.slideUp();

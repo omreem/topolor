@@ -276,7 +276,7 @@ Yii::app()->clientScript->registerScript('todo-index-js', "
 		    if (result) {
 				$.ajax({
 					type: 'POST',
-					url: '/topolor/index.php/todo/delete/'.concat(\$this.closest('.post').find('#data_id').val()),
+					url: '".$this->createUrl('delete')."/'+\$this.closest('.post').find('#data_id').val(),
 					success: function(data) {
 						setTimeout(function() {
 							elem.slideUp();
