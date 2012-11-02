@@ -1,6 +1,6 @@
 <div class="comment-item clearfix">
 	<div class="user-avatar">
-		<?php echo GxHtml::image(Yii::app()->baseUrl.'/uploads/images/profile-avatar/0.png','', array('width'=>'48px', 'height'=>'48px', 'class'=>'img-polaroid'));?>
+		<?php echo GxHtml::image(Yii::app()->baseUrl.'/uploads/images/profile-avatar/'.Yii::app()->user->id.'.png','', array('width'=>'48px', 'height'=>'48px', 'class'=>'img-polaroid'));?>
 	</div>
 	<div class="content">
 		<span class="user-name"><?php echo $data->learner?></span>:

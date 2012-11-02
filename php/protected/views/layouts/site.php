@@ -38,7 +38,7 @@
         <ul class="nav pull-right">
           <li><a rel="tooltip" data-placement="bottom" title="My profile">
           	<?php echo GxHtml::image(
-			Yii::app()->baseUrl.'/uploads/images/profile-avatar/0.png','',
+			Yii::app()->baseUrl.'/uploads/images/profile-avatar/'.Yii::app()->user->id.'.png','',
 			array(
 				'width'=>'20px',
 				'height'=>'20px',
@@ -60,7 +60,7 @@
         <ul class="nav nav-list">
           <li class="nav-header">Menu</li>
           <li <?php echo $this->id == 'feed' ? ' class="active"' : '';?>><a href="<?php echo Yii::app()->homeUrl;?>"><i class="icon-list-alt"></i> News Feed</a></li>
-          <li <?php echo $this->getAction()->id == 'message' ? ' class="active"' : '';?>><a href="<?php echo Yii::app()->createUrl('site/message');?>"><i class="icon-envelope"></i> Messages</a></li>
+          <li <?php echo $this->id == 'message' ? ' class="active"' : '';?>><a href="<?php echo Yii::app()->createUrl('message');?>"><i class="icon-envelope"></i> Messages</a></li>
           <li <?php echo $this->id == 'ask' ? ' class="active"' : '';?>><a href="<?php echo Yii::app()->createUrl('ask');?>"><i class="icon-comment"></i> Q&amp;As</a></li>
           <li <?php echo $this->id == 'note' ? ' class="active"' : '';?>><a href="<?php echo Yii::app()->createUrl('note');?>"><i class="icon-edit"></i> Notes</a></li>
           <li <?php echo $this->id == 'todo' ? ' class="active"' : '';?>><a href="<?php echo Yii::app()->createUrl('todo');?>"><i class="icon-check"></i> To-Do</a></li>

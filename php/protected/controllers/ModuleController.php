@@ -86,7 +86,6 @@ class ModuleController extends GxController {
 		else
 			$recentlyLearntConcepts=new CSqlDataProvider($sql, array(
 			    'totalItemCount'=>$countRecentlyLearnt,
-				'id'=>'id',
 				'keyField'=>'id',
 			    'pagination'=>array(
 			        'pageSize'=>5,
@@ -126,7 +125,6 @@ class ModuleController extends GxController {
 		else
 			$quizDone=new CSqlDataProvider($sql, array(
 					'totalItemCount'=>$countquizDone,
-					'id'=>'id',
 					'keyField'=>'id',
 					'pagination'=>array(
 							'pageSize'=>5,
@@ -168,7 +166,6 @@ class ModuleController extends GxController {
 		else
 			$notes=new CSqlDataProvider($sql, array(
 					'totalItemCount'=>$countNote>2?2:$countNote,
-					'id'=>'id',
 					'keyField'=>'id',
 					'pagination'=>array(
 							'pageSize'=>2,
@@ -208,7 +205,6 @@ class ModuleController extends GxController {
 		else
 			$asks=new CSqlDataProvider($sql, array(
 					'totalItemCount'=>$countAsk>2?2:$countAsk,
-					'id'=>'id',
 					'keyField'=>'id',
 					'pagination'=>array(
 							'pageSize'=>2,

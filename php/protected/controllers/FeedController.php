@@ -93,7 +93,7 @@ class FeedController extends GxController {
 
 	public function actionIndex() {
 		$newFeed = new Feed;
-//		$newMessage = new Message;
+		$newMessage = new Message;
 		$newAsk = new Ask;
 		$newNote = new Note;
 		$newTodo = new Todo;
@@ -103,7 +103,7 @@ class FeedController extends GxController {
 		
 		$this->render('index', array(
 			'newFeed'=>$newFeed,
-//			'newMessage'=>$newMessage,
+			'newMessage'=>$newMessage,
 			'newAsk'=>$newAsk,
 			'newNote'=>$newNote,
 			'newTodo'=>$newTodo,

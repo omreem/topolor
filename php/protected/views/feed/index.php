@@ -1,6 +1,6 @@
 <?php $this->pageTitle=Yii::app()->name;?>
 <div class="well top-panel-fix">
-	<ul class="nav nav-pills top-panel-fix" id="create-pills">
+	<ul class="nav nav-pills top-panel-fix" id="create-pills" style="margin-top: -6px;">
 		<li class="active btn-feed"><a class="btn-link">Status</a></li>
 		<li class="btn-message"><a class="btn-link">Message</a></li>
 		<li class="btn-ask"><a class="btn-link">Q&amp;A</a></li>
@@ -9,6 +9,9 @@
 	</ul>
 	<div id="create-panel-feed" style="margin: -10px 0 -20px 0;">
 		<?php $this->renderPartial('/feed/_form', array('model' => $newFeed));?>
+	</div>
+	<div id="create-panel-message" style="margin: -10px 0 -20px 0; display: none;">
+		<?php $this->renderPartial('/message/_form', array('model' => $newMessage));?>
 	</div>
 	<div id="create-panel-ask" style="margin: -10px 0 -20px 0; display: none;">
 		<?php $this->renderPartial('/ask/_form', array('model' => $newAsk));?>
@@ -144,6 +147,8 @@ Yii::app()->clientScript->registerScript('feed-index-js', "
 	$('.btn-feed').click(function(){
 		$('#create-pills > li').removeClass('active');
 		$(this).addClass('active');
+		if ($('#Message_description').val() == '')
+			$('#message-form .form-rest').slideUp('fast');
 		if ($('#Ask_title').val() == '' && $('#Ask_description').val() == '')
 			$('#ask-form .form-rest').slideUp('fast');
 		if ($('#Note_title').val() == '' && $('#Note_description').val() == '')
@@ -152,6 +157,27 @@ Yii::app()->clientScript->registerScript('feed-index-js', "
 			$('#todo-form .form-rest').slideUp('fast');
 		setTimeout(function() {
 			$('#create-panel-feed').show();
+			$('#create-panel-message').hide();
+			$('#create-panel-ask').hide();
+			$('#create-panel-note').hide();
+			$('#create-panel-todo').hide();
+		}, 100);
+	});
+		
+	$('.btn-message').click(function(){
+		$('#create-pills > li').removeClass('active');
+		$(this).addClass('active');
+		if ($('#Feed_description').val() == '')
+			$('#feed-form .form-rest').slideUp('fast');
+		if ($('#Ask_title').val() == '' && $('#Ask_description').val() == '')
+			$('#ask-form .form-rest').slideUp('fast');
+		if ($('#Note_title').val() == '' && $('#Note_description').val() == '')
+			$('#note-form .form-rest').slideUp('fast');
+		if ($('#Todo_title').val() == '' && $('#Todo_description').val() == '')
+			$('#todo-form .form-rest').slideUp('fast');
+		setTimeout(function() {
+			$('#create-panel-feed').hide();
+			$('#create-panel-message').show();
 			$('#create-panel-ask').hide();
 			$('#create-panel-note').hide();
 			$('#create-panel-todo').hide();
@@ -163,12 +189,15 @@ Yii::app()->clientScript->registerScript('feed-index-js', "
 		$(this).addClass('active');
 		if ($('#Feed_description').val() == '')
 			$('#feed-form .form-rest').slideUp('fast');
+		if ($('#Message_description').val() == '')
+			$('#message-form .form-rest').slideUp('fast');
 		if ($('#Note_title').val() == '' && $('#Note_description').val() == '')
 			$('#note-form .form-rest').slideUp('fast');
 		if ($('#Todo_title').val() == '' && $('#Todo_description').val() == '')
 			$('#todo-form .form-rest').slideUp('fast');
 		setTimeout(function() {
 			$('#create-panel-feed').hide();
+			$('#create-panel-message').hide();
 			$('#create-panel-ask').show();
 			$('#create-panel-note').hide();
 			$('#create-panel-todo').hide();
@@ -180,12 +209,15 @@ Yii::app()->clientScript->registerScript('feed-index-js', "
 		$(this).addClass('active');
 		if ($('#Feed_description').val() == '')
 			$('#feed-form .form-rest').slideUp('fast');
+		if ($('#Message_description').val() == '')
+			$('#message-form .form-rest').slideUp('fast');
 		if ($('#Ask_title').val() == '' && $('#Ask_description').val() == '')
 			$('#ask-form .form-rest').slideUp('fast');
 		if ($('#Todo_title').val() == '' && $('#Todo_description').val() == '')
 			$('#todo-form .form-rest').slideUp('fast');
 		setTimeout(function() {
 			$('#create-panel-feed').hide();
+			$('#create-panel-message').hide();
 			$('#create-panel-ask').hide();
 			$('#create-panel-note').show();
 			$('#create-panel-todo').hide();
@@ -197,19 +229,22 @@ Yii::app()->clientScript->registerScript('feed-index-js', "
 		$(this).addClass('active');
 		if ($('#Feed_description').val() == '')
 			$('#feed-form .form-rest').slideUp('fast');
+		if ($('#Message_description').val() == '')
+			$('#message-form .form-rest').slideUp('fast');
 		if ($('#Ask_title').val() == '' && $('#Ask_description').val() == '')
 			$('#ask-form .form-rest').slideUp('fast');
 		if ($('#Note_title').val() == '' && $('#Note_description').val() == '')
 			$('#note-form .form-rest').slideUp('fast');
 		setTimeout(function() {
 			$('#create-panel-feed').hide();
+			$('#create-panel-message').hide();
 			$('#create-panel-ask').hide();
 			$('#create-panel-note').hide();
 			$('#create-panel-todo').show();
 		}, 100);
 	});
 	
-//********* create feed ask, note, todo
+//********* create feed, message, ask, note, todo
 	
 	$('#Feed_description').focus(function () {
 		$('#feed-form .form-rest').slideDown();
@@ -246,7 +281,6 @@ Yii::app()->clientScript->registerScript('feed-index-js', "
 						data: $(this).serialize()
 					});
 					$('#feed-form').find('textarea').val('');
-					$('#Feed_description').attr('placeholder','What \'s up?');
 					$('#feed-form .btn-create').addClass('disabled');
                 }, 400);
 				
@@ -262,6 +296,49 @@ Yii::app()->clientScript->registerScript('feed-index-js', "
 		$('#feed-form .btn-create').addClass('disabled');
 		$('#feed-form').find('textarea').val('');
 		$('#feed-form').find('#Feed_description').attr('placeholder','What\'s up?');
+	});
+		
+//--
+	$('#Message_description').focus(function () {
+		$('#message-form .form-rest').slideDown();
+	});
+	
+	$('#Message_description').keyup(function(event) {
+		if ($('#Message_description').val() != '')
+			$('#message-form .btn-create').removeClass('disabled')
+		else
+			$('#message-form .btn-create').addClass('disabled')
+	});
+	
+	$('#message-form .btn-create').click(function(){
+		if($(this).hasClass('disabled'))
+			return;
+		
+		\$this=$(this);
+		\$form = \$this.closest('form');
+
+		$.ajax({
+			type: 'POST',
+			url: '".$this->createUrl('message/create')."',
+			data: \$form.serialize(),
+			success: function (html) {
+				$('#message-form .form-rest').slideUp();
+				setTimeout(function() {
+					$('#message-form .btn-create').addClass('disabled')
+					$('#Message_description').val('');
+                }, 400);
+				$('.left-main-menu').find('.icon-envelope').parent().attr('style', 'background-color: #F5A9A9; color: white;');
+				setTimeout(function() {
+					$('.left-main-menu').find('.icon-envelope').parent().removeAttr('style');
+				}, 600);
+			}
+		});
+		return false;
+	});
+	
+	$('#message-form .btn-cancel').click(function (){
+		$('#message-form .btn-create').addClass('disabled')
+		$('#Message_description').val('');
 	});
 		
 //--
@@ -309,7 +386,6 @@ Yii::app()->clientScript->registerScript('feed-index-js', "
 					});
 					$('#ask-form').find('input').val('');
 					$('#ask-form').find('textarea').val('');
-					$('#Ask_title').attr('placeholder','Ask a question');
 					$('#ask-form .btn-create').addClass('disabled');
                 }, 400);
 				$('.left-main-menu').find('.icon-comment').parent().attr('style', 'background-color: #F5A9A9; color: white;');
@@ -371,12 +447,8 @@ Yii::app()->clientScript->registerScript('feed-index-js', "
 			success: function (html) {
 				$('#note-form .form-rest').slideUp();
 				setTimeout(function() {
-					$.fn.yiiListView.update('feed-list', {
-						data: $(this).serialize()
-					});
 					$('#note-form').find('textarea').val('');
 					$('#note-form').find('input').val('');
-					$('#Note_title').attr('placeholder','Create a note');
 					$('#note-form .btn-create').addClass('disabled');
                 }, 400);
 				$('.left-main-menu').find('.icon-edit').parent().attr('style', 'background-color: #F5A9A9; color: white;');
@@ -442,7 +514,6 @@ Yii::app()->clientScript->registerScript('feed-index-js', "
                 setTimeout(function() {
 					$('#todo-form').find('textarea').val('');
 					$('#todo-form').find('input').val('');
-					$('#Todo_title').attr('placeholder','Create a todo');
 					$('#todo-form .btn-create').addClass('disabled');
                 }, 400);
 				$('.left-main-menu').find('.icon-check').parent().attr('style', 'background-color: #F5A9A9; color: white;');

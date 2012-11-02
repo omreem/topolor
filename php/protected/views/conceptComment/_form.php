@@ -1,7 +1,7 @@
 <div class="post clearfix">
 	<div class="user-avatar">
 		<?php echo GxHtml::image(
-			Yii::app()->baseUrl.'/uploads/images/profile-avatar/0.png','',
+			Yii::app()->baseUrl.'/uploads/images/profile-avatar/'.Yii::app()->user->id.'.png','',
 			array(
 				'width'=>'66px',
 				'height'=>'66px',

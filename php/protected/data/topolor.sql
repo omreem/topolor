@@ -440,21 +440,25 @@ CREATE TABLE IF NOT EXISTS `topolor`.`tpl_favorite` (
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `topolor`.`tpl_message` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `user_id` INT(10) UNSIGNED NOT NULL COMMENT 'message from',
-  `to_id` INT(10) UNSIGNED NOT NULL COMMENT 'message to',
-  `title` TEXT NOT NULL,
-  `content` TEXT NULL,
+  `user_id` INT(10) UNSIGNED NOT NULL COMMENT 'message from user',
+  `to_user_id` INT(10) UNSIGNED NOT NULL COMMENT 'message to user',
+  `to_message_id` INT(10) UNSIGNED NULL COMMENT 'first message started',
+  `description` TEXT NOT NULL,
   `status` INT(1) NOT NULL DEFAULT 0 COMMENT '0: unread; 1: read; 2: deleted',
   `create_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `message_user_id` (`user_id`),
-  KEY `message_to_id` (`to_id`),
-  CONSTRAINT `message_user_id_fk`
+  KEY `message_from_user_id` (`user_id`),
+  KEY `message_to_user_id` (`to_user_id`),
+  CONSTRAINT `message_from_user_id_fk`
     FOREIGN KEY (`user_id`)
     REFERENCES `topolor`.`tpl_user` (`id`)
     ON DELETE CASCADE,
-  CONSTRAINT `message_to_id_fk`
-    FOREIGN KEY (`to_id`)
+  CONSTRAINT `message_to_user_id_fk`
+    FOREIGN KEY (`to_user_id`)
     REFERENCES `topolor`.`tpl_user` (`id`)
+    ON DELETE CASCADE,
+  CONSTRAINT `message_to_message_id_fk`
+    FOREIGN KEY (`to_message_id`)
+    REFERENCES `topolor`.`tpl_message` (`id`)
     ON DELETE CASCADE
 ) ENGINE=InnoDB;
