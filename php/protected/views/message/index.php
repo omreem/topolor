@@ -8,6 +8,7 @@
 	'dataProvider'=>$dataProvider,
 	'itemView'=>'_view',
 	'summaryText'=>'',
+	'emptyText' => 'No message yet.',
 	'id'=>'message-list'
 ));
 
