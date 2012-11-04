@@ -2,7 +2,7 @@
 	<?php if($data->learner_id == Yii::app()->user->id) {?><span class='btn btn-link pull-right delete' style="color: #ddd; margin-right: -3px;">x</span><?php } ?>
 	<div class="user-avatar">
 		<?php echo GxHtml::image(
-			Yii::app()->baseUrl.'/uploads/images/profile-avatar/'.Yii::app()->user->id.'.png','',
+			Yii::app()->baseUrl.'/uploads/images/profile-avatar/'.$data->learner_id.'.png','',
 			array(
 				'width'=>'66px',
 				'height'=>'66px',

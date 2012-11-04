@@ -128,7 +128,7 @@ class Tag extends BaseTag
 		$this->updateCounters(array('frequency'=>1),$criteria);
 		foreach($tags as $name)
 		{
-			if(!$this->exists('name=:name and user_id=:user_id',array(':name'=>$name, ':user_id'=>Yii::app()->user->id)))
+			if(!$this->exists('name=:name and user_id=:user_id and of=:of',array(':name'=>$name, ':user_id'=>Yii::app()->user->id, ':of'=>$of)))
 			{
 				$tag=new Tag;
 				$tag->name=$name;

@@ -2,7 +2,7 @@
 	<?php if($model->user_id == Yii::app()->user->id) {?><span class='btn btn-link pull-right delete' style="color: #ddd; margin-right: -3px;">x</span><?php } ?>
 	<div class="user-avatar">
 		<?php echo GxHtml::image(
-			Yii::app()->baseUrl.'/uploads/images/profile-avatar/'.Yii::app()->user->id.'.png','',
+			Yii::app()->baseUrl.'/uploads/images/profile-avatar/'.$model->user_id.'.png','',
 			array(
 				'width'=>'66px',
 				'height'=>'66px',
@@ -156,7 +156,7 @@ Yii::app()->clientScript->registerScript('site-index-js', "
 						+ '<span class=\"btn btn-link pull-right btn-comment-delete\" style=\"color: #ddd; margin: -10px -10px 0 0\">x</span>'
 						+ '<i class=\"icon-pencil transparent30 pull-right btn-comment-edit\" style=\"margin-top: -2px\"></i>'
 						+ '<div class=\"user-avatar\">'
-							+ '<img width=\"40px\" height=\"40px\" class=\"img-polaroid\" src=\"/topolor/uploads/images/profile-avatar/0.png\"/>'
+							+ '<img width=\"40px\" height=\"40px\" class=\"img-polaroid\" src=\"/topolor/uploads/images/profile-avatar/".Yii::app()->user->id.".png\"/>'
 						+ '</div>'
 						+ '<div class=\"content\" style=\"margin-left: 70px;\">'
 							+ '<div class=\"description\" style=\"display: inline;\">'

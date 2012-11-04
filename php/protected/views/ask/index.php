@@ -182,6 +182,16 @@ Yii::app()->clientScript->registerScript('ask-index-js', "
 					$('#ask-form .btn-create').addClass('disabled');
                 }, 400);
 				
+				$.ajax({
+					type: 'POST',
+					url: '".$this->createUrl('updateFiltersBar')."',
+					data: $('#filter-form').serialize(),
+					success: function (barInfo) {
+						$('#tags-bar').html(barInfo.tagsBar);
+						$('#concepts-bar').html(barInfo.conceptsBar);
+					}
+				});
+				
 				oldCount++;
 			}
 		});
@@ -262,9 +272,23 @@ Yii::app()->clientScript->registerScript('ask-index-js', "
 				$.ajax({
 					type: 'POST',
 					url: '".$this->createUrl('delete')."/'+\$this.closest('.post').find('#data_id').val(),
+					success: function(data) {
+						setTimeout(function() {
+							elem_post.slideUp();
+							elem_comment.slideUp();
+						}, 500);
+		
+						$.ajax({
+							type: 'POST',
+							url: '".$this->createUrl('updateFiltersBar')."',
+							data: $('#filter-form').serialize(),
+							success: function (barInfo) {
+								$('#tags-bar').html(barInfo.tagsBar);
+								$('#concepts-bar').html(barInfo.conceptsBar);
+							}
+						});
+					}
 				});
-				elem_post.slideUp();
-				elem_comment.slideUp();
 				return false;
 			}
 		});
@@ -405,7 +429,8 @@ Yii::app()->clientScript->registerScript('ask-index-js', "
 					\$commentCount.addClass('btn-link');
 					\$commentCount.attr('onclick', '$(this).next().slideToggle();');
 				}
-				$('#answer-list .items').prepend('<div class=\"comment-item clearfix\"><div class=\"user-avatar\"><img width=\"48px\" height=\"48px\" class=\"img-polaroid\" src=\"".Yii::app()->baseUrl."/uploads/images/profile-avatar/0.png\"/></div><div class=\"content\"><span class=\"user-name\">admin</span>:<span class=\"pull-right owner\" style=\"display:none;\"><input type=\"hidden\" id=\"answer_id\" value=\"'.concat(data).concat('\"><span class=\"btn-link btn-edit\">edit</span><span style=\"color:grey;\">&nbsp;/&nbsp;</span><span class=\"btn-link btn-delete\">delete</span></span><br><span class=\"description\">').concat(newAnswerDescription).concat('</span></div></div>'));
+				\$form.closest('.post-comment').find('#answer-list').children('.items').prepend('<div class=\"comment-item clearfix\" style=\"display: none;\"><div class=\"user-avatar\"><img width=\"48px\" height=\"48px\" class=\"img-polaroid\" src=\"".Yii::app()->baseUrl."/uploads/images/profile-avatar/".Yii::app()->user->id.".png\"/></div><div class=\"content\"><span class=\"user-name\">admin</span>:<span class=\"pull-right owner\" style=\"display:none;\"><input type=\"hidden\" id=\"answer_id\" value=\"'.concat(data).concat('\"><span class=\"btn-link btn-edit\">edit</span><span style=\"color:grey;\">&nbsp;/&nbsp;</span><span class=\"btn-link btn-delete\">delete</span></span><br><span class=\"description\">').concat(newAnswerDescription).concat('</span></div></div>'));
+				\$form.closest('.post-comment').find('#answer-list div:first-child').slideDown();
 			}
 		});
 		
@@ -590,6 +615,16 @@ Yii::app()->clientScript->registerScript('ask-index-js', "
 								$('#tag-canvas').find('.alert-success').hide();
 								$('.modal.in').modal('hide');
 			                }, 1200);
+		
+							$.ajax({
+								type: 'POST',
+								url: '".$this->createUrl('updateFiltersBar')."',
+								data: $('#filter-form').serialize(),
+								success: function (barInfo) {
+									$('#tags-bar').html(barInfo.tagsBar);
+									$('#concepts-bar').html(barInfo.conceptsBar);
+								}
+							});
 						}
 					});
 					return false;

@@ -73,8 +73,9 @@ class Ask extends BaseAsk
 	 */
 	protected function afterDelete() {
 		parent::afterDelete();
-		Answer::model()->deleteAll('ask_id='.$this->id);
 		Tag::model()->updateFrequency($this->tags, '', 'ask');
+		
+		Answer::model()->deleteAll('ask_id='.$this->id);
 		
 		//delete related 'feed' and 'favorite'
 		Feed::model()->deleteAll('of=:of and of_id=:of_id', array(':of'=>'ask', ':of_id'=>$this->id));

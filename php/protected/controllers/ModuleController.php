@@ -120,16 +120,13 @@ class ModuleController extends GxController {
 		.' and done_at IS NOT NULL'
 		.' and q.learner_id='.Yii::app()->user->id;
 		$countquizDone=Yii::app()->db->createCommand($sql2)->queryScalar();
-		if ($countquizDone == 0)
-			$quizDone = null;
-		else
-			$quizDone=new CSqlDataProvider($sql, array(
-					'totalItemCount'=>$countquizDone,
-					'keyField'=>'id',
-					'pagination'=>array(
-							'pageSize'=>5,
-					),
-			));
+		$quizDone=new CSqlDataProvider($sql, array(
+				'totalItemCount'=>$countquizDone,
+				'keyField'=>'id',
+				'pagination'=>array(
+						'pageSize'=>5,
+				),
+		));
 		
 		$sql='select count(concept_id) from tpl_question group by concept_id';
 		$countQuizzes = count(Yii::app()->db->createCommand($sql)->queryAll());
@@ -161,17 +158,14 @@ class ModuleController extends GxController {
 		.' and n.learner_id='.Yii::app()->user->id;
 		
 		$countNote=Yii::app()->db->createCommand($sql2)->queryScalar();
-		if ($countNote == 0)
-			$notes = null;
-		else
-			$notes=new CSqlDataProvider($sql, array(
-					'totalItemCount'=>$countNote>2?2:$countNote,
-					'keyField'=>'id',
-					'pagination'=>array(
-							'pageSize'=>2,
-					),
-			));
-		
+		$notes=new CSqlDataProvider($sql, array(
+			'totalItemCount'=>$countNote,
+			'keyField'=>'id',
+			'pagination'=>array(
+				'pageSize'=>2,
+			),
+		));
+
 		//ask
 		$sql='select'
 		.' a.id,'
@@ -200,16 +194,13 @@ class ModuleController extends GxController {
 		.' order by a.create_at desc';
 		
 		$countAsk=Yii::app()->db->createCommand($sql2)->queryScalar();
-		if ($countAsk == 0)
-			$asks = null;
-		else
-			$asks=new CSqlDataProvider($sql, array(
-					'totalItemCount'=>$countAsk>2?2:$countAsk,
-					'keyField'=>'id',
-					'pagination'=>array(
-							'pageSize'=>2,
-					),
-			));
+		$asks=new CSqlDataProvider($sql, array(
+				'totalItemCount'=>$countAsk,
+				'keyField'=>'id',
+				'pagination'=>array(
+						'pageSize'=>2,
+				),
+		));
 		
 		$this->render('view', array(
 			'model' => $model,

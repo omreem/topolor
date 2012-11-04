@@ -90,8 +90,8 @@ abstract class BaseNote extends GxActiveRecord {
 					break;
 				}
 				case 'week': {
-					$criteria->addCondition("create_at >= '".date('Y-m-d', strtotime('this monday'))."'", 'AND');
-					$criteria->addCondition("create_at < '".date('Y-m-d', strtotime('next monday'))."'", 'AND');
+					$criteria->addCondition("create_at >= '".date('Y-m-d', strtotime('last monday'))."'", 'AND');
+					$criteria->addCondition("create_at < '".date('Y-m-d', strtotime('monday'))."'", 'AND');
 					break;
 				}
 				case 'month': {

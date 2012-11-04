@@ -66,7 +66,7 @@ $model=new UserLogin;?>
 	   				<label class="checkbox">
 						<?php echo CHtml::activeCheckBox($model,'rememberMe'); ?> <?php echo CHtml::activeLabelEx($model,'rememberMe'); ?>
 					</label>
-					<?php echo CHtml::submitButton(UserModule::t("Sign in"), array('class'=>'btn')); ?>
+					<?php echo CHtml::submitButton(UserModule::t("Sign in"), array('class'=>'btn btn-primary disabled')); ?>
 				</div>
 			</div>
 		<?php echo CHtml::endForm(); ?><!-- form -->
@@ -656,7 +656,7 @@ Yii::app()->clientScript->registerScript('feed-index-js', "
 						+ '<span class=\"btn btn-link pull-right btn-comment-delete\" style=\"color: #ddd; margin: -10px -10px 0 0\">x</span>'
 						+ '<i class=\"icon-pencil transparent30 pull-right btn-comment-edit\" style=\"margin-top: -2px\"></i>'
 						+ '<div class=\"user-avatar\">'
-							+ '<img width=\"40px\" height=\"40px\" class=\"img-polaroid\" src=\"".Yii::app()->baseUrl."/uploads/images/profile-avatar/0.png\"/>'
+							+ '<img width=\"40px\" height=\"40px\" class=\"img-polaroid\" src=\"".Yii::app()->baseUrl."/uploads/images/profile-avatar/".Yii::app()->user->id.".png\"/>'
 						+ '</div>'
 						+ '<div class=\"content\" style=\"margin-left: 70px;\">'
 							+ '<div class=\"description\" style=\"display: inline;\">'

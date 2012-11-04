@@ -139,6 +139,15 @@ Yii::app()->clientScript->registerScript('note-index-js', "
 					$('#Note_title').attr('placeholder','Create a note');
 					$('#note-form .btn-create').addClass('disabled');
                 }, 400);
+				$.ajax({
+					type: 'POST',
+					url: '".$this->createUrl('updateFiltersBar')."',
+					data: $('#filter-form').serialize(),
+					success: function (barInfo) {
+						$('#tags-bar').html(barInfo.tagsBar);
+						$('#concepts-bar').html(barInfo.conceptsBar);
+					}
+				});
 			}
 		});
 		return false;
@@ -220,6 +229,16 @@ Yii::app()->clientScript->registerScript('note-index-js', "
 						setTimeout(function() {
 							elem.slideUp();
 						}, 500);
+		
+						$.ajax({
+							type: 'POST',
+							url: '".$this->createUrl('updateFiltersBar')."',
+							data: $('#filter-form').serialize(),
+							success: function (barInfo) {
+								$('#tags-bar').html(barInfo.tagsBar);
+								$('#concepts-bar').html(barInfo.conceptsBar);
+							}
+						});
 					}
 				});
 				return false;
@@ -419,6 +438,16 @@ Yii::app()->clientScript->registerScript('note-index-js', "
 								$('#tag-canvas').find('.alert-success').hide();
 								$('.modal.in').modal('hide');
 			                }, 1200);
+		
+							$.ajax({
+								type: 'POST',
+								url: '".$this->createUrl('updateFiltersBar')."',
+								data: $('#filter-form').serialize(),
+								success: function (barInfo) {
+									$('#tags-bar').html(barInfo.tagsBar);
+									$('#concepts-bar').html(barInfo.conceptsBar);
+								}
+							});
 						}
 					});
 					return false;

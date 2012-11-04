@@ -62,7 +62,8 @@ return array(
             'recoveryUrl' => array('/user/recovery'),
 
             # login form path
-            'loginUrl' => array('/user/login'),
+//            'loginUrl' => array('/user/login'),
+			'loginUrl' => array('/feed/index'),
 
             # page after login
             'returnUrl' => array('/user/profile'),

@@ -1,3 +1,54 @@
+<?php 
+		$sql='select'
+		.' n.id,'
+		.' n.title,'
+		.' n.create_at,'
+		.' n.description'
+		
+		.' from'
+		.' tpl_note as n'
+		.' join tpl_concept as c on c.id = n.concept_id'
+		
+		.' where'
+		.' c.root=1'
+		.' and n.learner_id='.Yii::app()->user->id
+		.' order by n.create_at desc';
+		
+		$sql2='select count(n.id)'
+		
+		.' from'
+		.' tpl_note as n'
+		.' join tpl_concept as c on c.id = n.concept_id'
+		
+		.' where'
+		.' c.root=1'
+		.' and n.learner_id='.Yii::app()->user->id;
+		
+		$countNote=Yii::app()->db->createCommand($sql2)->queryScalar();
+		$notes=new CSqlDataProvider($sql, array(
+			'totalItemCount'=>$countNote,
+			'keyField'=>'id',
+			'pagination'=>array(
+					'pageSize'=>2,
+			),
+		));
+
+
+$this->widget('zii.widgets.CListView', array(
+				'dataProvider'=>$notes,
+				'itemView'=>'/note/_item',
+				'summaryText'=>'',
+				'pager' => array(
+					'header' => '',
+					'prevPageLabel' => '&lt;&lt;',
+					'nextPageLabel' => '&gt;&gt;',
+				),
+				'id'=>'note-list',
+			));
+
+echo $notes == null? 'is null': 'not null';
+
+?>
 <div class="well top-panel-fix">
 	<div style="margin-bottom:-20px;">
 	<?php $this->renderPartial('_form', array('model' => $newTodo));?>
@@ -121,10 +172,19 @@ Yii::app()->clientScript->registerScript('todo-index-js', "
 						data: $(this).serialize()
 					});
 					$('#todo-form').find('textarea').val('');
-					$('#todo-form').find('input').val('');
+					$('#todo-form').find('#Todo_tags').val('');
 					$('#Todo_title').attr('placeholder','Create a todo');
 					$('#todo-form .btn-create').addClass('disabled');
                 }, 400);
+				$.ajax({
+					type: 'POST',
+					url: '".$this->createUrl('updateFiltersBar')."',
+					data: $('#filter-form').serialize(),
+					success: function (barInfo) {
+						$('#tags-bar').html(barInfo.tagsBar);
+						$('#concepts-bar').html(barInfo.conceptsBar);
+					}
+				});
 			}
 		});
 		return false;
@@ -281,6 +341,16 @@ Yii::app()->clientScript->registerScript('todo-index-js', "
 						setTimeout(function() {
 							elem.slideUp();
 						}, 500);
+		
+						$.ajax({
+							type: 'POST',
+							url: '".$this->createUrl('updateFiltersBar')."',
+							data: $('#filter-form').serialize(),
+							success: function (barInfo) {
+								$('#tags-bar').html(barInfo.tagsBar);
+								$('#concepts-bar').html(barInfo.conceptsBar);
+							}
+						});
 					}
 				});
 				return false;
@@ -525,6 +595,16 @@ Yii::app()->clientScript->registerScript('todo-index-js', "
 								$('#tag-canvas').find('.alert-success').hide();
 								$('.modal.in').modal('hide');
 			                }, 1200);
+		
+							$.ajax({
+								type: 'POST',
+								url: '".$this->createUrl('updateFiltersBar')."',
+								data: $('#filter-form').serialize(),
+								success: function (barInfo) {
+									$('#tags-bar').html(barInfo.tagsBar);
+									$('#concepts-bar').html(barInfo.conceptsBar);
+								}
+							});
 						}
 					});
 					return false;

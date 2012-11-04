@@ -46,27 +46,22 @@
 	  	<?php } ?>
 		<div class="well">
 			<div class="well-title">Quizzes<span class="pull-right" style="; font-weight: normal; font-size: 14px; color: #aaa;">You've done <span style="fond-size: 24px; color: #666;"><?php echo $countquizDone;?></span> out of <span style="fond-size: 24px; color: #666;"><?php echo $countQuizzes;?></span> quizzes</span></div>
-			<?php if ($quizDone != null) {
-				$this->widget('zii.widgets.CListView', array(
+			<?php $this->widget('zii.widgets.CListView', array(
 					'dataProvider'=>$quizDone,
 					'itemView'=>'/quiz/_item',
 					'summaryText'=>'',
+					'emptyText'=>'Not taken quiz yet.',
 					'pager' => array(
 						'header' => '',
 						'prevPageLabel' => '&lt;&lt;',
 						'nextPageLabel' => '&gt;&gt;',
 					),
 					'id'=>'quiz-list',
-				)); } ?>
+				)); ?>
 	  	</div><!-- /.well -->
 	</div>
 	
 	<div class="span4">
-	  	<div class="well">
-			<p class="well-title">Event</p>
-			<p><span class="date-time">10/09</span> <span class="title">Adaptive Navigation Support</span></p>
-			<div class="widget-bottom-bar"><a class="btn btn-link" href="#">More &raquo;</a></div>
-	  	</div><!-- /.well -->
 	  	<div class="well">
 	  		<div id="note_item_create" class="modal hide fade in" style="display: none;" data-backdrop="static">
 				<div class="modal-header">
@@ -98,6 +93,7 @@
 				'dataProvider'=>$notes,
 				'itemView'=>'/note/_item',
 				'summaryText'=>'',
+				'emptyText'=>'No note yet.',
 				'pager' => array(
 					'header' => '',
 					'prevPageLabel' => '&lt;&lt;',
@@ -105,7 +101,6 @@
 				),
 				'id'=>'note-list',
 			)); ?>
-			More &raquo;
 	  	</div><!-- /.well -->
 	  	<div class="well">
 	  		<div id="ask_item_create" class="modal hide fade in" style="display: none;" data-backdrop="static">
@@ -138,6 +133,7 @@
 				'dataProvider'=>$asks,
 				'itemView'=>'/ask/_item',
 				'summaryText'=>'',
+				'emptyText'=>'No Q&A yet.',
 				'pager' => array(
 					'header' => '',
 					'prevPageLabel' => '&lt;&lt;',
@@ -145,7 +141,6 @@
 				),
 				'id'=>'ask-list',
 			)); ?>
-			More &raquo;
 	  	</div><!-- /.well -->
 	</div><!--/.span-->		
 </div><!--/.row-->

@@ -240,7 +240,7 @@ class TodoController extends GxController {
 				$sql = 'select concept_id as id, tpl_concept.title as title, count(*) as frequency 
 					from tpl_todo 
 					join tpl_concept on tpl_concept.id=tpl_todo.concept_id 
-					where learner_id=1 
+					where learner_id=1 AND concept_id<>root 
 					group by concept_id
 					order by frequency DESC, title 
 					';
@@ -250,7 +250,7 @@ class TodoController extends GxController {
 				->select('concept_id as id, tpl_concept.title as title, count(*) as frequency')
 				->from('tpl_todo')
 				->join('tpl_concept', 'tpl_concept.id=tpl_todo.concept_id')
-				->where($whereStatus.'tpl_todo.tags LIKE "%'.$tag.'%" AND learner_id=:learner_id', array(':learner_id'=>Yii::app()->user->id))
+				->where($whereStatus.'tpl_todo.tags LIKE "%'.$tag.'%" AND learner_id=:learner_id AND concept_id<>root', array(':learner_id'=>Yii::app()->user->id))
 				->group('concept_id')
 				->order('frequency DESC, title')
 				->queryAll();
@@ -265,7 +265,7 @@ class TodoController extends GxController {
 					break;
 				}
 				case 'week': {
-					$whereInterval = "tpl_todo.start_at >= '".date('Y-m-d', strtotime('this monday'))."' AND tpl_todo.start_at < '".date('Y-m-d', strtotime('next monday'))."' AND ";
+					$whereInterval = "tpl_todo.start_at >= '".date('Y-m-d', strtotime('last monday'))."' AND tpl_todo.start_at < '".date('Y-m-d', strtotime('monday'))."' AND ";
 					break;
 				}
 				case 'month': {
@@ -297,7 +297,7 @@ class TodoController extends GxController {
 				->from('tpl_todo')
 				->join('tpl_concept', 'tpl_concept.id=tpl_todo.concept_id')
 				->group('concept_id')
-				->where($whereStatus.$whereInterval.'learner_id=:learner_id', array(':learner_id'=>Yii::app()->user->id))
+				->where($whereStatus.$whereInterval.'learner_id=:learner_id AND concept_id<>root', array(':learner_id'=>Yii::app()->user->id))
 				->order('frequency DESC, title')
 				->queryAll();
 			else
@@ -305,7 +305,7 @@ class TodoController extends GxController {
 				->select('concept_id as id, tpl_concept.title as title, count(*) as frequency')
 				->from('tpl_todo')
 				->join('tpl_concept', 'tpl_concept.id=tpl_todo.concept_id')
-				->where($whereStatus.$whereInterval.'tpl_todo.tags LIKE "%'.$tag.'%" AND learner_id=:learner_id', array(':learner_id'=>Yii::app()->user->id))
+				->where($whereStatus.$whereInterval.'tpl_todo.tags LIKE "%'.$tag.'%" AND learner_id=:learner_id AND concept_id<>root', array(':learner_id'=>Yii::app()->user->id))
 				->group('concept_id')
 				->order('frequency DESC, title')
 				->queryAll();
@@ -397,7 +397,8 @@ class TodoController extends GxController {
 			->from('tpl_todo')
 			->join('tpl_concept', 'tpl_concept.id=tpl_todo.concept_id')
 			->group('concept_id')
-			->where('status=:status', array(':status'=>Todo::STATUS_UNDONE))
+			->where('learner_id=:learner_id AND status=:status AND concept_id<>root', array(':learner_id'=>Yii::app()->user->id, ':status'=>Todo::STATUS_UNDONE))
+			->order('frequency DESC')
 			->queryAll();
 	
 		foreach ($concepts as $concept)

@@ -290,7 +290,7 @@
 		    if (result) {
 				$.ajax({
 					type: 'POST',
-					url: '/topolor/index.php/conceptcomment/delete/'+\$this.closest('.post').find('#data_id').val(),
+					url: '".$this->createUrl('conceptcomment/delete')."/'+\$this.closest('.post').find('#data_id').val(),
 					success: function(data) {
 						var tmp = $('#tab-comments').text();
 						var t = tmp.split('(');
@@ -313,7 +313,7 @@
 	});
 		
 //******************************************
-//************** common ask, note, todo
+//************** comment ask, note, todo
 		
 	var homeUrl = '".Yii::app()->homeUrl."';
 		
@@ -629,6 +629,14 @@
 					$('#Ask_title').attr('placeholder','Ask a question');
 					$('#ask-form .btn-create').addClass('disabled');
                 }, 400);
+				$.ajax({
+					type: 'POST',
+					url: '".$this->createUrl('updateAskTagBar')."',
+					data: $('#ask-filter-form').serialize(),
+					success: function (askTagBar) {
+						$('#askTagBar').html(askTagBar);
+					}
+				});
 			}
 		});
 		return false;
@@ -658,7 +666,7 @@
 				var elem_comment = elem_post.next();
 				$.ajax({
 					type: 'POST',
-					url: '/topolor/index.php/ask/delete/'.concat(\$this.closest('.post').find('#data_id').val()),
+					url: '".$this->createUrl('ask/delete')."/'.concat(\$this.closest('.post').find('#data_id').val()),
 					success: function(html) {
 						var tmp = $('#tab-asks').text();
 						var t = tmp.split('(');
@@ -670,6 +678,15 @@
 						else
 							str += ' (' + sum + ')';
 						$('#tab-asks').text(str);
+		
+						$.ajax({
+							type: 'POST',
+							url: '".$this->createUrl('updateAskTagBar')."',
+							data: $('#ask-filter-form').serialize(),
+							success: function (askTagBar) {
+								$('#askTagBar').html(askTagBar);
+							}
+						});
 					}
 				});
 				elem_post.slideUp();
@@ -811,7 +828,8 @@
 					\$commentCount.addClass('btn-link');
 					\$commentCount.attr('onclick', '$(this).next().slideToggle();');
 				}
-				$('#answer-list .items').prepend('<div class=\"comment-item clearfix\"><div class=\"user-avatar\"><img width=\"48px\" height=\"48px\" class=\"img-polaroid\" src=\"/topolor/uploads/images/profile-avatar/0.png\"/></div><div class=\"content\"><span class=\"user-name\">admin</span>:<span class=\"pull-right owner\" style=\"display:none;\"><input type=\"hidden\" id=\"answer_id\" value=\"'.concat(data).concat('\"><span class=\"btn-link btn-edit\">edit</span><span style=\"color:grey;\">&nbsp;/&nbsp;</span><span class=\"btn-link btn-delete\">delete</span></span><br><span class=\"description\">').concat(newAnswerDescription).concat('</span></div></div>'));
+				\$form.closest('.post-comment').find('#answer-list').children('.items').prepend('<div class=\"comment-item clearfix\" style=\"display: none;\"><div class=\"user-avatar\"><img width=\"48px\" height=\"48px\" class=\"img-polaroid\" src=\"".Yii::app()->baseUrl."/uploads/images/profile-avatar/".Yii::app()->user->id.".png\"/></div><div class=\"content\"><span class=\"user-name\">admin</span>:<span class=\"pull-right owner\" style=\"display:none;\"><input type=\"hidden\" id=\"answer_id\" value=\"'.concat(data).concat('\"><span class=\"btn-link btn-edit\">edit</span><span style=\"color:grey;\">&nbsp;/&nbsp;</span><span class=\"btn-link btn-delete\">delete</span></span><br><span class=\"description\">').concat(newAnswerDescription).concat('</span></div></div>'));
+				\$form.closest('.post-comment').find('#answer-list div:first-child').slideDown();
 			}
 		});
 		
@@ -939,6 +957,15 @@
 					$('#Note_title').attr('placeholder','Create a note');
 					$('#note-form .btn-create').addClass('disabled');
                 }, 400);
+		
+				$.ajax({
+					type: 'POST',
+					url: '".$this->createUrl('updateNoteTagBar')."',
+					data: $('#note-filter-form').serialize(),
+					success: function (noteTagBar) {
+						$('#noteTagBar').html(noteTagBar);
+					}
+				});
 			}
 		});
 		return false;
@@ -966,7 +993,7 @@
 		    if (result) {
 				$.ajax({
 					type: 'POST',
-					url: '/topolor/index.php/note/delete/'+\$this.closest('.post').find('#data_id').val(),
+					url: '".$this->createUrl('note/delete')."/'+\$this.closest('.post').find('#data_id').val(),
 					success: function(data) {
 						var tmp = $('#tab-notes').text();
 						var t = tmp.split('(');
@@ -981,6 +1008,15 @@
 						setTimeout(function() {
 							elem.slideUp();
 						}, 500);
+		
+						$.ajax({
+							type: 'POST',
+							url: '".$this->createUrl('updateNoteTagBar')."',
+							data: $('#note-filter-form').serialize(),
+							success: function (noteTagBar) {
+								$('#noteTagBar').html(noteTagBar);
+							}
+						});
 					}
 				});
 				return false;
@@ -1127,6 +1163,15 @@
 					$('#Todo_title').attr('placeholder','Create a todo');
 					$('#todo-form .btn-create').addClass('disabled');
                 }, 400);
+		
+				$.ajax({
+					type: 'POST',
+					url: '".$this->createUrl('updateTodoTagBar')."',
+					data: $('#todo-filter-form').serialize(),
+					success: function (todoTagBar) {
+						$('#todoTagBar').html(todoTagBar);
+					}
+				});
 			}
 		});
 		return false;
@@ -1155,7 +1200,7 @@
 		    if (result) {
 				$.ajax({
 					type: 'POST',
-					url: '/topolor/index.php/todo/delete/'.concat(\$this.closest('.post').find('#data_id').val()),
+					url: '".$this->createUrl('todo/delete')."/'.concat(\$this.closest('.post').find('#data_id').val()),
 					success: function(data) {
 						var tmp = $('#tab-todos').text();
 						var t = tmp.split('(');
@@ -1171,6 +1216,15 @@
 						setTimeout(function() {
 							elem.slideUp();
 						}, 500);
+		
+						$.ajax({
+							type: 'POST',
+							url: '".$this->createUrl('updateTodoTagBar')."',
+							data: $('#todo-filter-form').serialize(),
+							success: function (todoTagBar) {
+								$('#todoTagBar').html(todoTagBar);
+							}
+						});
 					}
 				});
 				return false;

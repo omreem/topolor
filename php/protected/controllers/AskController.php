@@ -5,7 +5,12 @@ class AskController extends GxController {
 	public $layout='//layouts/site_column';
 		
 	public function actionView($id) {
-		$this->render('view', array('model' => $this->loadModel($id, 'Ask')));
+		$model = Ask::model()->findByPk($id);
+		if ($model == null) {
+			$this->redirect($this->createUrl('index'));
+		}
+		else
+			$this->render('view', array('model' => $model));
 	}
 
 	public function actionCreate() {
@@ -349,6 +354,8 @@ class AskController extends GxController {
 			->from('tpl_ask')
 			->join('tpl_concept', 'tpl_concept.id=tpl_ask.concept_id')
 			->group('concept_id')
+			->where('concept_id<>root')
+			->order('frequency DESC')
 			->queryAll();
 		
 		foreach ($concepts as $concept)

@@ -202,14 +202,14 @@ class NoteController extends GxController {
 					->join('tpl_concept', 'tpl_concept.id=tpl_note.concept_id')
 					->group('concept_id')
 					->order('frequency DESC, title')
-					->where('learner_id=:learner_id', array(':learner_id'=>Yii::app()->user->id))
+					->where('learner_id=:learner_id AND concept_id<>root', array(':learner_id'=>Yii::app()->user->id))
 					->queryAll();
 			else
 				$concepts = Yii::app()->db->createCommand()
 					->select('concept_id as id, tpl_concept.title as title, count(*) as frequency')
 					->from('tpl_note')
 					->join('tpl_concept', 'tpl_concept.id=tpl_note.concept_id')
-					->where('tpl_note.tags LIKE "%'.$tag.'%" AND learner_id=:learner_id', array(':learner_id'=>Yii::app()->user->id))
+					->where('tpl_note.tags LIKE "%'.$tag.'%" AND learner_id=:learner_id AND concept_id<>root', array(':learner_id'=>Yii::app()->user->id))
 					->group('concept_id')
 					->order('frequency DESC, title')
 					->queryAll();
@@ -224,7 +224,7 @@ class NoteController extends GxController {
 					break;
 				}
 				case 'week': {
-					$whereInterval = "tpl_note.create_at >= '".date('Y-m-d', strtotime('this monday'))."' AND tpl_note.create_at < '".date('Y-m-d', strtotime('next monday'))."'";
+					$whereInterval = "tpl_note.create_at >= '".date('Y-m-d', strtotime('last monday'))."' AND tpl_note.create_at < '".date('Y-m-d', strtotime('monday'))."'";
 					break;
 				}
 				case 'month': {
@@ -256,7 +256,7 @@ class NoteController extends GxController {
 					->from('tpl_note')
 					->join('tpl_concept', 'tpl_concept.id=tpl_note.concept_id')
 					->group('concept_id')
-					->where($whereInterval.' AND learner_id=:learner_id', array(':learner_id'=>Yii::app()->user->id))
+					->where($whereInterval.' AND learner_id=:learner_id AND concept_id<>root', array(':learner_id'=>Yii::app()->user->id))
 					->order('frequency DESC, title')
 					->queryAll();
 			else
@@ -264,7 +264,7 @@ class NoteController extends GxController {
 					->select('concept_id as id, tpl_concept.title as title, count(*) as frequency')
 					->from('tpl_note')
 					->join('tpl_concept', 'tpl_concept.id=tpl_note.concept_id')
-					->where($whereInterval.' AND tpl_note.tags LIKE "%'.$tag.'%" AND learner_id=:learner_id', array(':learner_id'=>Yii::app()->user->id))
+					->where($whereInterval.' AND tpl_note.tags LIKE "%'.$tag.'%" AND learner_id=:learner_id AND concept_id<>root', array(':learner_id'=>Yii::app()->user->id))
 					->group('concept_id')
 					->order('frequency DESC, title')
 					->queryAll();
@@ -340,7 +340,8 @@ class NoteController extends GxController {
 			->from('tpl_note')
 			->join('tpl_concept', 'tpl_concept.id=tpl_note.concept_id')
 			->group('concept_id')
-			->where('learner_id=:learner_id', array(':learner_id'=>Yii::app()->user->id))
+			->where('learner_id=:learner_id AND concept_id<>root', array(':learner_id'=>Yii::app()->user->id))
+			->order('frequency DESC')
 			->queryAll();
 	
 		foreach ($concepts as $concept)

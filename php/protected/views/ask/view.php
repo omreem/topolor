@@ -2,7 +2,7 @@
 	<?php if($model->learner_id == Yii::app()->user->id) {?><div class='btn btn-link pull-right delete' style="color: #ddd; margin-right: -3px;">x</div><?php }?>
 	<div class="user-avatar">
 		<?php echo GxHtml::image(
-			Yii::app()->baseUrl.'/uploads/images/profile-avatar/'.Yii::app()->user->id.'.png','',
+			Yii::app()->baseUrl.'/uploads/images/profile-avatar/'.$model->learner_id.'.png','',
 			array(
 				'width'=>'66px',
 				'height'=>'66px',
@@ -110,6 +110,7 @@
 		<a href="#" class="btn btn-small btn-share-cancel" data-dismiss="modal">Cancel</a>
 	</div>
 </div>
+<div style="display: none;">
 <?php
 	$model = new Feed;
 	$form = $this->beginWidget('GxActiveForm', array(
@@ -121,6 +122,8 @@
 	<?php echo $form->textField($model, 'of_id')?>
 	<?php echo $form->textField($model, 'from_id')?>
 <?php $this->endWidget(); ?>
+</div>
+
 <?php
 Yii::app()->clientScript->registerScript('ask-view-js', "
 	$(document).ready(function() {
@@ -177,7 +180,7 @@ Yii::app()->clientScript->registerScript('ask-view-js', "
 			    if (result) {
 					$.ajax({
 						type: 'POST',
-						url: '/topolor/index.php/ask/delete/'+$('#data_id').val(),
+						url: '".$this->createUrl('ask/delete')."/'+$('#data_id').val(),
 						success: function(data) {
 							window.location = '".Yii::app()->homeUrl."/ask';
 						}

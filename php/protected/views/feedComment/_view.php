@@ -4,7 +4,7 @@
 		<i class="icon-pencil transparent30 pull-right btn-comment-edit" style="margin-top: -2px"></i>
 	<?php } ?>
 	<div class="user-avatar">
-		<?php echo GxHtml::image(Yii::app()->baseUrl.'/uploads/images/profile-avatar/'.Yii::app()->user->id.'.png','', array('width'=>'40px', 'height'=>'40px', 'class'=>'img-polaroid'));?>
+		<?php echo GxHtml::image(Yii::app()->baseUrl.'/uploads/images/profile-avatar/'.$data->user_id.'.png','', array('width'=>'40px', 'height'=>'40px', 'class'=>'img-polaroid'));?>
 	</div>
 	<div class="content" style="margin-left: 70px;">
 		<div class="description" style="display: inline;">

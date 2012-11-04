@@ -21,7 +21,7 @@
 	<?php else :?>
 	<div class="pull-right">
 		<?php echo GxHtml::image(
-			Yii::app()->baseUrl.'/uploads/images/profile-avatar/'.Yii::app()->user->id.'.png','',
+			Yii::app()->baseUrl.'/uploads/images/profile-avatar/'.$data->user_id.'.png','',
 			array(
 				'width'=>'66px',
 				'height'=>'66px',
