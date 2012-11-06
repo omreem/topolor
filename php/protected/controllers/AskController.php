@@ -385,4 +385,12 @@ class AskController extends GxController {
 		echo json_encode($arr);
 		Yii::app()->end();
 	}
+	
+	public function actionAskCount() {
+		$sql = 'select count(*) from tpl_ask';
+		$count = Yii::app()->db->createCommand($sql)->queryScalar();
+		
+		echo $count;
+		Yii::app()->end();
+	}
 }

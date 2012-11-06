@@ -265,7 +265,7 @@ class TodoController extends GxController {
 					break;
 				}
 				case 'week': {
-					$whereInterval = "tpl_todo.start_at >= '".date('Y-m-d', strtotime('last monday'))."' AND tpl_todo.start_at < '".date('Y-m-d', strtotime('monday'))."' AND ";
+					$whereInterval = "tpl_todo.start_at >= '".date('Y-m-d', strtotime('monday'))."' AND tpl_todo.start_at < '".date('Y-m-d', strtotime('next monday'))."' AND ";
 					break;
 				}
 				case 'month': {

@@ -13,6 +13,10 @@ textarea {
     padding:1%;
 }
 
+.hint {
+	color: #666;
+}
+
 .transparent50 {
 	zoom: 1;
 	filter: alpha(opacity=50);

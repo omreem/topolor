@@ -42,34 +42,60 @@
 </div>
 
 <?php if (Yii::app()->user->isGuest):
-$model=new UserLogin;?>
+	$userLogin = new UserLogin;
+	$reg = new RegistrationForm;
+?>
 <div id="login-modal" class="modal hide">
-	<div class="modal-header"><b>Login</b></div>
+	<div class="modal-header"><h3>Sign In</h3></div>
 	<div class="modal-body">
-		<?php echo CHtml::beginForm(Yii::app()->homeUrl.'/user/login', 'POST', array('class'=>'form-horizontal')); ?>
+		<div class="pull-left canvas-signin">
+			<?php echo CHtml::beginForm(Yii::app()->homeUrl.'/user/login', 'POST', array('id'=>'form-signin')); ?>
+			<p><?php echo CHtml::activeTextField($userLogin,'username', array('placeholder'=>'Email or username', 'style'=>'width: 260px;')) ?></p>
+		    <p><?php echo CHtml::activePasswordField($userLogin,'password', array('placeholder'=>'Password', 'style'=>'width: 260px;')) ?></p>
+			<p><label class="checkbox hint"><?php echo CHtml::activeCheckBox($userLogin,'rememberMe'); ?> <?php echo CHtml::activeLabelEx($userLogin,'rememberMe'); ?></label></p>
+			<?php echo CHtml::endForm(); ?><!-- form -->	
+		   	<div>
+				<div class="alert alert-error" style="display: none;">
+					<button type="button" class="close" data-dismiss="alert">×</button>
+					Username/email or password is wrong.
+				</div>
+		   		<span class="btn btn-primary disabled" id="btn-signin"><?php echo UserModule::t("Sign In"); ?></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		   		<span class="hint">New to Topolor?</span>&nbsp;&nbsp;<span class="btn-link btn-to-signup">Sign Up</span>
+		   	</div>
+		</div>
+		<div class="pull-left canvas-signup" style="display: none;">
+			<?php echo CHtml::beginForm($this->createUrl('user/registration'), 'POST', array('id'=>'form-signup', 'class'=>'form-inline', 'enctype' => 'multipart/form-data')); ?>
 			<div class="control-group">
-				<label class="control-label" for="inputEmail">
-					<?php echo CHtml::activeLabelEx($model,'username'); ?>
-				</label>
 				<div class="controls">
-	    			<?php echo CHtml::activeTextField($model,'username', array('id'=>'inputEmail', 'placeholder'=>'Email or Username')) ?>
-	    		</div>
-	    	</div>
-			<div class="control-group">
-				<label class="control-label" for="inputPassword"><?php echo CHtml::activeLabelEx($model,'password'); ?></label>
-				<div class="controls">
-					<?php echo CHtml::activePasswordField($model,'password', array('id'=>'inputPassword', 'placeholder'=>'Password')) ?>
+					<?php echo CHtml::activeTextField($reg,'email', array('placeholder'=>'Email', 'style'=>'width: 260px;')); ?>
+					<span class="help-inline"></span>
 				</div>
 			</div>
 			<div class="control-group">
-	    		<div class="controls">
-	   				<label class="checkbox">
-						<?php echo CHtml::activeCheckBox($model,'rememberMe'); ?> <?php echo CHtml::activeLabelEx($model,'rememberMe'); ?>
-					</label>
-					<?php echo CHtml::submitButton(UserModule::t("Sign in"), array('class'=>'btn btn-primary disabled')); ?>
+				<div class="controls">
+					<?php echo CHtml::activeTextField($reg,'username', array('placeholder'=>'Username', 'style'=>'width: 260px;')); ?>
+					<span class="help-inline"></span>
 				</div>
 			</div>
-		<?php echo CHtml::endForm(); ?><!-- form -->
+			<div class="control-group">
+				<div class="controls">
+					<?php echo CHtml::activePasswordField($reg,'password', array('placeholder'=>'Password', 'style'=>'width: 260px;')); ?>
+					<span class="help-inline"></span>
+				</div>
+			</div>
+			<div class="control-group">
+				<div class="controls">
+					<?php echo CHtml::activePasswordField($reg,'verifyPassword', array('placeholder'=>'Re-enter password', 'style'=>'width: 260px;')); ?>
+					<span class="help-inline"></span>
+				</div>
+			</div>
+			<?php echo CHtml::activeFileField($reg, 'avatar', array('placeholder'=>'Upload an avatar (png only)', 'style'=>'width: 260px;')); ?>
+			<?php echo CHtml::endForm(); ?><!-- form -->
+		   	<div>
+		   		<span class="btn btn-primary disabled" id="btn-signup"><?php echo UserModule::t("Sign Up"); ?></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		   		<span class="hint">Have an account?</span>&nbsp;&nbsp;<span class="btn-link btn-to-signin">Sign In</span>
+		   	</div>
+		</div>
 	</div>
 </div>
 <?php endif;?>
@@ -102,16 +128,231 @@ $model=new UserLogin;?>
 
 Yii::app()->clientScript->registerScript('feed-index-js', "
 	$('[rel=tooltip]').tooltip();
+		
+//********* Sign In / Up
 	var isguest = ".Yii::app()->user->id.";
 	if (isguest == 0)
 		$('#login-modal').modal({show: true, backdrop: 'static'});
+		
+	$('.btn-to-signup').click(function() {
+		$('.canvas-signin').fadeOut();
+		
+		setTimeout(function() {
+			$('.canvas-signup').fadeIn();
+			$('#login-modal .modal-header h3').text('Sign Up');
+			$('#form-signup #RegistrationForm_email').focus();
+		}, 400);
+	});
+		
+	$('.btn-to-signin').click(function() {
+		$('.canvas-signup').fadeOut();
+		
+		setTimeout(function() {
+			$('.canvas-signin').fadeIn();
+			$('#login-modal .modal-header h3').text('Sign In');
+			$('#form-signin #UserLogin_username').focus();
+		}, 400);
+	});
 	
+	$('#form-signin #UserLogin_username, #form-signin #UserLogin_password').keyup(function(event) {
+		if ($('#form-signin #UserLogin_username').val() != '' && $('#form-signin #UserLogin_password').val().length >= 6)
+			$('#btn-signin').removeClass('disabled')
+		else if ($('#form-signin #UserLogin_username').val() == '' || $('#form-signin #UserLogin_password').val().length < 6)
+			$('#btn-signin').addClass('disabled')
+	});
+		
+	$('#btn-signin').click(function() {
+		if ($(this).hasClass('disabled'))
+			return;
+		
+		var username = $('#UserLogin_username').val();
+		var password = $('#UserLogin_password').val();
+		
+		$.ajax({
+			data: {username: username, password: password},
+			type: 'post',
+			url: '".$this->createUrl('validateUP')."',
+			success: function (result) {
+				if (result == 'success') {
+					$('#form-signin').submit();
+				} else {
+					$('.alert-error').show();
+					$('#UserLogin_username').focus();
+					$('#btn-signin').addClass('disabled');
+				}
+			}
+		});
+		
+	});
+		
+	$('#form-signup #RegistrationForm_email').focus(function() {
+		if($(this).val() == '') {
+			$(this).next().text('What\'s your email address?');
+			$(this).parent().parent().removeClass('error');
+		}
+	});
+		
+	$('#form-signup #RegistrationForm_username').focus(function() {
+		if($(this).val() == '') {
+			$(this).next().text('Enter your username.');
+			$(this).parent().parent().removeClass('error');
+		}
+	});
+		
+	$('#form-signup #RegistrationForm_password').focus(function() {
+		if($(this).val() == '') {
+			$(this).next().text('6 characters or more!');
+			$(this).parent().parent().removeClass('error');
+		}
+	});
+		
+	$('#form-signup #RegistrationForm_verifyPassword').focus(function() {
+		if($(this).val() == '') {
+			$(this).next().text('Re-enter your password.');
+			$(this).parent().parent().removeClass('error');
+		}
+	});
+		
+	$('#form-signup #RegistrationForm_email').focusout(function() {
+		if ($(this).next().text() != 'Email\'s format okey.')
+			return;
+		var email = $(this).val();
+		\$this = $(this);
+		$.ajax({
+			data: {email: email},
+			type: 'post',
+			url: '".$this->createUrl('validateEmail')."',
+			success: function (result) {
+				if (result == 'success') {
+					\$this.next().text('Email is okey.');
+					\$this.parent().parent().removeClass('error');
+					\$this.parent().parent().addClass('success');
+				} else {
+					\$this.next().text('This email is already registered.');
+					\$this.parent().parent().removeClass('success');
+					\$this.parent().parent().addClass('error');
+				}
+				validSignupForm();
+			}
+		});
+	});
+		
+	$('#form-signup #RegistrationForm_username').focusout(function() {
+		if ($(this).val() == '')
+			return;
+		if (!isValidUsername($(this).val())) {
+			$(this).next().text('Username\'s format is wrong!');
+			$(this).parent().parent().removeClass('success');
+			$(this).parent().parent().addClass('error');
+			return;
+		}
+		var username = $(this).val();
+		\$this = $(this);
+		$.ajax({
+			data: {username: username},
+			type: 'post',
+			url: '".$this->createUrl('validateUsername')."',
+			success: function (result) {
+				if (result == 'success') {
+					\$this.next().text('Username is okey.');
+					\$this.parent().parent().removeClass('error');
+					\$this.parent().parent().addClass('success');
+				} else {
+					\$this.next().text('This username is already registered.');
+					\$this.parent().parent().removeClass('success');
+					\$this.parent().parent().addClass('error');
+				}
+				validSignupForm();
+			}
+		});
+	});
+		
+	$('#form-signup #RegistrationForm_email').keyup(function() {
+		if($(this).val() == '') {
+			$(this).next().text('An email is required!');
+			$(this).parent().parent().removeClass('success');
+			$(this).parent().parent().addClass('error');
+		} else if (!isValidEmailAddress($(this).val())){
+			$(this).next().text('Doesn\'t look like a valid email.');
+			$(this).parent().parent().removeClass('success');
+			$(this).parent().parent().addClass('error');
+		} else {
+			$(this).next().text('Email\'s format okey.');
+			$(this).parent().parent().removeClass('error');
+			$(this).parent().parent().addClass('success');
+		}
+		validSignupForm();
+	});
+		
+	$('#form-signup #RegistrationForm_username').keyup(function() {
+		if($(this).val() == '') {
+			$(this).next().text('A username is required!');
+			$(this).parent().parent().removeClass('success');
+			$(this).parent().parent().addClass('error');
+		}
+		validSignupForm();
+		
+	});
+		
+	$('#form-signup #RegistrationForm_password').keyup(function() {
+		if($(this).val().length < 6) {
+			$(this).next().text('Must be at least 6 characters!');
+			$(this).parent().parent().removeClass('success');
+			$(this).parent().parent().addClass('error');
+		} else {
+			$(this).next().text('Password is okey.');
+			$(this).parent().parent().removeClass('error');
+			$(this).parent().parent().addClass('success');
+		}
+		validSignupForm();
+	});
+		
+	$('#form-signup #RegistrationForm_verifyPassword').keyup(function() {
+		if($(this).val() != $('#form-signup #RegistrationForm_password').val()) {
+			$(this).next().text('Must be the same as password above!');
+			$(this).parent().parent().removeClass('success');
+			$(this).parent().parent().addClass('error');
+		} else {
+			$(this).next().text('Re-password is okey.');
+			$(this).parent().parent().removeClass('error');
+			$(this).parent().parent().addClass('success');
+		}
+		validSignupForm();
+	});
+		
+	$('#btn-signup').click(function() {
+		if($(this).hasClass('disabled'))
+			return;
+		
+		$('#form-signup').submit();
+	});
+
+	function isValidEmailAddress(emailAddress) {
+		//var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+		var reg = /^([0-9a-zA-Z]([-\.\+\_\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$/;
+		return reg.test(emailAddress)
+	}
+		
+	function isValidUsername(username) {
+		var reg = /^[A-Za-z0-9_]+$/;
+		return reg.test(username)
+	}
+		
+	function validSignupForm() {
+		if ($('#form-signup').find('.success').length == 4)
+			setTimeout(function() {
+				$('#btn-signup').removeClass('disabled');
+			}, 500);
+		else
+			$('#btn-signup').addClass('disabled');	
+	}
+
 //********* if there are any new news
 
 	var oldCount = ".$dataProvider->totalItemCount.";
 	var newCount = oldCount;
 	
-	setInterval(function(){getNewFeedCount()},60000);
+	setInterval(function(){getNewFeedCount()},30000);
 	
 	function getNewFeedCount() {
 		$.ajax({
@@ -656,7 +897,7 @@ Yii::app()->clientScript->registerScript('feed-index-js', "
 						+ '<span class=\"btn btn-link pull-right btn-comment-delete\" style=\"color: #ddd; margin: -10px -10px 0 0\">x</span>'
 						+ '<i class=\"icon-pencil transparent30 pull-right btn-comment-edit\" style=\"margin-top: -2px\"></i>'
 						+ '<div class=\"user-avatar\">'
-							+ '<img width=\"40px\" height=\"40px\" class=\"img-polaroid\" src=\"".Yii::app()->baseUrl."/uploads/images/profile-avatar/".Yii::app()->user->id.".png\"/>'
+							+ '<img style=\"width:40px; height:40px;\" class=\"img-polaroid\" src=\"".Yii::app()->baseUrl."/uploads/images/profile-avatar/".Yii::app()->user->id."\"/>'
 						+ '</div>'
 						+ '<div class=\"content\" style=\"margin-left: 70px;\">'
 							+ '<div class=\"description\" style=\"display: inline;\">'

@@ -1,9 +1,9 @@
 <?php
 	if ($data->user_id == Yii::app()->user->id) {
-		$imgUrl = Yii::app()->baseUrl.'/uploads/images/profile-avatar/'.$data->to_user_id.'.png';
+		$imgUrl = Yii::app()->baseUrl.'/uploads/images/profile-avatar/'.$data->to_user_id;
 		$userName = GxHtml::encode(GxHtml::valueEx($data->toUser));
 	} else {
-		$imgUrl = Yii::app()->baseUrl.'/uploads/images/profile-avatar/'.$data->user_id.'.png';
+		$imgUrl = Yii::app()->baseUrl.'/uploads/images/profile-avatar/'.$data->user_id;
 		$userName = GxHtml::encode(GxHtml::valueEx($data->user));
 	}
 ?>
@@ -13,8 +13,7 @@
 			<?php echo GxHtml::image(
 				$imgUrl,'',
 				array(
-					'width'=>'44px',
-					'height'=>'44px',
+					'style'=>'width: 44px; height: 44px;',
 					'class'=>'img-rounded',
 				));?>
 		</div>

@@ -462,3 +462,22 @@ CREATE TABLE IF NOT EXISTS `topolor`.`tpl_message` (
     REFERENCES `topolor`.`tpl_message` (`id`)
     ON DELETE CASCADE
 ) ENGINE=InnoDB;
+
+-- -----------------------------------------------------
+-- Table `topolor`.`tpl_monitor`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `topolor`.`tpl_monitor` (
+  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `user_id` INT(10) UNSIGNED NOT NULL,
+  `controllor` VARCHAR(40) NOT NULL,
+  `action` VARCHAR(40) NOT NULL,
+  `type` VARCHAR(4) NULL,
+  `params` VARCHAR(255) NULL,
+  `create_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `monitor_user_id` (`user_id`),
+  CONSTRAINT `monitor_user_id_fk`
+    FOREIGN KEY (`user_id`)
+    REFERENCES `topolor`.`tpl_user` (`id`)
+    ON DELETE CASCADE
+) ENGINE=InnoDB;

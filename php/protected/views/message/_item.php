@@ -2,10 +2,9 @@
 	<?php if ($data->to_user_id == Yii::app()->user->id):?>
 	<div class="user-avatar">
 		<?php echo GxHtml::image(
-			Yii::app()->baseUrl.'/uploads/images/profile-avatar/'.$data->user_id.'.png','',
+			Yii::app()->baseUrl.'/uploads/images/profile-avatar/'.$data->user_id,'',
 			array(
-				'width'=>'66px',
-				'height'=>'66px',
+				'style'=>'width: 66px; height: 66px;',
 				'class'=>'img-polaroid',
 			));?>
 	</div>
@@ -21,10 +20,9 @@
 	<?php else :?>
 	<div class="pull-right">
 		<?php echo GxHtml::image(
-			Yii::app()->baseUrl.'/uploads/images/profile-avatar/'.$data->user_id.'.png','',
+			Yii::app()->baseUrl.'/uploads/images/profile-avatar/'.$data->user_id,'',
 			array(
-				'width'=>'66px',
-				'height'=>'66px',
+				'style'=>'width: 66px; height: 66px;',
 				'class'=>'img-polaroid',
 			));?>
 	</div>

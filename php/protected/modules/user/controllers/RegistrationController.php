@@ -45,8 +45,13 @@ class RegistrationController extends Controller
 						$model->verifyPassword=UserModule::encrypting($model->verifyPassword);
 						$model->superuser=0;
 						$model->status=((Yii::app()->controller->module->activeAfterRegister)?User::STATUS_ACTIVE:User::STATUS_NOACTIVE);
-						
+
 						if ($model->save()) {
+/////////////////////////////////////
+							$model->avatar=CUploadedFile::getInstance($model,'avatar');
+							$model->avatar->saveAs("uploads/images/profile-avatar/".$model->id);
+////////////////////////////////////
+							
 							$profile->user_id=$model->id;
 							$profile->save();
 							if (Yii::app()->controller->module->sendActivationMail) {

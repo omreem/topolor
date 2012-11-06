@@ -34,8 +34,8 @@ class UserLogin extends CFormModel
 	public function attributeLabels()
 	{
 		return array(
-			'rememberMe'=>UserModule::t("Remember me next time"),
-			'username'=>UserModule::t("Username or Email"),
+			'rememberMe'=>UserModule::t("Keep me signed-in"),
+			'username'=>UserModule::t("Username or email"),
 			'password'=>UserModule::t("Password"),
 		);
 	}

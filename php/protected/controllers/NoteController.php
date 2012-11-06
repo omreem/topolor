@@ -224,7 +224,7 @@ class NoteController extends GxController {
 					break;
 				}
 				case 'week': {
-					$whereInterval = "tpl_note.create_at >= '".date('Y-m-d', strtotime('last monday'))."' AND tpl_note.create_at < '".date('Y-m-d', strtotime('monday'))."'";
+					$whereInterval = "tpl_note.create_at >= '".date('Y-m-d', strtotime('monday'))."' AND tpl_note.create_at < '".date('Y-m-d', strtotime('next monday'))."'";
 					break;
 				}
 				case 'month': {

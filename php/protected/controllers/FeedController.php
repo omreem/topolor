@@ -130,5 +130,43 @@ class FeedController extends GxController {
 		echo $count;
 		Yii::app()->end();
 	}
+	
+	//for sign-in
+	public function actionValidateUP() {
+		if (isset($_POST['username']) && isset($_POST['password'])
+				&& ( User::model()->find('username=:username AND password=:password', array(':username'=>$_POST['username'], ':password'=>UserModule::encrypting($_POST['password']))) != null
+				|| User::model()->find('email=:username AND password=:password', array(':username'=>$_POST['username'], ':password'=>UserModule::encrypting($_POST['password']))) != null
+				))
+			echo 'success';
+		else
+			echo 'fail';
+		Yii::app()->end();
+	}
+	
+	//for sign-up
+	public function actionValidateEmail() {
+		if (isset($_POST['email']) && User::model()->find('email=:email', array(':email'=>$_POST['email'])) == null)
+			echo 'success';
+		else
+			echo 'fail';
+		Yii::app()->end();
+	}
+	public function actionValidateUsername() {
+		if (isset($_POST['username']) && User::model()->find('username=:username', array(':username'=>$_POST['username'])) == null)
+			echo 'success';
+		else
+			echo 'fail';
+		Yii::app()->end();
+	}
+	public function actionRegistration() {
+		if (isset($_POST['RegistrationForm'])) {
+			$model = new RegistrationForm;
+			$model->attributes=$_POST['RegistrationForm'];
+			$model->activkey = 'not set yet';
+			$model->superuser = 0;
+			$model->status = 1;
+			$model->save();
+		}
+	}
 
 }

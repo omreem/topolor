@@ -22,8 +22,40 @@ class Controller extends CController
 	public $breadcrumbs=array();
 	
 	public function actionError() {
-		echo 'FUCK U!';
+		echo 'FA-KE--YOU';
 		Yii::app()->end();
+	}
+	
+	protected function beforeAction($action) {
+/*		
+		if ($this->id == 'login' || $this->id == 'registration' || $action->id == 'registration') {
+			return true;
+		}
+		
+		if (Yii::app()->user->isGuest && $this->id != 'feed' && ($action->id != 'index' || $action->id != '')) {
+			$this->redirect(Yii::app()->baseUrl);
+			return true;
+		}
+		
+		if (!Yii::app()->user->isGuest
+				&& $action->id != 'initTagBarsAjax') {
+			$monitor = new Monitor;
+			$monitor->user_id = Yii::app()->user->id;
+			$monitor->controllor = $this->id;
+			$monitor->action = $action->id;
+			$monitor->create_at = date('Y-m-d H:i:s', time());
+			
+			if (isset($_POST))
+				$monitor->type = 'post';
+//			if (isset())
+			
+			$_REQUEST;
+			
+			
+			$monitor->save();
+		}
+*/		
+		return true;
 	}
 	
 }

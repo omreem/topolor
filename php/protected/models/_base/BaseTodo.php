@@ -102,8 +102,8 @@ abstract class BaseTodo extends GxActiveRecord {
 					break;
 				}
 				case 'week': {
-					$criteria->addCondition("start_at >= '".date('Y-m-d', strtotime('last monday'))."'", 'AND');
-					$criteria->addCondition("start_at < '".date('Y-m-d', strtotime('monday'))."'", 'AND');
+					$criteria->addCondition("start_at >= '".date('Y-m-d', strtotime('monday'))."'", 'AND');
+					$criteria->addCondition("start_at < '".date('Y-m-d', strtotime('next monday'))."'", 'AND');
 					break;
 				}
 				case 'month': {
