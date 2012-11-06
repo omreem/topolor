@@ -89,7 +89,13 @@
 					<span class="help-inline"></span>
 				</div>
 			</div>
-			<?php echo CHtml::activeFileField($reg, 'avatar', array('placeholder'=>'Upload an avatar (png only)', 'style'=>'width: 260px;')); ?>
+			<div class="file-wrapper">
+				<?php echo CHtml::activeFileField($reg, 'avatar', array('accept'=>'image/*', 'style'=>'width: 260px;', 'class'=>'input-file')); ?>
+				<div class="input-append">
+				    <input id="fake-file-input" type="text" placeholder="Avatar" style="width: 180px;">
+				    <button id="fake-file-button" class="btn" type="button" style="width: 80px;">Browse</button>
+				</div>
+			</div>
 			<?php echo CHtml::endForm(); ?><!-- form -->
 		   	<div>
 		   		<span class="btn btn-primary disabled" id="btn-signup"><?php echo UserModule::t("Sign Up"); ?></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -308,7 +314,12 @@ Yii::app()->clientScript->registerScript('feed-index-js', "
 	});
 		
 	$('#form-signup #RegistrationForm_verifyPassword').keyup(function() {
-		if($(this).val() != $('#form-signup #RegistrationForm_password').val()) {
+		
+		if($(this).val().length < 6) {
+			$(this).next().text('Must be at least 6 characters!');
+			$(this).parent().parent().removeClass('success');
+			$(this).parent().parent().addClass('error');
+		} else if($(this).val() != $('#form-signup #RegistrationForm_password').val()) {
 			$(this).next().text('Must be the same as password above!');
 			$(this).parent().parent().removeClass('success');
 			$(this).parent().parent().addClass('error');
@@ -318,6 +329,14 @@ Yii::app()->clientScript->registerScript('feed-index-js', "
 			$(this).parent().parent().addClass('success');
 		}
 		validSignupForm();
+	});
+		
+	$('#fake-file-input, #fake-file-button').click(function() {
+		$('#form-signup .input-file').trigger('click');
+	});
+		
+	$('#form-signup .input-file').change(function(){
+		$('#fake-file-input').val($(this).val());
 	});
 		
 	$('#btn-signup').click(function() {
