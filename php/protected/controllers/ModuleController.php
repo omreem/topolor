@@ -80,17 +80,13 @@ class ModuleController extends GxController {
 		.' and lc.learner_id='.Yii::app()->user->id;
 		
 		$countRecentlyLearnt=Yii::app()->db->createCommand($sql2)->queryScalar();
-		
-		if ($countRecentlyLearnt == 0)
-			$recentlyLearntConcepts = null;
-		else
-			$recentlyLearntConcepts=new CSqlDataProvider($sql, array(
-			    'totalItemCount'=>$countRecentlyLearnt,
-				'keyField'=>'id',
-			    'pagination'=>array(
-			        'pageSize'=>5,
-			    ),
-			));
+		$recentlyLearntConcepts=new CSqlDataProvider($sql, array(
+		    'totalItemCount'=>$countRecentlyLearnt,
+			'keyField'=>'id',
+		    'pagination'=>array(
+		        'pageSize'=>5,
+		    ),
+		));
 		
 		//quiz
 		$sql='select'

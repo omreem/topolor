@@ -624,6 +624,7 @@ Yii::app()->clientScript->registerScript('note-index-js', "
 		});
 		setTimeout(function() {
 			$('.modal.in').modal('hide');
+			$('#share-canvas').find('#description').val('');
 		}, 400);
 		return false;
 	});

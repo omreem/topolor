@@ -5,7 +5,7 @@
 	<?php echo $form->textArea($model, 'title', array('placeholder'=>'Ask a question', 'rows'=>1)); ?>
 	<div class="form-rest" style="display:none;">
 		<?php echo $form->textArea($model, 'description', array('placeholder'=>'Description', 'rows'=>4)); ?>
-		<?php echo $form->dropDownList($model, 'concept_id', GxHtml::listDataEx(Concept::model()->findAllAttributes(null, true))); ?>
+		<?php echo $form->dropDownList($model, 'concept_id', GxHtml::listDataEx(Concept::model()->findAllAttributes(null, true, 'id<>root'))); ?>
 		<br>
 		<?php $this->widget('CAutoComplete', array(
 			'model'=>$model,

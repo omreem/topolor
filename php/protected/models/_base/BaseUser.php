@@ -76,6 +76,8 @@ abstract class BaseUser extends GxActiveRecord {
 			'resources' => array(self::HAS_MANY, 'Resource', 'author_id'),
 			'metadatas' => array(self::HAS_MANY, 'Metadata', 'user_id'),
 			'todos' => array(self::HAS_MANY, 'Todo', 'learner_id'),
+				
+			'countAsk' => array(self::STAT, 'Ask', 'user_id'),
 		);
 	}
 

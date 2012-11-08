@@ -30,10 +30,20 @@
       <a class="brand" href="<?php echo Yii::app()->homeUrl;?>"><?php echo CHtml::encode(Yii::app()->name);?></a>
       <div class="nav-collapse collapse">
         <ul class="nav">
-          <li<?php echo Yii::app()->controller->id == 'site' ? ' class="active"' : ' '; ?>><a href="<?php echo Yii::app()->homeUrl;?>">Home</a></li>
-          <li<?php echo Yii::app()->controller->id == 'module' ? ' class="active"' : ' '; ?>><a href="<?php echo Yii::app()->homeUrl.'/module';?>">Module Center</a></li>
-          <li<?php echo Yii::app()->controller->id == 'ask' ? ' class="active"' : ' '; ?>><a href="<?php echo Yii::app()->homeUrl.'/ask';?>">Q&amp;A Center</a></li>
+          <li><a href="<?php echo Yii::app()->homeUrl;?>">Home</a></li>
+          <li class="active"><a href="<?php echo Yii::app()->homeUrl.'/module';?>">Module Center</a></li>
+          <li><a href="<?php echo Yii::app()->homeUrl.'/qacenter';?>">Q&amp;A Center</a></li>
         </ul>
+        <?php if (!Yii::app()->user->isGuest):?>
+        <ul class="nav pull-right">
+          <li><a rel="tooltip" data-placement="bottom" title="My profile">
+          	<?php echo GxHtml::image(
+			Yii::app()->baseUrl.'/uploads/images/profile-avatar/'.Yii::app()->user->id,'',
+			array('style'=>'height: 20px; width: 20px;'));?>
+          	&nbsp;<?php echo Yii::app()->getModule('user')->user();?></a></li>
+          <li><a rel="tooltip" data-placement="bottom" title="Log out" href="<?php echo Yii::app()->homeUrl.'/user/logout';?>">Log out</a></li>
+        </ul>
+        <?php endif;?>
       </div>
     </div>
   </div>

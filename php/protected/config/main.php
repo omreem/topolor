@@ -66,12 +66,13 @@ return array(
 			'loginUrl' => array('/feed/index'),
 
             # page after login
-			'returnUrl' => array('/user/profile'),
+//			'returnUrl' => array('/user/profile'),
             'returnUrl' => array('/feed/index'),
 
             # page after logout
-			'returnLogoutUrl' => array('/user/login'),
+//			'returnLogoutUrl' => array('/user/login'),
 			'returnLogoutUrl' => array('/feed/index'),
+				
         ),
         
 	),
@@ -105,13 +106,13 @@ return array(
 		),
 
 		'db'=>array(
-//			'connectionString' => 'mysql:host=127.0.0.1;dbname=topolor',
-			'connectionString' => 'mysql:host=127.2.144.129;dbname=topolor',
+			'connectionString' => 'mysql:host=127.0.0.1;dbname=topolor',
+//			'connectionString' => 'mysql:host=127.2.144.129;dbname=topolor',
 			'emulatePrepare' => true,
-//			'username' => 'root',
-//			'password' => '123456',
-			'username' => 'admin',
-			'password' => 'wIjt3DRXvHR4',
+			'username' => 'root',
+			'password' => '123456',
+//			'username' => 'admin',
+//			'password' => 'wIjt3DRXvHR4',
 			'charset' => 'utf8',
 			'tablePrefix' => 'tpl_',
 		),

@@ -1,25 +1,17 @@
-<div class="well top-panel-fix">
-	<div style="margin-bottom:-20px;">
-	<?php $this->renderPartial('/ask/_form', array('model' => $newAsk));?>
-	</div>
-</div><!-- form -->
-<ul class="nav nav-tabs">
-	<li class="active filter-btn-all"><a class="btn-link">All</a></li>
-	<li class="filter-btn-myquestions"><a class="btn-link">My questions</a></li>
-	<li class="filter-btn-myanswers"><a class="btn-link">My answers</a></li>
-	<li class="filter-btn-tags pull-right"><a class="btn-link" onclick="$('#tags-bar').toggle();">All tags</a></li>
-	<li class="filter-btn-concepts pull-right"><a class="btn-link" onclick="$('#concepts-bar').toggle();">All concepts</a></li>
+<ul class="nav nav-tabs top-panel-fix" id="order-filter-bar">
+	<li class="active btn-order-recent"><a class="btn-link">Recent</a></li>
+	<li class="btn-is-answered"><a class="btn-link">Answered</a></li>
+	<li class="btn-filter-unansered"><a class="btn-link">Unanswered</a></li>
+	<li class="btn-order-shared"><a class="btn-link">Shared</a></li>
+	<li class="btn-order-favorited"><a class="btn-link">favorited</a></li>
 </ul>
-<div id="concepts-bar" style="display:none;"></div>
-<div id="tags-bar" style="display:none;"></div>
 
 <?php $form = $this->beginWidget('GxActiveForm', array(
 	'method' => 'get',
-	'id' => 'filter-form',
+	'id' => 'order-filter-form'
 )); ?>
-<input name="filter_by" id="filter_by" type="hidden"/>
-<input name="tag" id="tag" type="hidden"/>
-<input name="concept_id" id="concept_id" type="hidden"/>
+<input name="is_answered" id="is_answered" type="hidden"/>
+<input name="order_by" id="order_by" type="hidden"/>
 <?php $this->endWidget(); ?>
 
 <div id="tag-canvas" class="modal hide fade in" style="display: none;">
@@ -76,143 +68,16 @@
 <?php $this->endWidget(); ?>
 </div>
 
-<div id="new-ask-count" class="alert alert-info" style="display: none;">
-	<div class="btn-show-new-ask btn-link" style="text-align:center;"></div>
-</div>
-
 <?php $this->widget('zii.widgets.CListView', array(
-	'dataProvider'=>$dataProvider,
-	'itemView'=>'/ask/_view',
-	'summaryText'=>'',
-	'emptyText' => 'No Q&amp;A yet.',
-	'id'=>'ask-list',
+		'dataProvider'=>$dataProvider,
+		'itemView'=>'/ask/_view',
+		'summaryText'=>'',
+		'emptyText' => 'No Q&amp;A yet.',
+		'id'=>'ask-list',
 ));
 
-Yii::app()->clientScript->registerScript('ask-index-js', "
-		
+Yii::app()->clientScript->registerScript('qacenter-index-js', "
 	$('[rel=tooltip]').tooltip();
-	
-	// init filter bar
-	$.ajax({
-		type: 'POST',
-		url: '".$this->createUrl('ask/updateFiltersBar')."',
-		data: $('#filter-form').serialize(),
-		success: function (barInfo) {
-			$('#tags-bar').html(barInfo.tagsBar);
-			$('#concepts-bar').html(barInfo.conceptsBar);
-		}
-	});
-	
-//********* if there are any new asks
-
-	var oldCount = ".$dataProvider->totalItemCount.";
-	var newCount = oldCount;
-	
-	setInterval(function(){getNewAskCount()},30000);
-	
-	function getNewAskCount() {
-		$.ajax({
-			type: 'post',
-			url: '".$this->createUrl('ask/askCount')."',
-			success: function (count) {
-				newCount = count;
-				var diffCount = newCount - oldCount;
-				if (diffCount > 0) {
-					var str = diffCount + ' new question';
-					if (diffCount > 1)
-						str += 's';
-					str += '. Click to refresh the list.';
-					$('.btn-show-new-ask').text(str);
-					$('#new-ask-count').attr('style', 'display: block;');
-				}
-			}
-		});
-	}
-
-	$('.btn-show-new-ask').click(function(){
-		oldCount = newCount;
-		setTimeout(function() {
-			$.fn.yiiListView.update('ask-list', {
-				data: $(this).serialize()
-			});
-			$('#new-ask-count').attr('style','display: none;');
-		}, 400);
-	});
-		
-//********* create ask
-	
-	$('#Ask_title').focus(function () {
-		$('#ask-form .form-rest').slideDown();
-	});
-	
-	$('#Ask_title, #Ask_description').keyup(function(event) {
-		if ($('#Ask_title').val() != '' && $('#Ask_description').val() != '')
-			$('#ask-form .btn-create').removeClass('disabled')
-		else if ($('#Ask_title').val() == '' || $('#Ask_description').val() == '')
-			$('#ask-form .btn-create').addClass('disabled')
-	});
-		
-	$('#ask-form .btn-create').live('click', function(){
-		if($(this).hasClass('disabled')) {
-			if ($('#Ask_title').val() == '') {
-				$('#Ask_title').attr('placeholder','Please input a title!');
-				setTimeout(function() {
-					$('#Ask_title').attr('placeholder','Title');
-					$('#Ask_title').focus();
-				}, 400);
-			} else {
-				$('#Ask_description').attr('placeholder','Please input a description!');
-				setTimeout(function() {
-					$('#Ask_description').attr('placeholder','Description');
-					$('#Ask_description').focus();
-				}, 400);
-			}
-			return;
-		}
-		
-		\$this=$(this);
-		\$form = \$this.closest('form');
-
-		$.ajax({
-			type: 'POST',
-			url: '".$this->createUrl('ask/create')."',
-			data: \$form.serialize(),
-			success: function (html) {
-				$('#ask-form .form-rest').slideUp();
-                setTimeout(function() {
-					$.fn.yiiListView.update('ask-list', {
-						data: $(this).serialize()
-					});
-					$('#ask-form').find('input').val('');
-					$('#ask-form').find('textarea').val('');
-					$('#Ask_title').attr('placeholder','Ask a question');
-					$('#ask-form .btn-create').addClass('disabled');
-                }, 400);
-				
-				$.ajax({
-					type: 'POST',
-					url: '".$this->createUrl('ask/updateFiltersBar')."',
-					data: $('#filter-form').serialize(),
-					success: function (barInfo) {
-						$('#tags-bar').html(barInfo.tagsBar);
-						$('#concepts-bar').html(barInfo.conceptsBar);
-					}
-				});
-				
-				oldCount++;
-			}
-		});
-		return false;
-	
-	});
-	
-	$('#ask-form .btn-cancel').click(function (){
-		$('#ask-form .form-rest').slideUp();
-		$('#ask-form .btn-create').addClass('disabled')
-		$('#ask-form').find('textarea').val('');
-		$('#ask-form').find('input').val('');
-		$('#ask-form').find('#Ask_title').attr('placeholder','Ask a question');
-	});
 
 //********* update ask in the ask-list
 			
@@ -443,121 +308,57 @@ Yii::app()->clientScript->registerScript('ask-index-js', "
 		
 	});
 
-//********* filter the asks in the ask-list
-		
-	$('#filter-form').submit(function(){
+//******** filter
+	$('#order-filter-form').submit(function(){
 	    $.fn.yiiListView.update('ask-list', { 
 	        data: $(this).serialize()
 	    });
-		$.ajax({
-			type: 'POST',
-			url: '".$this->createUrl('ask/updateFiltersBar')."',
-			data: $('#filter-form').serialize(),
-			success: function (barInfo) {
-				$('#tags-bar').html(barInfo.tagsBar);
-				$('#concepts-bar').html(barInfo.conceptsBar);
-			}
-		});
 	    return false;
 	});
-	
-	$('.filter-btn-all').click(function(){
+		
+	$('.btn-is-answered').click(function(){
+		$('#order-filter-bar > li').removeClass('active');
 		$(this).addClass('active');
-		$('.filter-btn-myquestions').removeClass('active');
-		$('.filter-btn-myanswers').removeClass('active');
 		
-		$('#filter-form #filter_by').val('');
-		$('#filter-form').submit();
+		$('#order-filter-form #order_by').val('answered');
+		$('#order-filter-form #is_answered').val('');
+		$('#order-filter-form').submit();
 	});
 		
-	$('.filter-btn-myquestions').click(function(){
+	$('.btn-filter-unansered').click(function(){
+		$('#order-filter-bar > li').removeClass('active');
 		$(this).addClass('active');
-		$('.filter-btn-all').removeClass('active');
-		$('.filter-btn-myanswers').removeClass('active');
 		
-		$('#filter-form #filter_by').val('myquestions');
-		$('#filter-form').submit();
+		$('#order-filter-form #order_by').val('');
+		$('#order-filter-form #is_answered').val('unanswered');
+		$('#order-filter-form').submit();
 	});
 		
-	$('.filter-btn-myanswers').click(function(){
+	$('.btn-order-shared').click(function(){
+		$('#order-filter-bar > li').removeClass('active');
 		$(this).addClass('active');
-		$('.filter-btn-myquestions').removeClass('active');
-		$('.filter-btn-all').removeClass('active');
 		
-		$('#filter-form #filter_by').val('myanswers');
-		$('#filter-form').submit();
+		$('#order-filter-form #order_by').val('shared');
+		$('#order-filter-form #is_answered').val('');
+		$('#order-filter-form').submit();
 	});
 		
-	$('.tag').live('mouseenter', function(){
-		$(this).css('cursor','pointer');
-		if (!$(this).hasClass('selected'))
-			$(this).addClass('label-info');
+	$('.btn-order-favorited').click(function(){
+		$('#order-filter-bar > li').removeClass('active');
+		$(this).addClass('active');
+		
+		$('#order-filter-form #order_by').val('favorited');
+		$('#order-filter-form #is_answered').val('');
+		$('#order-filter-form').submit();
 	});
 		
-	$('.tag').live('mouseleave', function(){
-		$(this).removeClass('cursor');
-		if (!$(this).hasClass('selected'))
-			$(this).removeClass('label-info');
-	});
+	$('.btn-order-recent').click(function(){
+		$('#order-filter-bar > li').removeClass('active');
+		$(this).addClass('active');
 		
-	$('.tag').live('click', function(){
-		var tag = htmlEncode($(this).text());
-		if (tag.lastIndexOf('(') != -1)
-			tag = $(this).text().substr(0, tag.lastIndexOf('('));
-		if ($(this).attr('id') == 'all-tag')
-			tag = '';
-		
-		$('#filter-form #tag').val(tag);
-		$('#filter-form').submit();
-		$('#tags-bar').show();
-		$('#tags-bar > span').removeClass('label-info');
-		$('#tags-bar > span').removeClass('selected');
-		$('#tags-bar > span[name='.concat('\"').concat(tag).concat('\"').concat(']')).addClass('label-info');
-		$('#tags-bar > span[name='.concat('\"').concat(tag).concat('\"').concat(']')).addClass('selected');
-		
-		if (tag=='') {
-			$(this).addClass('label-info');
-			$(this).addClass('selected');
-		}
-		
-		if($('#filter-form #tag').val() != '')
-			$('.filter-btn-tags .btn-link').text('Tag: '.concat($('#filter-form #tag').val()));
-		else
-			$('.filter-btn-tags .btn-link').text('All tags');
-	});
-		
-	$('.concept').live('mouseenter', function(){
-		$(this).css('cursor','pointer');
-		if (!$(this).hasClass('selected'))
-			$(this).addClass('label-success');
-	});
-		
-	$('.concept').live('mouseleave', function(){
-		$(this).removeClass('cursor');
-		if (!$(this).hasClass('selected'))
-			$(this).removeClass('label-success');
-	});
-		
-	$('.concept').live('click', function(){
-		var concept_id = $(this).attr('name');
-		
-		$('#filter-form #concept_id').val(concept_id);
-		$('#filter-form').submit();
-		$('#concepts-bar').show();
-		$('#concepts-bar > span').removeClass('label-success');
-		$('#concepts-bar > span').removeClass('selected');
-		$('#concepts-bar > span[name='.concat('\"').concat(concept_id).concat('\"').concat(']')).addClass('label-success');
-		$('#concepts-bar > span[name='.concat('\"').concat(concept_id).concat('\"').concat(']')).addClass('selected');
-		
-		var concept_name = htmlEncode($(this).text());
-		if (concept_name.lastIndexOf('(') != -1)
-			concept_name = concept_name.substr(0, concept_name.lastIndexOf('('));
-		if ($(this).attr('id') == 'all-concept') {
-			$(this).addClass('selected label-success');
-			concept_name = 'All concepts';
-		}
-		$('.filter-btn-concepts .btn-link').text(concept_name);
-		
+		$('#order-filter-form #order_by').val('recent');
+		$('#order-filter-form #is_answered').val('');
+		$('#order-filter-form').submit();
 	});
 
 //********* edit tags of asks

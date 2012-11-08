@@ -61,6 +61,11 @@ abstract class BaseAsk extends GxActiveRecord {
 			'answerCount' => array(self::STAT, 'Answer', 'ask_id'),
 			'concept' => array(self::BELONGS_TO, 'Concept', 'concept_id'),
 			'learner' => array(self::BELONGS_TO, 'User', 'learner_id'),
+
+// foreign key needed
+//			'countFavorited' => array(self::STAT, 'Favorite', 'of_id', 'condition'=>'of=\'ask\''),
+//			'countShared' => array(),
+//			'countAnswered' => array(),
 		);
 	}
 
@@ -85,9 +90,18 @@ abstract class BaseAsk extends GxActiveRecord {
 		);
 	}
 
-	public function search($filter_by='', $tag='', $concept_id='', $pageSize=10) {
+	public function search($filter_by='', $tag='', $concept_id='', $isAnswered='', $order_by='', $pageSize=20) {
 		$criteria = new CDbCriteria;
 		
+		$criteria->compare('id', $this->id, true);
+		$criteria->compare('learner_id', $this->learner_id);
+		$criteria->compare('title', $this->title, true);
+		$criteria->compare('description', $this->description, true);
+		$criteria->compare('concept_id', $this->concept_id);
+		$criteria->compare('tags', $this->tags, true);
+		$criteria->compare('create_at', $this->create_at, true);
+		$criteria->compare('update_at', $this->update_at, true);
+	
 		if ($filter_by != '') {
 			if ($filter_by == 'myquestions')
 				$this->learner_id = Yii::app()->user->id;
@@ -106,6 +120,22 @@ abstract class BaseAsk extends GxActiveRecord {
 			}
 		}
 		
+		if ($isAnswered != '') {
+			$asks = Yii::app()->db->createCommand()
+				->selectDistinct('ask_id')
+				->from('tpl_answer')
+				->queryAll();
+			$askArr=array();
+			foreach ($asks as $ask) {
+				array_push($askArr,$ask['ask_id']);
+			}
+		
+			if ($isAnswered == 'answered')
+				$criteria->addInCondition('id', $askArr);
+			else if ($isAnswered == 'unanswered')
+				$criteria->addNotInCondition('id', $askArr);
+		}
+		
 		if($tag != '')
 			$criteria->addSearchCondition('tags',$tag);
 		
@@ -114,17 +144,27 @@ abstract class BaseAsk extends GxActiveRecord {
 			array_push($cArr, $concept_id);
 			$criteria->addInCondition('concept_id', $cArr);
 		}
-
-		$criteria->compare('id', $this->id, true);
-		$criteria->compare('learner_id', $this->learner_id);
-		$criteria->compare('title', $this->title, true);
-		$criteria->compare('description', $this->description, true);
-		$criteria->compare('concept_id', $this->concept_id);
-		$criteria->compare('tags', $this->tags, true);
-		$criteria->compare('create_at', $this->create_at, true);
-		$criteria->compare('update_at', $this->update_at, true);
 		
 		$criteria->order = 'create_at DESC';
+		
+		if ($order_by == 'answered') {
+			$criteria->select = 't.*';
+			$criteria->join = 'LEFT JOIN tpl_answer ON t.id = tpl_answer.ask_id';
+			$criteria->group = 't.id';
+			$criteria->order = 'count(t.id) DESC';
+		} else if ($order_by == 'shared') {
+			$criteria->select = 't.*';
+			$criteria->join = 'LEFT JOIN tpl_feed ON t.id = tpl_feed.of_id';
+			$criteria->compare('of', 'ask');
+			$criteria->group = 't.id';
+			$criteria->order = 'count(t.id) DESC';
+		} else if ($order_by == 'favorited') {
+			$criteria->select = 't.*';
+			$criteria->join = 'LEFT JOIN tpl_favorite ON t.id = tpl_favorite.of_id';
+			$criteria->compare('of', 'ask');
+			$criteria->group = 't.id';
+			$criteria->order = 'count(t.id) DESC';
+		}
 
 		return new CActiveDataProvider($this, array(
 			'criteria' => $criteria,

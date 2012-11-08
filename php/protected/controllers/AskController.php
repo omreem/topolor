@@ -80,7 +80,6 @@ class AskController extends GxController {
 		} else
 			throw new CHttpException(400, Yii::t('app', 'Your request is invalid.'));
 	}
-
 	
 	public function actionIndex() {
 		$newAsk = new Ask;
@@ -153,6 +152,10 @@ class AskController extends GxController {
 		if (isset($_POST['concept_id']))
 			$concept_id=$_POST['concept_id'];
 		
+		$isAnswered = '';
+		if (isset($_POST['is_answered']))
+			$isAnswered = $_POST['is_answered'];
+		
 		$tagsBarStr = '<b>Tag:</b> ';
 		$tagsBarStr .= $tag == '' ? CHtml::tag('span', array('class'=>'label label-info tag selected', 'id'=>'all-tag'), 'all') : CHtml::tag('span', array('class'=>'label tag', 'id'=>'all-tag'), 'all');
 		
@@ -162,18 +165,48 @@ class AskController extends GxController {
 		$hasTagInTagsBar = false;
 		$hasConceptInConceptsBar = false;
 		
+		// for-answered/unanswered
+		$aIdStr = '';
+		if ($isAnswered != '') {
+			$asks = Yii::app()->db->createCommand()
+				->selectDistinct('ask_id')
+				->from('tpl_answer')
+				->queryAll();
+			
+			if (count($asks) != 0) {
+				$aIdStr = '(';
+				foreach ($asks as $ask)
+					$aIdStr .= '"'.$ask['ask_id'].'",';
+				$aIdStr = substr($aIdStr, 0, -1);
+				$aIdStr .= ')';
+				
+				if ($isAnswered == 'answered')
+					$aIdStr = ' AND tpl_ask.id IN '.$aIdStr;
+				else if ($isAnswered == 'unanswered')
+					$aIdStr = ' AND tpl_ask.id NOT IN '.$aIdStr;
+			}
+		}
+		// end-answered/unanswered
+		
 		if ($filter_by == '') {
 			// for-tagsBar
-			if ($concept_id == '')
-				$tagArr = Yii::app()->db->createCommand()
+			if ($concept_id == '') {
+				if ($aIdStr == '')
+					$tagArr = Yii::app()->db->createCommand()
+						->select('tags')
+						->from('tpl_ask')
+						->queryAll();
+				else 
+					$tagArr = Yii::app()->db->createCommand()
 					->select('tags')
 					->from('tpl_ask')
+					->where(substr($aIdStr, 5))
 					->queryAll();
-			else
+			} else
 				$tagArr = Yii::app()->db->createCommand()
 					->select('tags')
 					->from('tpl_ask')
-					->where('concept_id=:concept_id', array(':concept_id'=>$concept_id))
+					->where('concept_id=:concept_id'.$aIdStr, array(':concept_id'=>$concept_id))
 					->queryAll();
 			// end-for-tagsBar
 			
@@ -182,6 +215,7 @@ class AskController extends GxController {
 				$concepts = Yii::app()->db->createCommand()
 					->select('concept_id as id, tpl_concept.title as title, count(*) as frequency')
 					->from('tpl_ask')
+					->where('concept_id<>root'.$aIdStr)
 					->join('tpl_concept', 'tpl_concept.id=tpl_ask.concept_id')
 					->group('concept_id')
 					->order('frequency DESC, title')
@@ -191,7 +225,7 @@ class AskController extends GxController {
 					->select('concept_id as id, tpl_concept.title as title, count(*) as frequency')
 					->from('tpl_ask')
 					->join('tpl_concept', 'tpl_concept.id=tpl_ask.concept_id')
-					->where('tpl_ask.tags LIKE "%'.$tag.'%"')
+					->where('tpl_ask.tags LIKE "%'.$tag.'%" AND concept_id<>root'.$aIdStr)
 					->group('concept_id')
 					->order('frequency DESC, title')
 					->queryAll();
@@ -202,13 +236,13 @@ class AskController extends GxController {
 				$tagArr = Yii::app()->db->createCommand()
 					->select('tags')
 					->from('tpl_ask')
-					->where('learner_id=:learner_id', array(':learner_id'=>Yii::app()->user->id))
+					->where('learner_id=:learner_id'.$aIdStr, array(':learner_id'=>Yii::app()->user->id))
 					->queryAll();
 			else
 				$tagArr = Yii::app()->db->createCommand()
 					->select('tags')
 					->from('tpl_ask')
-					->where('concept_id=:concept_id and learner_id=:learner_id', array(':concept_id'=>$concept_id,':learner_id'=>Yii::app()->user->id))
+					->where('concept_id=:concept_id and learner_id=:learner_id'.$aIdStr, array(':concept_id'=>$concept_id,':learner_id'=>Yii::app()->user->id))
 					->queryAll();
 			// end-for-tagsBar
 			
@@ -219,7 +253,7 @@ class AskController extends GxController {
 					->from('tpl_ask')
 					->join('tpl_concept', 'tpl_concept.id=tpl_ask.concept_id')
 					->group('concept_id')
-					->where('learner_id='.Yii::app()->user->id)
+					->where('concept_id<>root AND learner_id='.Yii::app()->user->id.$aIdStr)
 					->order('frequency DESC, title')
 					->queryAll();
 			else
@@ -227,7 +261,7 @@ class AskController extends GxController {
 					->select('concept_id as id, tpl_concept.title as title, count(*) as frequency')
 					->from('tpl_ask')
 					->join('tpl_concept', 'tpl_concept.id=tpl_ask.concept_id')
-					->where('tpl_ask.tags LIKE "%'.$tag.'%" and learner_id='.Yii::app()->user->id)
+					->where('concept_id<>root AND tpl_ask.tags LIKE "%'.$tag.'%" and learner_id='.Yii::app()->user->id.$aIdStr)
 					->group('concept_id')
 					->order('frequency DESC, title')
 					->queryAll();
@@ -252,13 +286,13 @@ class AskController extends GxController {
 					$tagArr = Yii::app()->db->createCommand()
 						->select('tags')
 						->from('tpl_ask')
-						->where('id IN '.$askIdStr)
+						->where('id IN '.$askIdStr.$aIdStr)
 						->queryAll();
 				else 
 					$tagArr = Yii::app()->db->createCommand()
 						->select('tags')
 						->from('tpl_ask')
-						->where('concept_id=:concept_id and id IN '.$askIdStr, array(':concept_id'=>$concept_id))
+						->where('concept_id=:concept_id and id IN '.$askIdStr.$aIdStr, array(':concept_id'=>$concept_id))
 						->queryAll();
 				// end-for-tagsBar
 			
@@ -269,7 +303,7 @@ class AskController extends GxController {
 						->from('tpl_ask')
 						->join('tpl_concept', 'tpl_concept.id=tpl_ask.concept_id')
 						->group('concept_id')
-						->where('tpl_ask.id IN '.$askIdStr)
+						->where('tpl_ask.id IN '.$askIdStr.$aIdStr)
 						->order('frequency DESC, title')
 						->queryAll();
 				else
@@ -277,7 +311,7 @@ class AskController extends GxController {
 						->select('concept_id as id, tpl_concept.title as title, count(*) as frequency')
 						->from('tpl_ask')
 						->join('tpl_concept', 'tpl_concept.id=tpl_ask.concept_id')
-						->where('tpl_ask.tags LIKE "%'.$tag.'%" and tpl_ask.id IN '.$askIdStr)
+						->where('tpl_ask.tags LIKE "%'.$tag.'%" and tpl_ask.id IN '.$askIdStr.$aIdStr)
 						->group('concept_id')
 						->order('frequency DESC, title')
 						->queryAll();
@@ -330,40 +364,6 @@ class AskController extends GxController {
 		Yii::app()->end();
 	}
 	
-	public function initTagBar() {
-		$str = '<b>Tag:</b> ';
-		$str .= CHtml::tag('span', array('class'=>'label label-info tag selected', 'id'=>'all-tag'), 'all');
-		$tags = Tag::model()->findTags('ask');
-		
-		if (array_key_exists('', $tags))
-			unset($tags['']);
-		
-		arsort($tags);
-		
-		foreach ($tags as $tag)
-			$str .= ' '.CHtml::tag('span', array('class'=>'label tag', 'name'=>$tag['name']), $tag['name'].'('.$tag['frequency'].')');
-		
-		return $str;
-	}
-	
-	public function initConceptBar() {
-		$str = '<b>Concept:</b> ';
-		$str .= CHtml::tag('span', array('class'=>'label label-success concept selected', 'id'=>'all-concept'), 'all');
-		$concepts = Yii::app()->db->createCommand()
-			->select('concept_id as id, tpl_concept.title as title, count(*) as frequency')
-			->from('tpl_ask')
-			->join('tpl_concept', 'tpl_concept.id=tpl_ask.concept_id')
-			->group('concept_id')
-			->where('concept_id<>root')
-			->order('frequency DESC')
-			->queryAll();
-		
-		foreach ($concepts as $concept)
-			$str .= ' '.CHtml::tag('span', array('class'=>'label concept', 'name'=>$concept['id']), $concept['title'].'('.$concept['frequency'].')');
-		
-		return $str;
-	}
-	
 	public function actionCreateTagCanvas() {
 		$allStr = '';
 		$tagArr =  Tag::model()->findTags('ask', Yii::app()->user->id, false);
@@ -393,4 +393,5 @@ class AskController extends GxController {
 		echo $count;
 		Yii::app()->end();
 	}
+
 }

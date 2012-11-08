@@ -28,13 +28,13 @@
 			</p>
 	  	</div><!-- /.well -->
 	  	<?php } ?>
-	  	<?php if ($recentlyLearntConcepts != null) {?>
 		<div class="well">
 			<div class="well-title">Recently Learnt<span class="pull-right" style="; font-weight: normal; font-size: 14px; color: #aaa;">You've learnt <span style="fond-size: 24px; color: #666;"><?php echo $countLearntConcepts;?></span> out of <span style="fond-size: 24px; color: #666;"><?php echo $countConcepts;?></span> concepts</span></div>
 			<?php $this->widget('zii.widgets.CListView', array(
 				'dataProvider'=>$recentlyLearntConcepts,
 				'itemView'=>'/concept/_item',
 				'summaryText'=>'',
+					'emptyText'=>'No leant concept yet.',
 				'pager' => array(
 					'header' => '',
 					'prevPageLabel' => '&lt;&lt;',
@@ -43,7 +43,6 @@
 				'id'=>'recent-list',
 			)); ?>
 	  	</div><!-- /.well -->
-	  	<?php } ?>
 		<div class="well">
 			<div class="well-title">Quizzes<span class="pull-right" style="; font-weight: normal; font-size: 14px; color: #aaa;">You've done <span style="fond-size: 24px; color: #666;"><?php echo $countquizDone;?></span> out of <span style="fond-size: 24px; color: #666;"><?php echo $countQuizzes;?></span> quizzes</span></div>
 			<?php $this->widget('zii.widgets.CListView', array(

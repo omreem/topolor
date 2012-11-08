@@ -13,6 +13,12 @@ textarea {
     padding:1%;
 }
 
+.boxsizingBorder {
+    -webkit-box-sizing: border-box;
+       -moz-box-sizing: border-box;
+            box-sizing: border-box;
+}
+
 /*signup - input-file*/
 .file-wrapper {
     position: relative;

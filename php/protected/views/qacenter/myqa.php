@@ -4,9 +4,9 @@
 	</div>
 </div><!-- form -->
 <ul class="nav nav-tabs">
-	<li class="active filter-btn-all"><a class="btn-link">All</a></li>
-	<li class="filter-btn-myquestions"><a class="btn-link">My questions</a></li>
-	<li class="filter-btn-myanswers"><a class="btn-link">My answers</a></li>
+	<li class="active filter-btn-all"<?php echo $_GET['filter_by'] == 'myanswers' ? "style=\"display: none;\"" : "";?>><a class="btn-link">All</a></li>
+	<li class="filter-btn-answered"<?php echo $_GET['filter_by'] == 'myanswers' ? "style=\"display: none;\"" : "";?>><a class="btn-link">Answered</a></li>
+	<li class="filter-btn-unanswered"<?php echo $_GET['filter_by'] == 'myanswers' ? "style=\"display: none;\"" : "";?>><a class="btn-link">Unanswered</a></li>
 	<li class="filter-btn-tags pull-right"><a class="btn-link" onclick="$('#tags-bar').toggle();">All tags</a></li>
 	<li class="filter-btn-concepts pull-right"><a class="btn-link" onclick="$('#concepts-bar').toggle();">All concepts</a></li>
 </ul>
@@ -15,9 +15,9 @@
 
 <?php $form = $this->beginWidget('GxActiveForm', array(
 	'method' => 'get',
-	'id' => 'filter-form',
+	'id' => 'filter-form'
 )); ?>
-<input name="filter_by" id="filter_by" type="hidden"/>
+<input name="is_answered" id="is_answered" type="hidden"/>
 <input name="tag" id="tag" type="hidden"/>
 <input name="concept_id" id="concept_id" type="hidden"/>
 <?php $this->endWidget(); ?>
@@ -76,10 +76,6 @@
 <?php $this->endWidget(); ?>
 </div>
 
-<div id="new-ask-count" class="alert alert-info" style="display: none;">
-	<div class="btn-show-new-ask btn-link" style="text-align:center;"></div>
-</div>
-
 <?php $this->widget('zii.widgets.CListView', array(
 	'dataProvider'=>$dataProvider,
 	'itemView'=>'/ask/_view',
@@ -91,7 +87,7 @@
 Yii::app()->clientScript->registerScript('ask-index-js', "
 		
 	$('[rel=tooltip]').tooltip();
-	
+		
 	// init filter bar
 	$.ajax({
 		type: 'POST',
@@ -103,42 +99,6 @@ Yii::app()->clientScript->registerScript('ask-index-js', "
 		}
 	});
 	
-//********* if there are any new asks
-
-	var oldCount = ".$dataProvider->totalItemCount.";
-	var newCount = oldCount;
-	
-	setInterval(function(){getNewAskCount()},30000);
-	
-	function getNewAskCount() {
-		$.ajax({
-			type: 'post',
-			url: '".$this->createUrl('ask/askCount')."',
-			success: function (count) {
-				newCount = count;
-				var diffCount = newCount - oldCount;
-				if (diffCount > 0) {
-					var str = diffCount + ' new question';
-					if (diffCount > 1)
-						str += 's';
-					str += '. Click to refresh the list.';
-					$('.btn-show-new-ask').text(str);
-					$('#new-ask-count').attr('style', 'display: block;');
-				}
-			}
-		});
-	}
-
-	$('.btn-show-new-ask').click(function(){
-		oldCount = newCount;
-		setTimeout(function() {
-			$.fn.yiiListView.update('ask-list', {
-				data: $(this).serialize()
-			});
-			$('#new-ask-count').attr('style','display: none;');
-		}, 400);
-	});
-		
 //********* create ask
 	
 	$('#Ask_title').focus(function () {
@@ -189,6 +149,13 @@ Yii::app()->clientScript->registerScript('ask-index-js', "
 					$('#ask-form .btn-create').addClass('disabled');
                 }, 400);
 				
+				if('".$_GET['filter_by']."' == 'myanswers') {
+					$('.left-main-menu').find('.icon-question-sign').parent().attr('style', 'background-color: #F5A9A9; color: white;');
+					setTimeout(function() {
+						$('.left-main-menu').find('.icon-question-sign').parent().removeAttr('style');
+					}, 600);
+				}
+				
 				$.ajax({
 					type: 'POST',
 					url: '".$this->createUrl('ask/updateFiltersBar')."',
@@ -198,8 +165,6 @@ Yii::app()->clientScript->registerScript('ask-index-js', "
 						$('#concepts-bar').html(barInfo.conceptsBar);
 					}
 				});
-				
-				oldCount++;
 			}
 		});
 		return false;
@@ -463,28 +428,28 @@ Yii::app()->clientScript->registerScript('ask-index-js', "
 	
 	$('.filter-btn-all').click(function(){
 		$(this).addClass('active');
-		$('.filter-btn-myquestions').removeClass('active');
-		$('.filter-btn-myanswers').removeClass('active');
+		$('.filter-btn-answered').removeClass('active');
+		$('.filter-btn-unanswered').removeClass('active');
 		
-		$('#filter-form #filter_by').val('');
+		$('#filter-form #is_answered').val('');
 		$('#filter-form').submit();
 	});
 		
-	$('.filter-btn-myquestions').click(function(){
+	$('.filter-btn-answered').click(function(){
 		$(this).addClass('active');
 		$('.filter-btn-all').removeClass('active');
-		$('.filter-btn-myanswers').removeClass('active');
+		$('.filter-btn-unanswered').removeClass('active');
 		
-		$('#filter-form #filter_by').val('myquestions');
+		$('#filter-form #is_answered').val('answered');
 		$('#filter-form').submit();
 	});
 		
-	$('.filter-btn-myanswers').click(function(){
+	$('.filter-btn-unanswered').click(function(){
 		$(this).addClass('active');
-		$('.filter-btn-myquestions').removeClass('active');
+		$('.filter-btn-answered').removeClass('active');
 		$('.filter-btn-all').removeClass('active');
 		
-		$('#filter-form #filter_by').val('myanswers');
+		$('#filter-form #is_answered').val('unanswered');
 		$('#filter-form').submit();
 	});
 		

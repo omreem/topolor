@@ -74,5 +74,4 @@ Yii::app()->clientScript->registerScript('note-index-js', "
 		window.location = '".Yii::app()->homeUrl."/message/'+$(this).find('#data_id').val();
 	});
 		
-	
 ");

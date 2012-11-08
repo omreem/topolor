@@ -23,7 +23,7 @@ class User extends GxActiveRecord
      * @var timestamp $create_at
      * @var timestamp $lastvisit_at
 	 */
-
+	
 	public static function model($className=__CLASS__) {
 		return parent::model($className);
 	}
@@ -73,7 +73,7 @@ class User extends GxActiveRecord
 
 	/**
 	 * @return array relational rules.
-	 */
+	 
 	public function relations()
 	{
         $relations = Yii::app()->getModule('user')->relations;
@@ -81,7 +81,30 @@ class User extends GxActiveRecord
             $relations['profile'] = array(self::HAS_ONE, 'Profile', 'user_id');
         return $relations;
 	}
-
+*/
+	
+	// by shi lei
+	public function relations() {
+		return array(
+				'answers' => array(self::HAS_MANY, 'Answer', 'learner_id'),
+				'asks' => array(self::HAS_MANY, 'Ask', 'learner_id'),
+				'concepts' => array(self::HAS_MANY, 'Concept', 'author_id'),
+				'conceptComments' => array(self::HAS_MANY, 'ConceptComment', 'learner_id'),
+				'concepts' => array(self::MANY_MANY, 'Concept', '{{learner_concept}}(learner_id, concept_id)'),
+				'notes' => array(self::HAS_MANY, 'Note', 'learner_id'),
+				'profile' => array(self::HAS_ONE, 'Profile', 'user_id'),
+				'questions' => array(self::HAS_MANY, 'Question', 'author_id'),
+				'quizzes' => array(self::HAS_MANY, 'Quiz', 'learner_id'),
+				'resources' => array(self::HAS_MANY, 'Resource', 'author_id'),
+				'metadatas' => array(self::HAS_MANY, 'Metadata', 'user_id'),
+				'todos' => array(self::HAS_MANY, 'Todo', 'learner_id'),
+	
+				'countAsk' => array(self::STAT, 'Ask', 'learner_id'),
+				'countAnswer' => array(self::STAT, 'answer', 'learner_id'),
+		);
+	}
+	
+	
 	/**
 	 * @return array customized attribute labels (name=>label)
 	 */

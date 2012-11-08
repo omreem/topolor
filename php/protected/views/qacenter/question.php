@@ -10,8 +10,12 @@
 	<li class="filter-btn-tags pull-right"><a class="btn-link" onclick="$('#tags-bar').toggle();">All tags</a></li>
 	<li class="filter-btn-concepts pull-right"><a class="btn-link" onclick="$('#concepts-bar').toggle();">All concepts</a></li>
 </ul>
-<div id="concepts-bar" style="display:none;"></div>
-<div id="tags-bar" style="display:none;"></div>
+<div id="concepts-bar" style="display:none;">
+	<?php echo $this->initConceptBar();?>
+</div>
+<div id="tags-bar" style="display:none;">
+	<?php echo $this->initTagBar();?>
+</div>
 
 <?php $form = $this->beginWidget('GxActiveForm', array(
 	'method' => 'get',
@@ -92,18 +96,7 @@ Yii::app()->clientScript->registerScript('ask-index-js', "
 		
 	$('[rel=tooltip]').tooltip();
 	
-	// init filter bar
-	$.ajax({
-		type: 'POST',
-		url: '".$this->createUrl('ask/updateFiltersBar')."',
-		data: $('#filter-form').serialize(),
-		success: function (barInfo) {
-			$('#tags-bar').html(barInfo.tagsBar);
-			$('#concepts-bar').html(barInfo.conceptsBar);
-		}
-	});
-	
-//********* if there are any new asks
+//********* if there are any new news
 
 	var oldCount = ".$dataProvider->totalItemCount.";
 	var newCount = oldCount;

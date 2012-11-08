@@ -29,10 +29,9 @@
       <a class="brand" href="<?php echo Yii::app()->homeUrl;?>"><?php echo CHtml::encode(Yii::app()->name);?></a>
       <div class="nav-collapse collapse">
         <ul class="nav">
-          <li<?php echo Yii::app()->controller->id == 'feed' ? ' class="active"' : ' '; ?>><a href="<?php echo Yii::app()->homeUrl;?>">Home</a></li>
-          <li<?php echo Yii::app()->controller->id == 'module' ? ' class="active"' : ' '; ?>><a href="<?php echo Yii::app()->homeUrl.'/module';?>">Module Center</a></li>
-          <li<?php echo Yii::app()->controller->id == 'ask' ? ' class="active"' : ' '; ?>><a href="<?php echo Yii::app()->homeUrl.'/ask';?>">Q&amp;A Center</a></li>
-          
+          <li class="active"><a href="<?php echo Yii::app()->homeUrl;?>">Home</a></li>
+          <li><a href="<?php echo Yii::app()->homeUrl.'/module';?>">Module Center</a></li>
+          <li><a href="<?php echo Yii::app()->homeUrl.'/qacenter';?>">Q&amp;A Center</a></li>
         </ul>
         <?php if (!Yii::app()->user->isGuest):?>
         <ul class="nav pull-right">
@@ -53,6 +52,9 @@
 <div class="container">
   <div class="row">
     <div class="span3">
+      <div class="well sidebar-nav left-main-menu">
+        user info
+      </div><!--/.well -->
       <div class="well sidebar-nav left-main-menu">
         <ul class="nav nav-list">
           <li class="nav-header">Menu</li>

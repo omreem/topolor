@@ -73,19 +73,28 @@ abstract class BaseTag extends GxActiveRecord {
 		);
 	}
 
-	public function search() {
-		$criteria = new CDbCriteria;
-
-		$criteria->compare('id', $this->id, true);
-		$criteria->compare('user_id', $this->user_id);
-		$criteria->compare('of', $this->of);
-		$criteria->compare('name', $this->name, true);
-		$criteria->compare('frequency', $this->frequency);
-		$criteria->compare('create_at', $this->create_at, true);
-		$criteria->compare('update_at', $this->update_at, true);
-
-		return new CActiveDataProvider($this, array(
-			'criteria' => $criteria,
+	public function search($order_by='frequency') {
+		$sql = 'select name, sum(frequency) as frequency, count(user_id) as sum_user, min(create_at) as create_at from tpl_tag where of=\'ask\' group by name order by ';
+		
+		if ($order_by == 'users') {
+			$sql .= 'sum_user desc';
+		} else if ($order_by == 'name') {
+			$sql .= 'name asc';
+		} else if ($order_by == 'recent') {
+			$sql .= 'create_at desc';
+		} else { //frequency
+			$sql .= 'frequency desc';
+		}
+		
+		$sql2 = 'select count(name) from tpl_tag where of=\'ask\' group by name';
+		
+		return new CSqlDataProvider($sql, array(
+			'totalItemCount'=>Yii::app()->db->createCommand($sql2)->queryScalar(),
+			'keyField'=>'name',
+			'pagination'=>array(
+					'pageSize'=>20,
+			),
 		));
+		
 	}
 }

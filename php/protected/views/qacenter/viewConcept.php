@@ -1,26 +1,9 @@
+<div class="well top-panel-fix"><a href="<?php echo $this->createUrl('concept');?>">Concepts</a> &raquo; <span class="label label-success"><?php echo $concept_title;?></span></div>
 <div class="well top-panel-fix">
 	<div style="margin-bottom:-20px;">
 	<?php $this->renderPartial('/ask/_form', array('model' => $newAsk));?>
 	</div>
 </div><!-- form -->
-<ul class="nav nav-tabs">
-	<li class="active filter-btn-all"><a class="btn-link">All</a></li>
-	<li class="filter-btn-myquestions"><a class="btn-link">My questions</a></li>
-	<li class="filter-btn-myanswers"><a class="btn-link">My answers</a></li>
-	<li class="filter-btn-tags pull-right"><a class="btn-link" onclick="$('#tags-bar').toggle();">All tags</a></li>
-	<li class="filter-btn-concepts pull-right"><a class="btn-link" onclick="$('#concepts-bar').toggle();">All concepts</a></li>
-</ul>
-<div id="concepts-bar" style="display:none;"></div>
-<div id="tags-bar" style="display:none;"></div>
-
-<?php $form = $this->beginWidget('GxActiveForm', array(
-	'method' => 'get',
-	'id' => 'filter-form',
-)); ?>
-<input name="filter_by" id="filter_by" type="hidden"/>
-<input name="tag" id="tag" type="hidden"/>
-<input name="concept_id" id="concept_id" type="hidden"/>
-<?php $this->endWidget(); ?>
 
 <div id="tag-canvas" class="modal hide fade in" style="display: none;">
 	 <div class="modal-header">
@@ -76,68 +59,16 @@
 <?php $this->endWidget(); ?>
 </div>
 
-<div id="new-ask-count" class="alert alert-info" style="display: none;">
-	<div class="btn-show-new-ask btn-link" style="text-align:center;"></div>
-</div>
-
 <?php $this->widget('zii.widgets.CListView', array(
-	'dataProvider'=>$dataProvider,
-	'itemView'=>'/ask/_view',
-	'summaryText'=>'',
-	'emptyText' => 'No Q&amp;A yet.',
-	'id'=>'ask-list',
+		'dataProvider'=>$dataProvider,
+		'itemView'=>'/ask/_view',
+		'summaryText'=>'',
+		'emptyText' => 'No Q&amp;A yet.',
+		'id'=>'ask-list',
 ));
 
-Yii::app()->clientScript->registerScript('ask-index-js', "
-		
+Yii::app()->clientScript->registerScript('qacenter-index-js', "
 	$('[rel=tooltip]').tooltip();
-	
-	// init filter bar
-	$.ajax({
-		type: 'POST',
-		url: '".$this->createUrl('ask/updateFiltersBar')."',
-		data: $('#filter-form').serialize(),
-		success: function (barInfo) {
-			$('#tags-bar').html(barInfo.tagsBar);
-			$('#concepts-bar').html(barInfo.conceptsBar);
-		}
-	});
-	
-//********* if there are any new asks
-
-	var oldCount = ".$dataProvider->totalItemCount.";
-	var newCount = oldCount;
-	
-	setInterval(function(){getNewAskCount()},30000);
-	
-	function getNewAskCount() {
-		$.ajax({
-			type: 'post',
-			url: '".$this->createUrl('ask/askCount')."',
-			success: function (count) {
-				newCount = count;
-				var diffCount = newCount - oldCount;
-				if (diffCount > 0) {
-					var str = diffCount + ' new question';
-					if (diffCount > 1)
-						str += 's';
-					str += '. Click to refresh the list.';
-					$('.btn-show-new-ask').text(str);
-					$('#new-ask-count').attr('style', 'display: block;');
-				}
-			}
-		});
-	}
-
-	$('.btn-show-new-ask').click(function(){
-		oldCount = newCount;
-		setTimeout(function() {
-			$.fn.yiiListView.update('ask-list', {
-				data: $(this).serialize()
-			});
-			$('#new-ask-count').attr('style','display: none;');
-		}, 400);
-	});
 		
 //********* create ask
 	
@@ -213,7 +144,7 @@ Yii::app()->clientScript->registerScript('ask-index-js', "
 		$('#ask-form').find('input').val('');
 		$('#ask-form').find('#Ask_title').attr('placeholder','Ask a question');
 	});
-
+		
 //********* update ask in the ask-list
 			
 	function titleClick() {
@@ -227,16 +158,16 @@ Yii::app()->clientScript->registerScript('ask-index-js', "
 			$(this).parent().parent().html(htmlEncode(title));
 			$('.content-title').live('click', titleClick);
 			if (title_ori != htmlEncode(title))
-				$.ajax({
-					type: 'POST',
-					url: '".$this->createUrl('ask/updateAjax')."',
-					data: {id: id, title: title}
-				});
+			$.ajax({
+				type: 'POST',
+				url: '".$this->createUrl('ask/updateAjax')."',
+				data: {id: id, title: title}
+			});
 		});
-		
+
 		$('.content-title').die('click');
 	}
-	
+
 	function descriptionClick() {
 		var description_ori=$(this).html();
 		$(this).html('<div id=\"wrap\" style=\"margin-right: 20px;\"><textarea rows=\"4\" id=\"description\" style=\"width: 100%;\"></textarea></div>');
@@ -248,28 +179,28 @@ Yii::app()->clientScript->registerScript('ask-index-js', "
 			$(this).parent().parent().html(htmlEncode(description));
 			$('.content-description').live('click', descriptionClick);
 			if (description_ori != htmlEncode(description))
-				$.ajax({
+			$.ajax({
 					type: 'POST',
 					url: '".$this->createUrl('ask/updateAjax')."',
 					data: {id: id, description: description}
-				});
+			});
 		});
-		
+
 		$('.content-description').die('click');
 	}
-	
-	$('.content-title').live('click',titleClick);
-		
-	$('.content-description').live('click', descriptionClick);
-	
+
+		$('.content-title').live('click',titleClick);
+
+		$('.content-description').live('click', descriptionClick);
+
 	$('#ask-list .post').live('mouseenter', function (){
 		$(this).children('.post-content').children('.social-bar').fadeIn('fast');
 	});
-	
+
 	$('#ask-list .post').live('mouseleave', function (){
 		$(this).children('.post-content').children('.social-bar').fadeOut('fast');
 	});
-	
+
 	$('#ask-list .delete').live('click', function() {
 		\$this=$(this);
 		bootbox.confirm('Are you sure?', function(result) {
@@ -284,7 +215,7 @@ Yii::app()->clientScript->registerScript('ask-index-js', "
 							elem_post.slideUp();
 							elem_comment.slideUp();
 						}, 500);
-		
+				
 						$.ajax({
 							type: 'POST',
 							url: '".$this->createUrl('ask/updateFiltersBar')."',
@@ -301,16 +232,16 @@ Yii::app()->clientScript->registerScript('ask-index-js', "
 		});
 	});
 
-//********* update answer in the answer-list of an ask		
-		
+//********* update answer in the answer-list of an ask
+
 	$('.comment-item').live('mouseenter', function (){
 		$(this).children('.content').children('.owner').fadeIn('fast');
 	});
-	
+
 	$('.comment-item').live('mouseleave', function (){
 		$(this).children('.content').children('.owner').fadeOut('fast');
 	});
-		
+
 	$('.comment-item .btn-edit').live('click', function() {
 		\$this=$(this);
 		$.ajax({
@@ -319,15 +250,15 @@ Yii::app()->clientScript->registerScript('ask-index-js', "
 			data: { view: 'update', id: \$this.prev().val()},
 			success: function (html) {
 				\$this.parent().parent().children('.description').html(html);
-           	}  
+			}
 		});
 	});
-		
+
 	$('.comment-item .btn-update').live('click', function() {
 		\$this=$(this);
 		\$form = \$this.parent();
 		\$input = \$this.prev().prev().children('#Answer_description');
-	
+
 		if (\$input.val() == '') {
 			\$input.parent().addClass('error');
 			\$input.focus();
@@ -346,7 +277,7 @@ Yii::app()->clientScript->registerScript('ask-index-js', "
 		});
 		return false;
 	});
-		
+
 	$('.comment-item .btn-cancel').live('click', function() {
 		\$this=$(this);
 		\$str=\$this.prev().prev().prev().children('#Answer_description').val();
@@ -440,123 +371,6 @@ Yii::app()->clientScript->registerScript('ask-index-js', "
 				\$form.closest('.post-comment').find('#answer-list div:first-child').slideDown();
 			}
 		});
-		
-	});
-
-//********* filter the asks in the ask-list
-		
-	$('#filter-form').submit(function(){
-	    $.fn.yiiListView.update('ask-list', { 
-	        data: $(this).serialize()
-	    });
-		$.ajax({
-			type: 'POST',
-			url: '".$this->createUrl('ask/updateFiltersBar')."',
-			data: $('#filter-form').serialize(),
-			success: function (barInfo) {
-				$('#tags-bar').html(barInfo.tagsBar);
-				$('#concepts-bar').html(barInfo.conceptsBar);
-			}
-		});
-	    return false;
-	});
-	
-	$('.filter-btn-all').click(function(){
-		$(this).addClass('active');
-		$('.filter-btn-myquestions').removeClass('active');
-		$('.filter-btn-myanswers').removeClass('active');
-		
-		$('#filter-form #filter_by').val('');
-		$('#filter-form').submit();
-	});
-		
-	$('.filter-btn-myquestions').click(function(){
-		$(this).addClass('active');
-		$('.filter-btn-all').removeClass('active');
-		$('.filter-btn-myanswers').removeClass('active');
-		
-		$('#filter-form #filter_by').val('myquestions');
-		$('#filter-form').submit();
-	});
-		
-	$('.filter-btn-myanswers').click(function(){
-		$(this).addClass('active');
-		$('.filter-btn-myquestions').removeClass('active');
-		$('.filter-btn-all').removeClass('active');
-		
-		$('#filter-form #filter_by').val('myanswers');
-		$('#filter-form').submit();
-	});
-		
-	$('.tag').live('mouseenter', function(){
-		$(this).css('cursor','pointer');
-		if (!$(this).hasClass('selected'))
-			$(this).addClass('label-info');
-	});
-		
-	$('.tag').live('mouseleave', function(){
-		$(this).removeClass('cursor');
-		if (!$(this).hasClass('selected'))
-			$(this).removeClass('label-info');
-	});
-		
-	$('.tag').live('click', function(){
-		var tag = htmlEncode($(this).text());
-		if (tag.lastIndexOf('(') != -1)
-			tag = $(this).text().substr(0, tag.lastIndexOf('('));
-		if ($(this).attr('id') == 'all-tag')
-			tag = '';
-		
-		$('#filter-form #tag').val(tag);
-		$('#filter-form').submit();
-		$('#tags-bar').show();
-		$('#tags-bar > span').removeClass('label-info');
-		$('#tags-bar > span').removeClass('selected');
-		$('#tags-bar > span[name='.concat('\"').concat(tag).concat('\"').concat(']')).addClass('label-info');
-		$('#tags-bar > span[name='.concat('\"').concat(tag).concat('\"').concat(']')).addClass('selected');
-		
-		if (tag=='') {
-			$(this).addClass('label-info');
-			$(this).addClass('selected');
-		}
-		
-		if($('#filter-form #tag').val() != '')
-			$('.filter-btn-tags .btn-link').text('Tag: '.concat($('#filter-form #tag').val()));
-		else
-			$('.filter-btn-tags .btn-link').text('All tags');
-	});
-		
-	$('.concept').live('mouseenter', function(){
-		$(this).css('cursor','pointer');
-		if (!$(this).hasClass('selected'))
-			$(this).addClass('label-success');
-	});
-		
-	$('.concept').live('mouseleave', function(){
-		$(this).removeClass('cursor');
-		if (!$(this).hasClass('selected'))
-			$(this).removeClass('label-success');
-	});
-		
-	$('.concept').live('click', function(){
-		var concept_id = $(this).attr('name');
-		
-		$('#filter-form #concept_id').val(concept_id);
-		$('#filter-form').submit();
-		$('#concepts-bar').show();
-		$('#concepts-bar > span').removeClass('label-success');
-		$('#concepts-bar > span').removeClass('selected');
-		$('#concepts-bar > span[name='.concat('\"').concat(concept_id).concat('\"').concat(']')).addClass('label-success');
-		$('#concepts-bar > span[name='.concat('\"').concat(concept_id).concat('\"').concat(']')).addClass('selected');
-		
-		var concept_name = htmlEncode($(this).text());
-		if (concept_name.lastIndexOf('(') != -1)
-			concept_name = concept_name.substr(0, concept_name.lastIndexOf('('));
-		if ($(this).attr('id') == 'all-concept') {
-			$(this).addClass('selected label-success');
-			concept_name = 'All concepts';
-		}
-		$('.filter-btn-concepts .btn-link').text(concept_name);
 		
 	});
 
