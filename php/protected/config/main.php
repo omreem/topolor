@@ -107,12 +107,12 @@ return array(
 
 		'db'=>array(
 //			'connectionString' => 'mysql:host=127.0.0.1;dbname=topolor',
-			'connectionString' => 'mysql:host=127.2.144.129;dbname=topolor',
-			'emulatePrepare' => true,
 //			'username' => 'root',
 //			'password' => '123456',
+			'connectionString' => 'mysql:host=127.2.144.129;dbname=topolor',
 			'username' => 'admin',
 			'password' => 'wIjt3DRXvHR4',
+			'emulatePrepare' => true,
 			'charset' => 'utf8',
 			'tablePrefix' => 'tpl_',
 		),

@@ -1,3 +1,10 @@
+<?php if (isset($_SERVER['HTTP_REFERER'])) {
+	$returnUrl = $_SERVER['HTTP_REFERER'];
+?>
+<div class="well top-panel-fix"><a href="<?php echo $returnUrl;?>">Return back</a></div>
+<?php } else {
+	$returnUrl = Yii::app()->homeUrl.'/ask';
+} ?>
 <div class="post top-panel-fix">
 	<?php if($model->learner_id == Yii::app()->user->id) {?><div class='btn btn-link pull-right delete' style="color: #ddd; margin-right: -3px;">x</div><?php }?>
 	<div class="user-avatar">
@@ -181,7 +188,7 @@ Yii::app()->clientScript->registerScript('ask-view-js', "
 						type: 'POST',
 						url: '".$this->createUrl('ask/delete')."/'+$('#data_id').val(),
 						success: function(data) {
-							window.location = '".Yii::app()->homeUrl."/ask';
+							window.location = '$returnUrl';
 						}
 					});
 					return false;

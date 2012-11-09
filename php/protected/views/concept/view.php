@@ -62,31 +62,6 @@
 	<?php endif; ?>
 </div>
 
-<div id="tag-canvas" class="modal hide fade in" style="display: none;">
-	 <div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal">&times;</button>
-		<b>Add tags</b>
-	</div>
-	<div class="modal-body" style="display: table">
-		<div style="display: table-row">
-			<div style="display: table-cell; width: 70px;">My tags:</div>
-			<div style="display: table-cell" class="modal-body-tags"></div>
-		</div><br>
-		<div style="display: table-row">
-			<div style="display: table-cell;">Tags:</div>
-			<div style="display: table-cell">
-				<input id="add-tags-input" type="text">
-				<input id="data_id" type="hidden">
-				<input id="add-tags-input_ori" type="hidden">
-			</div>
-		</div>
-	</div>
-	<div class="alert alert-success" style="display: none;">Successfully saved!</div>
-	<div class="modal-footer">
-		<a href="#" class="btn btn-primary btn-small btn-save-tags disabled">Save</a>
-	</div>
-</div>
-
 <div class="well">
 	<ul id="myTab" class="nav nav-tabs">
 		<li class="active"><a id="tab-comments" href="#comments" data-toggle="tab">Comment<?php echo $model->commentCount > 1 ? 's' : '';?> (<?php echo $model->commentCount;?>)</a></li>
@@ -180,6 +155,51 @@
 	</div>
 </div>
 
+<div id="tag-canvas" class="modal hide fade in" style="display: none;">
+	 <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal">&times;</button>
+		<b>Add tags</b>
+	</div>
+	<div class="modal-body" style="display: table">
+		<div style="display: table-row">
+			<div style="display: table-cell; width: 70px;">My tags:</div>
+			<div style="display: table-cell" class="modal-body-tags"></div>
+		</div><br>
+		<div style="display: table-row">
+			<div style="display: table-cell;">Tags:</div>
+			<div style="display: table-cell">
+				<input id="add-tags-input" type="text">
+				<input id="data_id" type="hidden">
+				<input id="add-tags-input_ori" type="hidden">
+			</div>
+		</div>
+	</div>
+	<div class="alert alert-success" style="display: none;">Successfully saved!</div>
+	<div class="modal-footer">
+		<a href="#" class="btn btn-primary btn-small btn-save-tags disabled">Save</a>
+	</div>
+</div>
+
+<!-- Message modal -->
+<div id="message-modal" class="modal hide fade in" style="display: none;">
+	<div class="modal-body" style="display: table">
+		<h5 class="message-send-to"></h5>
+		<?php $newMessage = new Message;
+		$form = $this->beginWidget('GxActiveForm', array(
+			'enableAjaxValidation' => false,
+			'id' => 'message-form',
+			));?>
+			<?php echo $form->textArea($newMessage, 'description', array('placeholder'=>'Send a message', 'rows'=>3, 'style'=>'width: 518px;')); ?>
+			<?php echo $form->hiddenField($newMessage, 'to_user_id');?>
+		<?php $this->endWidget();?>
+	</div>
+	<div class="alert alert-success" style="display: none;">Successfully Sent!</div>
+	<div class="modal-footer">
+		<a href="#" class="btn btn-primary btn-small btn-message-send disabled">Send</a>
+		<a class="btn btn-cancel">Cancel</a>
+	</div>
+</div>
+
 <?php $form = $this->beginWidget('GxActiveForm', array(
 	'method' => 'get',
 	'id' => 'ask-filter-form',
@@ -213,19 +233,16 @@
 
 <?php Yii::app()->clientScript->registerScript('concept-view-js', "
 		
-	$(document).ready(function() {
-		$.ajax({
-			type: 'GET',
-			url: '".$this->createUrl('initTagBarsAjax')."/".$model->id."',
-			success: function(tagBars) {
-				$('#askTagBar').html(tagBars.askTagBar);
-				$('#noteTagBar').html(tagBars.noteTagBar);
-				$('#todoTagBar').html(tagBars.todoTagBar);
-			}
-		});
+	$.ajax({
+		type: 'GET',
+		url: '".$this->createUrl('initTagBarsAjax')."/".$model->id."',
+		success: function(tagBars) {
+			$('#askTagBar').html(tagBars.askTagBar);
+			$('#noteTagBar').html(tagBars.noteTagBar);
+			$('#todoTagBar').html(tagBars.todoTagBar);
+			$('.concept-tag').popover();
+		}
 	});
-		
-	$('.concept-tag').popover();
 		
 //******************************************
 //************** conceptComment
@@ -1495,4 +1512,191 @@
 			$('.date-time').live('click', timeClick);
 		})
 	}
-");	?>
+
+//********* left menu: concepts-recommended(related)
+	$.ajax({
+		data: {concept_id: ".$model->id."},
+		type: 'post',
+		url: '".$this->createUrl('concept/fetchConceptsRelated')."',
+		success: function(html) {
+			$('#concept-related-content').html(html);
+			$('[rel=tooltip]').tooltip();
+		},
+	});
+		
+//********* left menu: user-ranking
+	// init
+	$.ajax({
+		data: {rank_by: 'answers', concept_id: ".$model->id."},
+		type: 'post',
+		url: '".$this->createUrl('concept/fetchUsers')."',
+		success: function(html) {
+			$('#user-ranking-content').html(html);
+			$('[rel=tooltip]').tooltip();
+		},
+	});
+		
+	$.ajax({
+		data: {concept_id: ".$model->id."},
+		type: 'post',
+		url: '".$this->createUrl('concept/fetchUsersLearning')."',
+		success: function(html) {
+			$('#user-fiter-content').html(html);
+			$('[rel=tooltip]').tooltip();
+		},
+	});
+	
+	// refresh
+	setInterval(function() {
+		var rank_by = $('.user-rank-order-by').text() == 'Answers' ? 'answers' : 'questions';
+		$.ajax({
+			data: {rank_by: rank_by, concept_id: ".$model->id."},
+			type: 'post',
+			url: '".$this->createUrl('concept/fetchUsers')."',
+			success: function(html) {
+				$('#user-ranking-content').html(html);
+				//$('[rel=tooltip]').tooltip();
+			},
+		});
+		
+		var url = $('.user-filter-by').text() == 'Learning' ? '".$this->createUrl('concept/fetchUsersLearning')."' : '".$this->createUrl('concept/fetchUsersLearnt')."';
+		$.ajax({
+			data: {concept_id: ".$model->id."},
+			type: 'post',
+			url: url,
+			success: function(html) {
+				$('#user-fiter-content').html(html);
+				//$('[rel=tooltip]').tooltip();
+			},
+		});
+	},30000);
+		
+	// change rank order by
+	$('.user-rank-order-by-change').live('click', function() {
+		
+		$('[rel=tooltip]').tooltip('disable');
+		
+		if ($(this).text() == 'Questions') {
+			$('.user-rank-order-by').text('Questions');
+			$(this).text('Answers');
+			$.ajax({
+				data: {rank_by: 'questions', concept_id: ".$model->id."},
+				type: 'post',
+				url: '".$this->createUrl('concept/fetchUsers')."',
+				success: function(html) {
+					$('#user-ranking-content').html(html);
+					$('[rel=tooltip]').tooltip();
+				},
+			});
+		
+		} else {
+			$('.user-rank-order-by').text('Answers');
+			$(this).text('Questions');
+		
+			$.ajax({
+				data: {rank_by: 'answers', concept_id: ".$model->id."},
+				type: 'post',
+				url: '".$this->createUrl('concept/fetchUsers')."',
+				success: function(html) {
+					$('#user-ranking-content').html(html);
+					$('[rel=tooltip]').tooltip();
+				},
+			});
+		}
+	});
+		
+	// change filter by learnt or learning
+	$('.user-filter-by-change').live('click', function() {
+		
+		$('[rel=tooltip]').tooltip('disable');
+		
+		if ($(this).text() == 'Learning') {
+			$('.user-filter-by').text('Learning');
+			$(this).text('Learnt');
+			$.ajax({
+				data: {concept_id: ".$model->id."},
+				type: 'post',
+				url: '".$this->createUrl('concept/fetchUsersLearning')."',
+				success: function(html) {
+					$('#user-fiter-content').html(html);
+					$('[rel=tooltip]').tooltip();
+				},
+			});
+		
+		} else {
+			$('.user-filter-by').text('Learnt');
+			$(this).text('Learning');
+		
+			$.ajax({
+				data: {concept_id: ".$model->id."},
+				type: 'post',
+				url: '".$this->createUrl('concept/fetchUsersLearnt')."',
+				success: function(html) {
+					$('#user-fiter-content').html(html);
+					$('[rel=tooltip]').tooltip();
+				},
+			});
+		}
+	});
+		
+	// change bg-color
+	$('.user-rank-item').live('mouseenter', function() {
+		$(this).css('background-color', '#edf3f8');
+		$(this).css('cursor', 'pointer');
+	});
+		
+	$('.user-rank-item').live('mouseleave', function() {
+		$(this).css('background-color', '');
+		$(this).css('cursor', 'default');
+	});
+		
+	// popup modal
+	$('.user-rank-item').live('click', function () {
+		$('#message-form #Message_to_user_id').val($(this).find('#data_id').val());
+		$('#message-modal .message-send-to').text('Send message to: '+ $(this).find('.name-user').html());
+	});
+	
+	$('#Message_description').keyup(function() {
+		if ($('#Message_description').val() != '')
+			$('.btn-message-send').removeClass('disabled')
+		else
+			$('.btn-message-send').addClass('disabled')
+	});
+		
+	$('.btn-message-send').click(function(){
+		if($(this).hasClass('disabled'))
+			return;
+		
+		$('.btn-message-send').addClass('disabled');
+		$('.btn-message-send').text('Sending...');
+		
+		var form = $('#message-form');
+
+		$.ajax({
+			type: 'POST',
+			url: '".$this->createUrl('message/create')."',
+			data: form.serialize(),
+			success: function (html) {
+				$('#message-modal .alert-success').show();
+				setTimeout(function() {
+					$('#message-modal').modal('hide');
+					$('#message-form').find('#Message_description').val('');
+					$('#message-form').find('#Message_to-user-id').val('');
+					$('#message-form').find('#Message_description').attr('placeholder','Send a message');
+					$('#message-modal .alert-success').hide();
+					$('.btn-message-send').text('Send');
+                }, 400);
+			}
+		});
+		return false;
+	});
+	
+	$('#message-modal .btn-cancel').click(function (){
+		$('#message-modal').modal('hide');
+		$('.btn-message-send').addClass('disabled')
+		$('.btn-message-send').text('Send');
+		$('#message-form').find('textarea').val('');
+		$('#message-form').find('#Message_description').attr('placeholder','Send a message');
+	});
+		
+");

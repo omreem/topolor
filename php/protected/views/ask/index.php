@@ -108,7 +108,7 @@ Yii::app()->clientScript->registerScript('ask-index-js', "
 	var oldCount = ".$dataProvider->totalItemCount.";
 	var newCount = oldCount;
 	
-	setInterval(function(){getNewAskCount()},30000);
+	setInterval(function(){getNewAskCount();},30000);
 	
 	function getNewAskCount() {
 		$.ajax({

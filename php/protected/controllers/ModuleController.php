@@ -13,11 +13,14 @@ class ModuleController extends GxController {
 	}
 	
 	public function actionView($id) {
-		//has not registered
+		
 		$learnerConcept = LearnerConcept::model()->find('learner_id=:learnerID and concept_id=:conceptID',
 				array(':learnerID'=>Yii::app()->user->id, ':conceptID'=>$id));
-		if ($learnerConcept ==null)
+		if ($learnerConcept ==null) //has not registered
 			$this->redirect(Yii::app()->homeUrl.'/module');
+
+		$learnerConcept->lastaction_at = date('Y-m-d H:i:s', time());
+		$learnerConcept->save();
 		
 		$model = $this->loadModel($id, 'Concept');
 		if (!$model->isModule())
@@ -27,26 +30,7 @@ class ModuleController extends GxController {
 		$concepts = Concept::model()->findAll(array("condition"=>"root =  $id","order" => "lft"));
 		
 		//up next
-		$sql='select'
-		.' c.id'
-		
-		.' from'
-		.' tpl_concept as c'
-		.' join tpl_learner_concept as lc on c.id = lc.concept_id'
-		
-		.' where'
-		.' c.root='.$id
-		.' and c.id<>'.$id
-		.' and lc.status='.LearnerConcept::STATUS_COMPLETED
-		.' and lc.learner_id='.Yii::app()->user->id
-		
-		.' order by c.lft desc';
-		$command = Yii::app()->db->createCommand($sql);
-		$row=$command->queryRow();
-		if ($row == null)
-			$upNext = $model->nextConcept;
-		else
-			$upNext = Concept::model()->findByPk($row['id'])->nextConcept;
+		$upNext = Concept::model()->findBySql('SELECT * FROM tpl_concept WHERE root<>id AND root='.$id.' AND id NOT IN (SELECT concept_id FROM tpl_learner_concept WHERE status=2 AND learner_id='.Yii::app()->user->id.') ORDER BY lft');
 		
 		//recently learnt
 		$sql='select'
@@ -84,7 +68,7 @@ class ModuleController extends GxController {
 		    'totalItemCount'=>$countRecentlyLearnt,
 			'keyField'=>'id',
 		    'pagination'=>array(
-		        'pageSize'=>5,
+		        'pageSize'=>8,
 		    ),
 		));
 		
@@ -203,7 +187,7 @@ class ModuleController extends GxController {
 			'concepts' => $concepts,
 			'upNext' => $upNext,
 			'recentlyLearntConcepts' => $recentlyLearntConcepts,
-			'countConcepts' => count($concepts),
+			'countConcepts' => count($concepts) - 1, // without root concept
 			'countLearntConcepts' => $countRecentlyLearnt,
 			'countquizDone' => $countquizDone,
 			'countQuizzes' => $countQuizzes,
@@ -243,6 +227,11 @@ class ModuleController extends GxController {
 		
 		if($learnerConcept->save())
 			Yii::app()->end();
+	}
+	
+	public function actionFetchModulesRelated() {
+		//@todo
+		return '';
 	}
 
 	// Uncomment the following methods and override them if needed

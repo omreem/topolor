@@ -7,7 +7,6 @@
     <meta name="description" content="Topolor for e-learning">
     <meta name="author" content="Shi Lei">
     <title><?php echo CHtml::encode($this->pageTitle); ?></title>
-    
     <link href="<?php echo Yii::app()->request->baseUrl; ?>/ext/bootstrap/css/bootstrap.css" rel="stylesheet">
     <link href="<?php echo Yii::app()->request->baseUrl; ?>/ext/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
     <link href="<?php echo Yii::app()->request->baseUrl; ?>/css/style.css" rel="stylesheet">
@@ -58,9 +57,9 @@
       </div><!--/.well -->
       <div class="well sidebar-nav left-main-menu">
       	<ul class="nav nav-tabs">
-          <li class="nav-header" style="margin-bottom: 6px;">Recommended modules</li>
+          <li class="nav-header" style="margin-bottom: 6px;">Recommended concepts</li>
         </ul>
-        <div id="modules-related-content" style="margin-top: -8px;"></div>
+        <div id="concept-related-content" style="margin-top: -8px;"></div>
       </div><!--/.well -->
       <div class="well sidebar-nav left-main-menu">
       	<ul class="nav nav-tabs">
@@ -107,9 +106,9 @@
     <p>Designed by Shi Lei</p>
   </div>
 </footer>
+
 <script src="<?php echo Yii::app()->request->baseUrl; ?>/ext/bootstrap/js/bootstrap.js"></script>
 <script src="<?php echo Yii::app()->request->baseUrl; ?>/js/bootbox.min.js"></script>
-<script src="<?php echo Yii::app()->request->baseUrl; ?>/js/jquery.validate.js"></script>
 <script src="<?php echo Yii::app()->request->baseUrl; ?>/js/topolor.js"></script>
 </body>
 </html>

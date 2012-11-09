@@ -371,7 +371,7 @@ Yii::app()->clientScript->registerScript('feed-index-js', "
 	var oldCount = ".$dataProvider->totalItemCount.";
 	var newCount = oldCount;
 	
-	setInterval(function(){getNewFeedCount()},30000);
+	setInterval(function(){getNewFeedCount();},30000);
 	
 	function getNewFeedCount() {
 		$.ajax({

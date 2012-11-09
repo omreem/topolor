@@ -13,6 +13,7 @@
  * @property string $author_id
  * @property string $title
  * @property string $description
+ * @property string $tags
  * @property string $root
  * @property string $lft
  * @property string $rgt
@@ -169,5 +170,41 @@ abstract class BaseConcept extends GxActiveRecord {
 		return new CActiveDataProvider($this, array(
 			'criteria' => $criteria,
 		));
+	}
+	
+	public function getTags() {
+		return explode(", ", $this->tags);
+	}
+	
+	public function getConceptsRelated($limit = 5) {
+		// order by how many tags matched
+		$cons = array();
+		$cs = Concept::model()->findAllBySql('SELECT * FROM tpl_concept WHERE root<> id AND root='.$this->root.' AND id<>'.$this->id);
+
+		foreach ($cs as $c) {
+			
+			$a = $c->getTags();
+			$b = $this->getTags();
+			
+			$count = 0;
+			foreach ($a as $m1)
+				foreach ($b as $m2)
+					if ($m1 == $m2)
+						$count++;
+			
+			if ($count > 0)
+				$cons[$count] = $c;
+		}
+		
+		krsort($cons);
+		
+		$concepts = array();
+		foreach ($cons as $c) {
+			array_push($concepts, $c);
+			if ($limit == 0) break;
+			$limit--;
+		}
+		return $concepts;
+		
 	}
 }

@@ -2,12 +2,13 @@
 
 class ConceptController extends GxController {
 
-	public $layout='//layouts/module';
+	public $layout='//layouts/concept';
 
 	public function actionView($id) {
 		$model = $this->loadModel($id, 'Concept');
 		
-		if ($model->isModule()) $this->redirect(Yii::app()->homeUrl.'/module/'.$id);
+		if ($model->isModule())
+			$this->redirect(Yii::app()->homeUrl.'/module/'.$id);
 		
 		$learnerModule = LearnerConcept::model()->find('learner_id=:learnerID and concept_id=:conceptID',
 				array(':learnerID'=>Yii::app()->user->id, ':conceptID'=>$model->root));
@@ -25,6 +26,7 @@ class ConceptController extends GxController {
 				$learnerConcept->concept_id = $id;
 				$learnerConcept->learner_id = $learnerID;
 				$learnerConcept->create_at = date('Y-m-d H:i:s', time());
+				$learnerConcept->lastaction_at = $learnerConcept->create_at;
 				$learnerConcept->save();	
 			}
 		}	
@@ -216,7 +218,18 @@ class ConceptController extends GxController {
 		$learnerConcept = LearnerConcept::model()->findByPk(array('concept_id'=>$_POST['concept_id'], 'learner_id'=>Yii::app()->user->id));
 		$learnerConcept->learnt_at = date('Y-m-d H:i:s', time());
 		$learnerConcept->status = LearnerConcept::STATUS_COMPLETED;
-		$learnerConcept->save();
+		if ($learnerConcept->save()) {
+			$concept = $this->loadModel($_POST['concept_id'], 'Concept');
+			$sumHasLearnt = Yii::app()->db->createCommand('SELECT COUNT(concept_id) FROM tpl_learner_concept WHERE status=2 AND learner_id='.Yii::app()->user->id.' AND concept_id IN (SELECT id FROM tpl_concept WHERE root<>id AND root='.$concept->root.')')->queryScalar();
+			$sumConcept = Yii::app()->db->createCommand('SELECT COUNT(id) FROM tpl_concept WHERE root<>id AND root='.$concept->root)->queryScalar();
+			if ($sumConcept == $sumHasLearnt) {
+				$lm = LearnerConcept::model()->findByPk(array('concept_id'=>$concept->root, 'learner_id'=>Yii::app()->user->id));
+				$lm->learnt_at = date('Y-m-d H:i:s', time());;
+				$lm->status = 2;
+				$lm->save();
+			}
+		}
+			
 		
 		echo '<span class="date-time pull-right">Learnt at: '.Helpers::datatime_feed($learnerConcept->learnt_at).'</span>';
 		Yii::app()->end();
@@ -654,6 +667,198 @@ class ConceptController extends GxController {
 		
 		echo $tagsBarStr;
 		Yii::app()->end();
+	}
+	
+	public function actionFetchUsers() {
+		if (!isset($_POST['concept_id']) || !isset($_POST['rank_by']))
+			throw new CHttpException(400, Yii::t('app', 'Your request is invalid.'));
+		
+		$concept_id = $_POST['concept_id'];
+		$rank_by = $_POST['rank_by'];
+		
+		$isRoot = $concept_id == Yii::app()->db->createCommand('SELECT root FROM tpl_concept WHERE id='.$concept_id)->queryScalar();
+		
+		$baseUrl = Yii::app()->baseUrl;
+		$rtn = '';
+	
+		if ($rank_by == 'questions') {
+			if ($isRoot)
+				$sql = 'SELECT t.id AS id, t.username AS username, COUNT(a.learner_id) AS countAsk from tpl_user AS t JOIN tpl_ask AS a ON a.learner_id=t.id WHERE a.concept_id IN (SELECT id FROM tpl_concept WHERE root='.$concept_id.') GROUP BY a.learner_id ORDER BY COUNT(a.learner_id) DESC';
+			else
+				$sql = 'SELECT t.id AS id, t.username AS username, COUNT(a.learner_id) AS countAsk from tpl_user AS t JOIN tpl_ask AS a ON a.learner_id=t.id WHERE a.concept_id='.$concept_id.' GROUP BY a.learner_id ORDER BY COUNT(a.learner_id) DESC';
+			$userArr = Yii::app()->db->createCommand($sql)->queryAll();
+			
+			if (count($userArr) == 0) {
+				echo '<div style="margin: 16px 16px 8px 16px;">No learner asked yet.</div>';
+				Yii::app()->end();
+			}
+			
+			foreach ($userArr as $user)
+				if ($user['id'] == Yii::app()->user->id)
+					$rtn .= '
+<div style="margin: 16px 16px 8px 16px;" class="user-rank-item" rel="tooltip" data-placement="right" title="It\'s you.">
+	<img src="'.$baseUrl.'/uploads/images/profile-avatar/'.$user['id'].'" style="height: 44px; width: 44px;">
+	<div style="margin-left: 60px; margin-top: -44px;">
+		<div class="name-user">'.$user['username'].'</div>
+		<div style="color: #333">'.$user['countAsk'].' question(s)</div>
+		<input id="data_id" type="hidden" value="'.$user['id'].'"/>
+	</div>
+</div>';
+				else
+					$rtn .= '
+<div style="margin: 16px 16px 8px 16px;" class="user-rank-item" rel="tooltip" data-placement="right" title="Send a message" data-toggle="modal" href="#message-modal">
+	<img src="'.$baseUrl.'/uploads/images/profile-avatar/'.$user['id'].'" style="height: 44px; width: 44px;">
+	<div style="margin-left: 60px; margin-top: -44px;">
+		<div class="name-user">'.$user['username'].'</div>
+		<div style="color: #333">'.$user['countAsk'].' question(s)</div>
+		<input id="data_id" type="hidden" value="'.$user['id'].'"/>
+	</div>
+</div>';
+		} else { // $rank_by == 'answers'
+			if ($isRoot)
+				$sql = 'SELECT t.id AS id, t.username AS username, COUNT(a.learner_id) AS countAnswer FROM tpl_user AS t JOIN tpl_answer AS a ON t.id=a.learner_id WHERE a.ask_id IN (SELECT id FROM tpl_ask where concept_id IN (SELECT id FROM tpl_concept WHERE root='.$concept_id.')) GROUP BY a.learner_id ORDER BY COUNT(a.learner_id) DESC';
+			else
+				$sql = 'SELECT t.id AS id, t.username AS username, COUNT(a.learner_id) AS countAnswer FROM tpl_user AS t JOIN tpl_answer AS a ON t.id=a.learner_id WHERE a.ask_id IN (SELECT id FROM tpl_ask where concept_id='.$concept_id.') GROUP BY a.learner_id ORDER BY COUNT(a.learner_id) DESC';
+			$userArr = Yii::app()->db->createCommand($sql)->queryAll();
+			
+			if (count($userArr) == 0) {
+				echo '<div style="margin: 16px 16px 8px 16px;">No learner answered yet.</div>';
+				Yii::app()->end();
+			}
+			
+			foreach ($userArr as $user)
+				if ($user['id'] == Yii::app()->user->id)
+					$rtn .= '
+<div style="margin: 16px 16px 8px 16px;" class="user-rank-item" rel="tooltip" data-placement="right" title="It\'s you.">
+	<img src="'.$baseUrl.'/uploads/images/profile-avatar/'.$user['id'].'" style="height: 44px; width: 44px;">
+	<div style="margin-left: 60px; margin-top: -44px;">
+		<div class="name-user">'.$user['username'].'</div>
+		<div style="color: #333">'.$user['countAnswer'].' answer(s)</div>
+		<input id="data_id" type="hidden" value="'.$user['id'].'"/>
+	</div>
+</div>';
+				else
+					$rtn .= '
+<div style="margin: 16px 16px 8px 16px;" class="user-rank-item" rel="tooltip" data-placement="right" title="Send a message" data-toggle="modal" href="#message-modal">
+	<img src="'.$baseUrl.'/uploads/images/profile-avatar/'.$user['id'].'" style="height: 44px; width: 44px;">
+	<div style="margin-left: 60px; margin-top: -44px;">
+		<div class="name-user">'.$user['username'].'</div>
+		<div style="color: #333">'.$user['countAnswer'].' answer(s)</div>
+		<input id="data_id" type="hidden" value="'.$user['id'].'"/>
+	</div>
+</div>';
+		}
+		echo $rtn;
+		Yii::app()->end();
+			
+	}
+	
+	public function actionFetchUsersLearning() {
+		if (!isset($_POST['concept_id']))
+			throw new CHttpException(400, Yii::t('app', 'Your request is invalid.'));
+		
+		$concept_id = $_POST['concept_id'];
+		
+		$baseUrl = Yii::app()->baseUrl;
+		$rtn = '';
+		
+		$sql = 'SELECT t.id AS id, t.username AS username, lc.lastaction_at AS lastaction_at from tpl_user AS t JOIN tpl_learner_concept AS lc ON t.id=lc.learner_id WHERE lc.concept_id='.$concept_id.' AND lc.status=1 ORDER BY lc.lastaction_at DESC limit 5';
+		$userArr = Yii::app()->db->createCommand($sql)->queryAll();
+			
+		if (count($userArr) == 0) {
+			echo '<div style="margin: 16px 16px 8px 16px;">No learner is learning.</div>';
+			Yii::app()->end();
+		}
+		
+		foreach ($userArr as $user)
+			if ($user['id'] == Yii::app()->user->id)
+				$rtn .= '
+<div style="margin: 16px 16px 8px 16px;" class="user-rank-item" rel="tooltip" data-placement="right" title="It\'s you.">
+	<img src="'.$baseUrl.'/uploads/images/profile-avatar/'.$user['id'].'" style="height: 44px; width: 44px;">
+	<div style="margin-left: 60px; margin-top: -44px;">
+		<div class="name-user">'.$user['username'].'</div>
+		<div style="color: #333">At '.Helpers::datatime_trim($user['lastaction_at']).'</div>
+		<input id="data_id" type="hidden" value="'.$user['id'].'"/>
+	</div>
+</div>';
+			else
+				$rtn .= '
+<div style="margin: 16px 16px 8px 16px;" class="user-rank-item" rel="tooltip" data-placement="right" title="Send a message" data-toggle="modal" href="#message-modal">
+	<img src="'.$baseUrl.'/uploads/images/profile-avatar/'.$user['id'].'" style="height: 44px; width: 44px;">
+	<div style="margin-left: 60px; margin-top: -44px;">
+		<div class="name-user">'.$user['username'].'</div>
+		<div style="color: #333">At '.Helpers::datatime_trim($user['lastaction_at']).'</div>
+		<input id="data_id" type="hidden" value="'.$user['id'].'"/>
+	</div>
+</div>';
+				
+		echo $rtn;
+		Yii::app()->end();
+		
+	}
+	
+	public function actionFetchUsersLearnt() {
+		if (!isset($_POST['concept_id']))
+			throw new CHttpException(400, Yii::t('app', 'Your request is invalid.'));
+		
+		$concept_id = $_POST['concept_id'];
+		
+		$baseUrl = Yii::app()->baseUrl;
+		$rtn = '';
+		
+		$sql = 'SELECT t.id AS id, t.username AS username, lc.learnt_at AS lastaction_at from tpl_user AS t JOIN tpl_learner_concept AS lc ON t.id=lc.learner_id WHERE lc.concept_id='.$concept_id.' AND lc.status=2 ORDER BY lc.learnt_at limit 5';
+		$userArr = Yii::app()->db->createCommand($sql)->queryAll();
+			
+		if (count($userArr) == 0) {
+			echo '<div style="margin: 16px 16px 8px 16px;">No learner has learnt.</div>';
+			Yii::app()->end();
+		}
+		
+		foreach ($userArr as $user)
+			if ($user['id'] == Yii::app()->user->id)
+			$rtn .= '
+<div style="margin: 16px 16px 8px 16px;" class="user-rank-item" rel="tooltip" data-placement="right" title="It\'s you.">
+	<img src="'.$baseUrl.'/uploads/images/profile-avatar/'.$user['id'].'" style="height: 44px; width: 44px;">
+	<div style="margin-left: 60px; margin-top: -44px;">
+		<div class="name-user">'.$user['username'].'</div>
+		<div style="color: #333">By '.Helpers::datatime_trim($user['lastaction_at']).'</div>
+		<input id="data_id" type="hidden" value="'.$user['id'].'"/>
+	</div>
+</div>';
+		else
+			$rtn .= '
+<div style="margin: 16px 16px 8px 16px;" class="user-rank-item" rel="tooltip" data-placement="right" title="Send a message" data-toggle="modal" href="#message-modal">
+	<img src="'.$baseUrl.'/uploads/images/profile-avatar/'.$user['id'].'" style="height: 44px; width: 44px;">
+	<div style="margin-left: 60px; margin-top: -44px;">
+		<div class="name-user">'.$user['username'].'</div>
+		<div style="color: #333">By '.Helpers::datatime_trim($user['lastaction_at']).'</div>
+		<input id="data_id" type="hidden" value="'.$user['id'].'"/>
+	</div>
+</div>';
+		
+		echo $rtn;
+		Yii::app()->end();
+	}
+	
+	public function actionFetchConceptsRelated() {
+		
+		// if only they have same tag(s)
+		// how many tags mached
+		if (!isset($_POST['concept_id']))
+			throw new CHttpException(400, Yii::t('app', 'Your request is invalid.'));
+		
+		$concept_id = $_POST['concept_id'];
+		
+		$concept = $this->loadModel($concept_id, 'Concept');
+		$concepts = $concept->getConceptsRelated();
+	
+		$rtn = '';
+		foreach ($concepts as $concept)
+			$rtn .= '<div style="margin: 0 0 6px 16px;" class="concepts-related-item"><a class="label label-success" rel="tooltip" data-placement="right" title="'.$concept->description.'" href="'.Yii::app()->homeUrl.'/concept/'.$concept->id.'">'.$concept->title.'</a></div>';
+		
+		echo $rtn .'';
+		Yii::app()->end();
+		
 	}
 
 }

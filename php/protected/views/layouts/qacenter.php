@@ -87,18 +87,18 @@
         </ul>
       </div><!--/.well -->
       <div class="well sidebar-nav left-main-menu">
-      <ul class="nav nav-tabs">
-              <li><a class="nav-header">Top Users</a></li>
-              <li class="dropdown pull-right">
-                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                  <span class="user-rank-order-by">by answers</span>
-                  <b class="caret"></b>
-                </a>
-                <ul class="dropdown-menu">
-                  <li><a class="btn-link user-rank-order-by-change">by questions</a></li>
-                </ul>
-              </li>
+      	<ul class="nav nav-tabs">
+          <li class="nav-header">Top Users</li>
+          <li class="dropdown pull-right" style="margin-top: -8px; margin-bottom: 2px;">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+              <span class="user-rank-order-by">Answers</span>
+              <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="btn-link user-rank-order-by-change">Questions</a></li>
             </ul>
+          </li>
+        </ul>
         <div id="user-ranking-content" style="margin-top: -8px;"></div>
       </div><!--/.well -->
     </div><!--/span-->
@@ -140,9 +140,9 @@
 		
 		$('[rel=tooltip]').tooltip('disable');
 		
-		if ($(this).text() == 'by questions') {
-			$('.user-rank-order-by').text('by questions');
-			$(this).text('by answers');
+		if ($(this).text() == 'Questions') {
+			$('.user-rank-order-by').text('Questions');
+			$(this).text('Answers');
 			$.ajax({
 				data: {rank_by: 'questions'},
 				type: 'post',
@@ -154,8 +154,8 @@
 			});
 		
 		} else {
-			$('.user-rank-order-by').text('by answers');
-			$(this).text('by questions');
+			$('.user-rank-order-by').text('Answers');
+			$(this).text('Questions');
 		
 			$.ajax({
 				data: {rank_by: 'answers'},
