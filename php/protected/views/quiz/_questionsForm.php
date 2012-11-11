@@ -7,7 +7,7 @@
 	<?php foreach ($questions as $question):?>
 		<li>
 			<div>
-				<p><?php echo $question['description'];?></p>
+				<p><b><?php echo $question['description'];?></b></p>
 				<?php foreach ($question['options'] as $option) :?>
 				<p>
 				<input type="radio" name='<?php echo "q".$question["id"];?>' value='<?php echo $option["opt"]?>'>

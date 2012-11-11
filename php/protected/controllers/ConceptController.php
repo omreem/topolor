@@ -332,6 +332,37 @@ class ConceptController extends GxController {
 		));
 	}
 	
+	public function actionMyanswers() {
+		
+		$moduleId = $_GET['moduleId'];
+		if ($moduleId == null || null == LearnerConcept::model()->findByPk(array('concept_id'=>$moduleId, 'learner_id'=>Yii::app()->user->id)))
+			$this->redirect(Yii::app()->homeUrl.'/concept');
+		
+		$filter_by = $_GET['filter_by'];
+		
+		if ($filter_by == 'correct')
+			$sql='SELECT q.id, q.description, q.correct_answer, qzq.answer, qz.done_at, q.concept_id, c.title AS concept_title FROM tpl_question AS q, tpl_quiz AS qz, tpl_quiz_question AS qzq, tpl_concept AS c WHERE q.id=qzq.question_id AND qzq.quiz_id = qz.id AND qzq.answer IS NOT NULL AND q.concept_id=c.id AND qzq.answer=q.correct_answer AND qz.learner_id='.Yii::app()->user->id.' ORDER BY qz.done_at DESC';
+		else if ($filter_by == 'incorrect')
+			$sql='SELECT q.id, q.description, q.correct_answer, qzq.answer, qz.done_at, q.concept_id, c.title AS concept_title FROM tpl_question AS q, tpl_quiz AS qz, tpl_quiz_question AS qzq, tpl_concept AS c WHERE q.id=qzq.question_id AND qzq.quiz_id = qz.id AND qzq.answer IS NOT NULL AND q.concept_id=c.id AND qzq.answer<>q.correct_answer AND qz.learner_id='.Yii::app()->user->id.' ORDER BY qz.done_at DESC';
+		else // all
+			$sql='SELECT q.id, q.description, q.correct_answer, qzq.answer, qz.done_at, q.concept_id, c.title AS concept_title FROM tpl_question AS q, tpl_quiz AS qz, tpl_quiz_question AS qzq, tpl_concept AS c WHERE q.id=qzq.question_id AND qzq.quiz_id = qz.id AND qzq.answer IS NOT NULL AND q.concept_id=c.id AND qz.learner_id='.Yii::app()->user->id.' ORDER BY qz.done_at DESC';
+		
+		$questionArr = Yii::app()->db->createCommand($sql)->queryAll();
+		$count = count($questionArr);
+		for($i=0;$i<$count;$i++) {
+			$optionArr = Yii::app()->db->createCommand('SELECT opt, val FROM tpl_question_option WHERE question_id='.$questionArr[$i]['id'].' ORDER BY opt')->queryAll();
+			$cnt = count($optionArr);
+			for ($j=0;$j<$cnt;$j++)
+				$questionArr[$i]['option'][$optionArr[$j]['opt']] = $optionArr[$j]['val'];
+		}
+		
+		$this->render('viewMyanswers', array(
+				'moduleId' => $moduleId,
+				'moduleTitle' => Yii::app()->db->createCommand('SELECT title FROM tpl_concept WHERE id='.$moduleId)->queryScalar(),
+				'dataProvider' => new CArrayDataProvider($questionArr, array('pagination'=>array('pageSize'=>20))),
+				'filter_by' => $filter_by
+		));
+	}
 	public function actionCreate() {
 		$model = new Concept;
 

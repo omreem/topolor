@@ -106,7 +106,19 @@
 		)); ?>
   	</div><!-- /.well -->
 	<div class="well">
-		<div class="well-title"><a href="<?php echo Yii::app()->homeUrl.'/concept/quizList?moduleId='.$model->id;?>">Quizzes</a><span class="pull-right" style="; font-weight: normal; font-size: 14px; color: #aaa;">You've done <a href="<?php echo Yii::app()->homeUrl.'/concept/quizList?moduleId='.$model->id;?>"><span style="fond-size: 24px;"><?php echo $countquizDone;?></span></a> out of <span style="fond-size: 24px;"><?php echo $countQuizzes;?></span> quizzes</span></div>
+		<div class="well-title">
+			<a href="<?php echo Yii::app()->homeUrl.'/concept/quizList?moduleId='.$model->id;?>">Quizzes</a>
+			<?php if ($countquizDone > 0):?> / 
+			<a href="<?php echo Yii::app()->homeUrl.'/concept/myanswers?filter_by=all&moduleId='.$model->id;?>">My answers</a>
+			<?php endif;?>
+			<span class="pull-right" style="; font-weight: normal; font-size: 14px; color: #aaa;">
+				You've done 
+				<a href="<?php echo Yii::app()->homeUrl.'/concept/quizList?moduleId='.$model->id;?>">
+					<span style="fond-size: 24px;"><?php echo $countquizDone;?></span>
+				</a> out of 
+				<span style="fond-size: 24px;"><?php echo $countQuizzes;?></span> quizzes
+			</span>
+		</div>
 		<?php $this->widget('zii.widgets.CListView', array(
 			'dataProvider'=>$quizDone,
 			'itemView'=>'/quiz/_item',

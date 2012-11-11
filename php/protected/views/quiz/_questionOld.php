@@ -3,7 +3,7 @@
 <ol>
 <?php foreach ($questions as $question) {?>
 <li>
-	<p><?php echo $question['description']; ?></p>
+	<p><b><?php echo $question['description']; ?></b></p>
 	<p><?php 
 		foreach ($question['options'] as $option) {
 			echo $option['opt'].': '.$option['val'].'<br>';
