@@ -32,7 +32,7 @@
 			<a class="btn btn-primary">Pre-test</a>
 		<?php } else {
 			if ($canHasQuiz == 'yes') {
-				echo CHtml::link ('Take a Quiz', '',
+				echo CHtml::link ($quizDoneAt == '' ? 'Take a Quiz' : 'Review the Quiz', '',
 					array(
 							'class' =>'btn btn-primary',
 							'id' => 'lq'.uniqid(),
@@ -59,7 +59,8 @@
 	<hr>
 	<div class="concept-description-panel">
 		<p><?php echo CHtml::encode($model->description);?></p>
-		<?php echo $this->getTags($model->id);?>
+		<hr>
+		<p><b>Tag:</b><?php echo $this->getTags($model->id);?></p>
 	</div>
 	<?php if (sizeof($model->resources) != 0) :?>
 	<hr>
@@ -105,7 +106,7 @@
 		)); ?>
   	</div><!-- /.well -->
 	<div class="well">
-		<div class="well-title">Quizzes<span class="pull-right" style="; font-weight: normal; font-size: 14px; color: #aaa;">You've done <a href=""><span style="fond-size: 24px;"><?php echo $countquizDone;?></span></a> out of <a href=""><span style="fond-size: 24px;"><?php echo $countQuizzes;?></span></a> quizzes</span></div>
+		<div class="well-title"><a href="<?php echo Yii::app()->homeUrl.'/concept/quizList?moduleId='.$model->id;?>">Quizzes</a><span class="pull-right" style="; font-weight: normal; font-size: 14px; color: #aaa;">You've done <a href="<?php echo Yii::app()->homeUrl.'/concept/quizList?moduleId='.$model->id;?>"><span style="fond-size: 24px;"><?php echo $countquizDone;?></span></a> out of <span style="fond-size: 24px;"><?php echo $countQuizzes;?></span> quizzes</span></div>
 		<?php $this->widget('zii.widgets.CListView', array(
 			'dataProvider'=>$quizDone,
 			'itemView'=>'/quiz/_item',
@@ -122,7 +123,7 @@
 <?php } ?>
 
 <!-- Social Panel -->
-<div class="well">
+<div class="well" id="social-panel">
 	<ul id="myTab" class="nav nav-tabs">
 		<li class="active"><a id="tab-comments" href="#comments" data-toggle="tab">Comment<?php echo $model->commentCount > 1 ? 's' : '';?> (<?php echo $model->commentCount;?>)</a></li>
 		<li><a id="tab-asks" href="#asks" data-toggle="tab">Q&amp;A<?php echo $model->askCount > 1 ? 's' : '';?> (<?php echo $model->askCount;?>)</a></li>
@@ -304,91 +305,6 @@
 	});
 		
 //******************************************
-//************** conceptComment
-	
-	$('#ConceptComment_description').keyup(function(event) {
-		if ($('#ConceptComment_description').val() != '')
-			$('#concept-comment-form .btn-create').removeClass('disabled')
-		else
-			$('#concept-comment-form .btn-create').addClass('disabled')
-	});
-
-	$('#concept-comment-form .btn-create').live('click', function(){
-		if ($(this).hasClass('disabled')) {
-			$('#ConceptComment_description').focus();
-			return;
-		}
-		
-		\$this=$(this);
-		\$form = \$this.parent();
-	
-		if ($('#ConceptComment_description').val() == '') {
-			$('#ConceptComment_description').parent().addClass('error');
-			$('#ConceptComment_description').focus();
-			$('#ConceptComment_description').attr('placeholder','Please input a description!');
-			return false;
-		}
-
-		$.ajax({
-			type: 'POST',
-			url: '".$this->createUrl('/conceptComment/create')."',
-			data: \$form.serialize(),
-			success: function (html) {
-				var tmp = $('#tab-comments').text();
-				var t = tmp.split('(');
-				tmp = t[1];
-				var sum = parseInt(tmp.substr(0, tmp.length-1)) + 1;
-				var str = 'Comment';
-				if (sum > 1)
-					str += 's (' + sum + ')';
-				else
-					str += ' (' + sum + ')';
-				$('#tab-comments').text(str);
-
-				$('#concept-comment-form .btn-create').addClass('disabled');
-
-				setTimeout(function() {
-					$('#concept-comment-form textarea').val('');
-					$('#ConceptComment_description').attr('placeholder','Comment');
-					$.fn.yiiListView.update('comment-list', {
-							data: $(this).serialize()
-					});
-                }, 400);
-			}
-		});
-		return false;
-	});
-		
-	$('#comment-list .delete').live('click', function() {
-		var elem = $(this).closest('.post');
-		\$this=$(this);
-		bootbox.confirm('Delete this comment?', function(result) {
-		    if (result) {
-				$.ajax({
-					type: 'POST',
-					url: '".$this->createUrl('conceptcomment/delete')."/'+\$this.closest('.post').find('#data_id').val(),
-					success: function(data) {
-						var tmp = $('#tab-comments').text();
-						var t = tmp.split('(');
-						tmp = t[1];
-						var sum = parseInt(tmp.substr(0, tmp.length-1)) - 1;
-						var str = 'Comment';
-						if (sum > 1)
-							str += 's (' + sum + ')';
-						else
-							str += ' (' + sum + ')';
-						$('#tab-comments').text(str);
-						setTimeout(function() {
-							elem.slideUp();
-						}, 500);
-					}
-				});
-				return false;
-			}
-		});
-	});
-		
-//******************************************
 //************** comment ask, note, todo
 		
 	var homeUrl = '".Yii::app()->homeUrl."';
@@ -457,9 +373,9 @@
 		$('.content-description').die('click');
 	}
 	
-	$('.content-title').live('click',titleClick);
+	$('#social-panel .content-title').live('click',titleClick);
 		
-	$('.content-description').live('click', descriptionClick);
+	$('#social-panel .content-description').live('click', descriptionClick);
 		
 	function tagModal() {
 		\$this = $(this);
@@ -642,6 +558,92 @@
 		$(this).removeClass('cursor');
 		if (!$(this).hasClass('selected'))
 			$(this).removeClass('label-info');
+	});
+
+		
+//******************************************
+//************** conceptComment
+	
+	$('#ConceptComment_description').keyup(function(event) {
+		if ($('#ConceptComment_description').val() != '')
+			$('#concept-comment-form .btn-create').removeClass('disabled')
+		else
+			$('#concept-comment-form .btn-create').addClass('disabled')
+	});
+
+	$('#concept-comment-form .btn-create').live('click', function(){
+		if ($(this).hasClass('disabled')) {
+			$('#ConceptComment_description').focus();
+			return;
+		}
+		
+		\$this=$(this);
+		\$form = \$this.parent();
+	
+		if ($('#ConceptComment_description').val() == '') {
+			$('#ConceptComment_description').parent().addClass('error');
+			$('#ConceptComment_description').focus();
+			$('#ConceptComment_description').attr('placeholder','Please input a description!');
+			return false;
+		}
+
+		$.ajax({
+			type: 'POST',
+			url: '".$this->createUrl('/conceptComment/create')."',
+			data: \$form.serialize(),
+			success: function (html) {
+				var tmp = $('#tab-comments').text();
+				var t = tmp.split('(');
+				tmp = t[1];
+				var sum = parseInt(tmp.substr(0, tmp.length-1)) + 1;
+				var str = 'Comment';
+				if (sum > 1)
+					str += 's (' + sum + ')';
+				else
+					str += ' (' + sum + ')';
+				$('#tab-comments').text(str);
+
+				$('#concept-comment-form .btn-create').addClass('disabled');
+
+				setTimeout(function() {
+					$('#concept-comment-form textarea').val('');
+					$('#ConceptComment_description').attr('placeholder','Comment');
+					$.fn.yiiListView.update('comment-list', {
+							data: $(this).serialize()
+					});
+                }, 400);
+			}
+		});
+		return false;
+	});
+		
+	$('#comment-list .delete').live('click', function() {
+		var elem = $(this).closest('.post');
+		\$this=$(this);
+		bootbox.confirm('Delete this comment?', function(result) {
+		    if (result) {
+				$.ajax({
+					type: 'POST',
+					url: '".$this->createUrl('conceptcomment/delete')."/'+\$this.closest('.post').find('#data_id').val(),
+					success: function(data) {
+						var tmp = $('#tab-comments').text();
+						var t = tmp.split('(');
+						tmp = t[1];
+						var sum = parseInt(tmp.substr(0, tmp.length-1)) - 1;
+						var str = 'Comment';
+						if (sum > 1)
+							str += 's (' + sum + ')';
+						else
+							str += ' (' + sum + ')';
+						$('#tab-comments').text(str);
+						setTimeout(function() {
+							elem.slideUp();
+						}, 500);
+					}
+				});
+				return false;
+			}
+		});
 	});
 		
 //******************************************

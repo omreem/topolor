@@ -1,6 +1,6 @@
 <div class="well top-panel-fix">
 	<div class="module-structure-panel">
-	  	<span class="module-title"><a href="<?php echo Yii::app()->homeUrl.'/concept/'.$moduleId;?>"><?php echo $moduleTitle;?></a></span>
+	  	<span class="module-title"><a href="<?php echo Yii::app()->homeUrl.'/concept/'.$moduleId;?>"><?php echo $moduleTitle;?></a> &raquo; Concept list</span>
 	  	<span class="btn btn-link pull-right" onClick='$(".module-structure-tree").slideToggle();'>Module Structure &raquo;</span>
   </div>
   <div class="module-structure-tree" style="display: none;"><?php echo $this->getModuleStructure($moduleId);?></div>
@@ -32,6 +32,8 @@
 ));
 
 Yii::app()->clientScript->registerScript('concept-list-js', "
+		
+$('.concept-tag').popover();
 		
 //******** filter
 	$('#filter-form').submit(function(){

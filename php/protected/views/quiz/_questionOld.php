@@ -1,4 +1,4 @@
-<p class="date-time">Done at: <?php echo $quizDoneAt;?></p>
+<p class="date-time">Done at: <?php echo Helpers::datatime_feed($quizDoneAt);?></p>
 <hr>
 <ol>
 <?php foreach ($questions as $question) {?>

@@ -7,7 +7,7 @@ class ConceptController extends GxController {
 	public function actionView($id) {
 		$model = $this->loadModel($id, 'Concept');
 		$learnerId = Yii::app()->user->id;
-		if ($model->isModule()) {
+		if ($model->isModule()) { // is Module
 			$learnerModule = LearnerConcept::model()->findByPk(array('concept_id'=>$model->id, 'learner_id'=>$learnerId));
 			if ($learnerModule == null) //has not registered
 				$this->redirect(Yii::app()->homeUrl.'/concept');
@@ -84,7 +84,7 @@ class ConceptController extends GxController {
 			$sql='select count(concept_id) from tpl_question group by concept_id';
 			$countQuizzes = count(Yii::app()->db->createCommand($sql)->queryAll());
 			
-		} else {
+		} else { // not Module
 			$learnerModule = LearnerConcept::model()->findByPk(array('concept_id'=>$model->root, 'learner_id'=>$learnerId));
 			$learnerModule->lastaction_at = date('Y-m-d H:i:s', time());
 			$learnerModule->save();
@@ -106,6 +106,7 @@ class ConceptController extends GxController {
 				$learnt_at = null;
 			
 			$canHasQuiz = $model->questionCount == 0 ? 'no' : 'yes';
+			$quizDoneAt = Yii::app()->db->createCommand('SELECT done_at FROM tpl_quiz WHERE concept_id='.$model->id.' AND learner_id='.Yii::app()->user->id)->queryScalar();
 		}
 		
 		$dataProvider_comment = new CArrayDataProvider($model->comments, array(
@@ -227,6 +228,7 @@ class ConceptController extends GxController {
 			$params['nextConcept'] = $model->nextConcept;
 			$params['canHasQuiz'] = $canHasQuiz;
 			$params['learnt_at'] = $learnt_at;
+			$params['quizDoneAt'] = $quizDoneAt;
 		}
 		
 		$this->render('view', $params);
@@ -284,20 +286,49 @@ class ConceptController extends GxController {
 		}
 
 		$conceptArr = Yii::app()->db->createCommand($sql)->queryAll();
-		$count = count($conceptArr);
-		
-		for ($i=0;$i<$count;$i++) {
-			$tagLabels='';
-			foreach (explode(', ', $conceptArr[$i]['tags']) as $tag)
-				$tagLabels.=CHtml::tag('span', array('class'=>'label label-info'), CHtml::encode($tag)).'&nbsp;';
-			$conceptArr[$i]['tags'] = $tagLabels;
-		}
 				
 		$this->render('viewConceptList', array(
 			'moduleId' => $moduleId,
 			'moduleTitle' => Yii::app()->db->createCommand('SELECT title FROM tpl_concept WHERE id='.$moduleId)->queryScalar(),
 			'recentlyLearntConcepts' => new CArrayDataProvider($conceptArr, array('pagination'=>array('pageSize'=>20))),
 			'filter_by' => $filter_by
+		));
+	}
+	
+	public function actionQuizList() {
+		
+		$moduleId = $_GET['moduleId'];
+		if ($moduleId == null || null == LearnerConcept::model()->findByPk(array('concept_id'=>$moduleId, 'learner_id'=>Yii::app()->user->id)))
+			$this->redirect(Yii::app()->homeUrl.'/concept');
+		
+		$sql='select'
+		.' q.id as id,'
+		.' q.score as score,'
+		.' c.id as concept_id,'
+		.' c.title as concept_title,'
+		.' q.done_at'
+			
+		.' from'
+		.' tpl_concept as c'
+		.' join tpl_quiz as q on c.id = q.concept_id'
+			
+		.' where'
+		.' c.root='.$moduleId
+		.' and done_at IS NOT NULL'
+		.' and q.learner_id='.Yii::app()->user->id
+		.' order by q.done_at desc';
+		
+		$quizArr = Yii::app()->db->createCommand($sql)->queryAll();
+		$count = count($quizArr);
+		
+		for ($i=0;$i<$count;$i++) {
+			$quizArr[$i]['tags'] = $this->getTags($quizArr[$i]['concept_id']);
+		}
+		
+		$this->render('viewQuizList', array(
+				'moduleId' => $moduleId,
+				'moduleTitle' => Yii::app()->db->createCommand('SELECT title FROM tpl_concept WHERE id='.$moduleId)->queryScalar(),
+				'dataProvider' => new CArrayDataProvider($quizArr, array('pagination'=>array('pageSize'=>20))),
 		));
 	}
 	
@@ -463,7 +494,7 @@ class ConceptController extends GxController {
 			sort($tagArr);
 		}
 		
-		$str = '<hr><p><b>Tag:</b>';
+		$str = '';
 		foreach ($tagArr as $tag) {
 			
 			$content = '';
@@ -487,7 +518,7 @@ class ConceptController extends GxController {
 					'data-content'=>$content,
 					), $tag);
 		}
-		return $str.'</p>';
+		return $str;
 	}
 	
 	public function actionPreview($id) { // preview for module

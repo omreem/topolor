@@ -23,4 +23,11 @@ class Quiz extends BaseQuiz
 		else
 			return false;
 	}
+	
+	public function getTagLabels() {
+		$labels='';
+		foreach(Tag::string2array($this->concept->tags) as $tag)
+			$labels.=CHtml::tag('span', array('class'=>'label label-info tag selected'), CHtml::encode($tag));
+		return $labels;
+	}
 }

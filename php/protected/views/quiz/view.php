@@ -3,6 +3,7 @@
 	  	<span class="module-title">
 	  		<a href="<?php echo Yii::app()->baseUrl.'/index.php/concept/'.$model->concept->module->id;?>" class="btn-link"><?php echo $model->concept->module->title;?></a>
   			 &raquo; <a href="<?php echo Yii::app()->baseUrl.'/index.php/concept/'.$model->concept->id;?>" class="btn-link"><?php echo $model->concept->title;?></a>
+  			 &raquo; Quiz
   		</span>
   		<div id="learnt-info" class="pull-right">
   		<?php if ($learnt_at != null) {?>
@@ -23,6 +24,11 @@
   		</div>
   </div>
 </div>
+<?php if (isset($_SERVER['HTTP_REFERER'])) {
+	$returnUrl = $_SERVER['HTTP_REFERER'];
+?>
+<div class="well top-panel-fix"><a href="<?php echo $returnUrl;?>" class="btn">Return back</a></div>
+<?php } ?>
 <div style="border: solid 1px #ddd; padding: 20px;">
 	<?php
 		if ($questions == null)
