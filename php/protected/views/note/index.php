@@ -620,6 +620,13 @@ Yii::app()->clientScript->registerScript('note-index-js', "
 				});
 				$('#share-form').find('textarea').val('');
 				$('#share-form').find('input').val('');
+		
+				setTimeout(function() {
+					$('.left-main-menu').find('.icon-list-alt').parent().attr('style', 'background-color: #F5A9A9; color: white;');
+					setTimeout(function() {
+						$('.left-main-menu').find('.icon-list-alt').parent().removeAttr('style');
+					}, 600);
+				}, 600);
 			}
 		});
 		setTimeout(function() {

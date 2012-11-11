@@ -46,8 +46,7 @@ class Feed extends BaseFeed
 		.' tpl_feed'
 		
 		.' where'
-		.' of=\'feed\''
-		.' and from_id=\''.$this->id.'\'';
+		.' from_id=\''.$this->id.'\'';
 		
 		$count=Yii::app()->db->createCommand($sql)->queryScalar();
 		

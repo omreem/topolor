@@ -1077,17 +1077,20 @@ Yii::app()->clientScript->registerScript('feed-index-js', "
 //********* share
 		
 	$('.btn-share').live('click', function() {
-		var id = $(this).closest('.post').find('#data_id').val();
+		var from_id = $(this).closest('.post').find('#data_id').val();
+		var of_id = $(this).closest('.post').find('#of_id').val();
+		var of = $(this).closest('.post').find('#of').val();
+		
 		var str = '@' + $(this).closest('.post').find('.user-name').html() + $(this).closest('.post').find('.content-description-feed').text();
 		$.ajax({
 			type: 'POST',
 			url: '".$this->createUrl('sharePrepare')."',
-			data: {id: id},
+			data: {id: from_id},
 			success: function (description) {
 				$('#share-canvas').find('.shared-content').text(str);
-				$('#share-form #Feed_of').val('feed');
-				$('#share-form #Feed_of_id').val(id);
-				$('#share-form #Feed_from_id').val(id);
+				$('#share-form #Feed_of').val(of);
+				$('#share-form #Feed_of_id').val(of_id);
+				$('#share-form #Feed_from_id').val(from_id);
 				$('#share-canvas').find('#description').val(description);
 				$('#share-canvas').find('#description').focus();
 			}
@@ -1107,6 +1110,9 @@ Yii::app()->clientScript->registerScript('feed-index-js', "
 				});
 				$('#share-form').find('textarea').val('');
 				$('#share-form').find('input').val('');
+		
+				// new feed reminder
+				oldCount++;
 			}
 		});
 		setTimeout(function() {

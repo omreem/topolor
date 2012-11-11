@@ -101,6 +101,8 @@
 			<a class="btn-link btn-share" data-toggle="modal" href="#share-canvas">Share<?php if ($shareCount > 0) echo ' ('.$shareCount.')';?></a>&nbsp;&middot;&nbsp;
 		</span><?php echo $isMyFavorite;?>
 		<input id="data_id" type="hidden" value='<?php echo $data->id;?>'/>
+		<input id="of" type="hidden" value='<?php echo $data->of;?>'/>
+		<input id="of_id" type="hidden" value='<?php echo $data->of_id;?>'/>
 	</div><!-- /.well -->
 	<div class="post-comment" style="display: none;">
 		<div class="fake-input" style="border: solid 1px #ddd;">Write a comment...</div>

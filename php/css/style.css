@@ -210,7 +210,7 @@ textarea {
 }
 
 .module-structure-panel .module-title {
-	font-size: 18px;
+	font-size: 16px;
 	vertical-align: middle;
 }
 
@@ -253,9 +253,6 @@ textarea {
 
 .tree-table .action {
 	width: 50px;
-}
-
-.concept-description-panel {
 }
 
 .quiz-form .error-msg {

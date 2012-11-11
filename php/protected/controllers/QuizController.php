@@ -2,7 +2,7 @@
 
 class QuizController extends GxController {
 	
-	public $layout='//layouts/module';
+	public $layout='//layouts/concept';
 
 	var $questionSum = 3;// 3 questions for each quiz, if the number questions for concept is enough
 	
@@ -13,26 +13,21 @@ class QuizController extends GxController {
 		$learner_id = Yii::app()->user->id;
 		$concept_id = $_POST['concept_id'];
 		
+		$connection = Yii::app()->db;
+		
 		$learnerConcept = LearnerConcept::model()->findByPk(array('concept_id'=>$concept_id, 'learner_id'=>$learner_id));
 		if ($learnerConcept->status == LearnerConcept::STATUS_COMPLETED)
 			$learnt_at = $learnerConcept->learnt_at;
 		else
 			$learnt_at = null;
 		
-		$questions = null;
-		$connection = Yii::app()->db;
-		
-		$quiz = Quiz::model()->findByAttributes(array(
-				'learner_id'=>$learner_id,
-				'concept_id'=>$concept_id,
-		));
-		
 		$quizDoneAt = null;
+		
+		$quiz = Quiz::model()->findByAttributes(array('learner_id'=>$learner_id, 'concept_id'=>$concept_id));
 		
 		if ($quiz != null) {
 			if ($quiz->done_at != null) // the learner has answered all the questions in the quiz
 				$quizDoneAt = $quiz->done_at;
-		
 			$sql = 'select'
 			.' q.id,'
 			.' position,'
@@ -41,41 +36,29 @@ class QuizController extends GxController {
 			.' answer,'
 			.' quiz_id'
 			.' done_at'
-		
+			
 			.' from {{question}} as q'
 			.' join {{quiz_question}} as qq'
 			.' on q.id = qq.question_id'
 			.' where'
 			.' quiz_id='.$quiz->id
 			.' order by position';
-		
+			
 			$questionArr = $connection->createCommand($sql)->queryAll();
-			$count = count($questionArr);
-			$questions = array($count);
-			for ($i=0;$i<$count;$i++) {
-				$optionArr = $connection->createCommand()
-				->select('id, question_id, opt, val')
-				->from('{{question_option}}')
-				->where('question_id = :question_id', array(':question_id'=>$questionArr[$i]['id']))
-				->order('opt')
-				->queryAll();
-				$questions[$i] = $questionArr[$i];
-				$questions[$i]['options'] = $optionArr;
-			}
-		
+			
 		} else {
 			// generate a new quiz
 			$questionArr = $connection->createCommand()
-			->select('id, description, correct_answer')
-			->from('{{question}}')
-			->where('concept_id = :concept_id', array(':concept_id'=>$concept_id))
-			->queryAll();
-		
+				->select('id, description, correct_answer')
+				->from('{{question}}')
+				->where('concept_id = :concept_id', array(':concept_id'=>$concept_id))
+				->queryAll();
+			
 			$count = count($questionArr);
-		
+			
 			if ($count > 1)
 				shuffle($questionArr);// random order
-		
+			
 			$transaction = $connection->beginTransaction();
 			try {
 				$quiz = new Quiz;
@@ -83,32 +66,40 @@ class QuizController extends GxController {
 				$quiz->concept_id = $concept_id;
 				$quiz->create_at = date('Y-m-d H:i:s', time());
 				$quiz->save();
-		
+			
 				for($i=0;$i<$this->questionSum && $i<$count;) {
 					$sql="INSERT INTO {{quiz_question}} (quiz_id, question_id, position) VALUES(".$quiz->id.",".$questionArr[$i]['id'].",".++$i.")";
 					$connection->createCommand($sql)->execute();
 				}
-				
+			
 				$transaction->commit();
-		
-				$questions = array();
-				foreach ($questionArr as $key => $value) {
-					$questions[$key] = $value;
-				}
-		
+			
 			} catch (Exception $e) {
 				$transaction->rollBack();
 				throw new CHttpException(400, "{$e->getMessage()}");
 			} //.try-catch
-		
+			
 		} //.if-else
 		
+		$count = count($questionArr);
+		$questions = array($count);
+		for ($i=0;$i<$count;$i++) {
+			$optionArr = $connection->createCommand()
+				->select('id, question_id, opt, val')
+				->from('{{question_option}}')
+				->where('question_id = :question_id', array(':question_id'=>$questionArr[$i]['id']))
+				->order('opt')
+				->queryAll();
+			$questions[$i] = $questionArr[$i];
+			$questions[$i]['options'] = $optionArr;
+		}
+
 		$this->render('view', array(
-			'model' => $quiz,
-			'learnt_at' => $learnt_at,
-			'concept_id'=>$concept_id,
-			'questions'=>$questions,
-			'quizDoneAt'=>$quizDoneAt,
+				'model' => $quiz,
+				'learnt_at' => $learnt_at,
+				'concept_id'=>$concept_id,
+				'questions'=>$questions,
+				'quizDoneAt'=>$quizDoneAt,
 		));
 	}
 
@@ -374,141 +365,5 @@ class QuizController extends GxController {
 				'quizDoneAt'=>$time_now,
 				'learnt_at'=>$time_now,
 		), false, true);
-
-	
 	}
-/*	
-	public function actionQuizSubmit() {
-	
-		if (!Yii::app()->request->isAjaxRequest || !isset($_POST['quiz_id']))
-			throw new CHttpException(400, Yii::t('app', 'Your request is invalid.'));
-	
-		$time_now = date('Y-m-d H:i:s', time());
-		$quiz_id = $_POST['quiz_id'];
-		$correctAnswer = 0;
-		$connection = Yii::app()->db;
-		$transaction = $connection->beginTransaction();
-		try {
-			$qqArr = QuizQuestion::model()->findAllByAttributes(
-					array(),
-					$condition = 'quiz_id = :quiz_id',
-					$params = array(':quiz_id' => $quiz_id)
-			);
-				
-			foreach ($qqArr as $qq) {
-				
-				//validate form failed
-				if (!isset($_POST['q'.$qq->question_id])) {
-					$sql = 'select'
-					.' q.id,'
-					.' position,'
-					.' description,'
-					.' correct_answer,'
-					.' answer,'
-					.' quiz_id'
-					.' done_at'
-					
-					.' from {{question}} as q'
-					.' join {{quiz_question}} as qq'
-					.' on q.id = qq.question_id'
-					.' where'
-					.' quiz_id='.$quiz_id
-					.' order by position';
-					
-					$questionArr = $connection->createCommand($sql)->queryAll();
-					$count = count($questionArr);
-					$questions = array($count);
-					for ($i=0;$i<$count;$i++) {
-						$optionArr = $connection->createCommand()
-						->select('id, question_id, opt, val')
-						->from('{{question_option}}')
-						->where('question_id = :question_id', array(':question_id'=>$questionArr[$i]['id']))
-						->order('opt')
-						->queryAll();
-						$questions[$i] = $questionArr[$i];
-						$questions[$i]['options'] = $optionArr;
-					}
-					
-					$this->renderPartial('_view', array(
-							'concept_id'=>5,
-							'questions'=>$questions,
-							'quizDoneAt'=>null,
-							'quiz_id'=>$quiz_id,
-							'error_msg'=>'Please choose an option for each question!',
-					), false, true);
-					
-					Yii::app()->end();
-					
-				}
-				
-				$qq->answer = $_POST['q'.$qq->question_id];
-				$qq->save();
-	
-				if (Question::model()->findByPk($qq->question_id)->correct_answer == $qq->answer)
-					$correctAnswer++;
-			}
-				
-			$questionSum = count($qqArr) < $this->questionSum ? count($qqArr) : $this->questionSum;
-				
-			$quiz = Quiz::model()->findByPk($quiz_id);
-			$quiz->score = $correctAnswer.'/'.$questionSum;
-			$quiz->done_at = $time_now;
-			$quiz->lastaccess_at = $time_now;
-			$quiz->save();
-			
-			// -> has learnt this concept
-			$learnerConcept = LearnerConcept::model()->findByPk(array('concept_id'=>$quiz->concept_id, 'learner_id'=>Yii::app()->user->id));
-			$learnerConcept->learnt_at = date('Y-m-d H:i:s', time());
-			$learnerConcept->status = LearnerConcept::STATUS_COMPLETED;
-			$learnerConcept->save();
-			
-	
-			$transaction->commit();
-				
-		} catch (Exception $e) {
-			$transaction->rollBack();
-			throw new CHttpException(400, "{$e->getMessage()}");
-		} //.try-catch
-	
-		$sql = 'select'
-		.' q.id,'
-		.' concept_id,'
-		.' position,'
-		.' description,'
-		.' correct_answer,'
-		.' answer,'
-		.' quiz_id'
-		.' done_at'
-	
-		.' from {{question}} as q'
-		.' join {{quiz_question}} as qq'
-		.' on q.id = qq.question_id'
-		.' where'
-		.' quiz_id='.$quiz_id
-		.' order by position';
-			
-		$questionArr = $connection->createCommand($sql)->queryAll();
-		$count = count($questionArr);
-		$questions = array($count);
-		for ($i=0;$i<$count;$i++) {
-			$optionArr = $connection->createCommand()
-			->select('id, question_id, opt, val')
-			->from('{{question_option}}')
-			->where('question_id = :question_id', array(':question_id'=>$questionArr[$i]['id']))
-			->order('opt')
-			->queryAll();
-			$questions[$i] = $questionArr[$i];
-			$questions[$i]['options'] = $optionArr;
-		}
-	
-		$this->renderPartial('_view', array(
-				'concept_id'=>$questions[0]['concept_id'],
-				'questions'=>$questions,
-				'quizDoneAt'=>$time_now,
-				'quiz_id'=>$quiz_id,
-				'error_msg'=>'',
-		), false, true);
-	
-	}
-*/
 }

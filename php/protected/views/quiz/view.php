@@ -1,7 +1,7 @@
 <div class="well top-panel-fix">
 	<div class="module-structure-panel">
 	  	<span class="module-title">
-	  		<a href="<?php echo Yii::app()->baseUrl.'/index.php/module/'.$model->concept->module->id;?>" class="btn-link"><?php echo $model->concept->module->title;?></a>
+	  		<a href="<?php echo Yii::app()->baseUrl.'/index.php/concept/'.$model->concept->module->id;?>" class="btn-link"><?php echo $model->concept->module->title;?></a>
   			 &raquo; <a href="<?php echo Yii::app()->baseUrl.'/index.php/concept/'.$model->concept->id;?>" class="btn-link"><?php echo $model->concept->title;?></a>
   		</span>
   		<div id="learnt-info" class="pull-right">
@@ -47,3 +47,4 @@
 		}	
 	?>
 </div>
+

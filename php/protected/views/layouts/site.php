@@ -30,7 +30,7 @@
       <div class="nav-collapse collapse">
         <ul class="nav">
           <li class="active"><a href="<?php echo Yii::app()->homeUrl;?>">Home</a></li>
-          <li><a href="<?php echo Yii::app()->homeUrl.'/module';?>">Module Center</a></li>
+          <li><a href="<?php echo Yii::app()->homeUrl.'/concept';?>">Module Center</a></li>
           <li><a href="<?php echo Yii::app()->homeUrl.'/qacenter';?>">Q&amp;A Center</a></li>
         </ul>
         <?php if (!Yii::app()->user->isGuest):?>

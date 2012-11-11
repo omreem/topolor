@@ -1,53 +1,60 @@
 <div class="well top-panel-fix">
 	<div class="module-structure-panel">
-	  	<span class="module-title">
-	  		<a href="<?php echo Yii::app()->baseUrl.'/index.php/module/'.$model->module->id;?>" class="btn-link"><?php echo $model->module->title;?></a>
-  			 &raquo;  <?php echo $model->title;?>
-  		</span>
-  		<div id="learnt-info" class="pull-right">
-  		<?php if ($learnt_at != null) {?>
-  		<span class="date-time pull-right">Learnt at: <?php echo Helpers::datatime_feed($learnt_at);?></span>
-  		<?php } else { ?>
-  		<?php echo CHtml::ajaxButton ("I've learnt",
-						CController::createUrl('hasLearnt'), 
-						array('update' => '#learnt-info',
-							'type' => 'POST',
-							'data' => array(
-								'concept_id' => $model->id,
+	  	<span class="module-title"><?php echo $breadcrumbs;?></span>
+	  	<?php if ($model->isModule()) {?>
+	  		<span class="btn btn-link pull-right" onClick='$(".module-structure-tree").slideToggle();'>Module Structure &raquo;</span>
+	  	<?php } else {?>
+	  		<div id="learnt-info" class="pull-right">
+	  		<?php if ($learnt_at != null) {?>
+	  		<span class="date-time pull-right">Learnt at: <?php echo Helpers::datatime_feed($learnt_at);?></span>
+	  		<?php } else { ?>
+	  		<?php echo CHtml::ajaxButton ("I've learnt",
+							CController::createUrl('hasLearnt'), 
+							array('update' => '#learnt-info',
+								'type' => 'POST',
+								'data' => array(
+									'concept_id' => $model->id,
+								),
 							),
-						),
-						array('class' =>'btn pull-right',
-							'id' => 'hl'.uniqid(),
-			));?>
-  		<?php } ?>
-  		</div>
+							array('class' =>'btn pull-right',
+								'id' => 'hl'.uniqid(),
+				));?>
+	  		<?php } ?>
+	  		</div>
+  		<?php }?>
   </div>
+  <?php if ($model->isModule()) {?><div class="module-structure-tree" style="display: none;"><?php echo $this->getModuleStructure($model->id);?></div><?php }?>
 </div>
+
 <div class="well">
 	<div style="display:inline;">
-		<?php if ($canHasQuiz == 'yes') { ?>
-		<?php echo CHtml::link ('Take a Quiz', '',
-				array(
-						'class' =>'btn btn-primary',
-						'id' => 'lq'.uniqid(),
-						'submit' => CController::createUrl('/quiz/view'),
-						'params' => array('concept_id'=>$model->id),
-		)); ?>
-		<?php } else { ?>
-		<button class="btn btn-primary disabled">Take a Quiz</button>
+		<?php if ($model->isModule()) {?>
+			<a class="btn btn-primary">Pre-test</a>
+		<?php } else {
+			if ($canHasQuiz == 'yes') {
+				echo CHtml::link ('Take a Quiz', '',
+					array(
+							'class' =>'btn btn-primary',
+							'id' => 'lq'.uniqid(),
+							'submit' => CController::createUrl('/quiz/view'),
+							'params' => array('concept_id'=>$model->id),
+					));
+				} else { ?>
+			<button class="btn btn-primary disabled">Take a Quiz</button>
+			<?php } ?>
+			<div class="btn-group pull-right">
+				<?php if ($previousConcept != null):?>
+					<a class="btn" href="<?php echo Yii::app()->homeUrl.'/concept/'.$previousConcept->id;?>"><i class="icon-chevron-left"></i> Previous</a>
+				<?php else:?>
+					<a class="btn disabled"><i class="icon-chevron-left"></i> Previous</a>
+				<?php endif;?>
+				<?php if ($nextConcept != null):?>
+					<a class="btn" href="<?php echo Yii::app()->homeUrl.'/concept/'.$nextConcept->id;?>">Next <i class="icon-chevron-right"></i></a>
+				<?php else:?>
+					<a class="btn disabled">Next <i class="icon-chevron-right"></i></a>
+				<?php endif;?>
+			</div>
 		<?php } ?>
-		<div class="btn-group pull-right">
-			<?php if ($previousConcept != null):?>
-				<a class="btn" href="<?php echo Yii::app()->homeUrl.'/concept/'.$previousConcept->id;?>"><i class="icon-chevron-left"></i> Previous</a>
-			<?php else:?>
-				<a class="btn disabled"><i class="icon-chevron-left"></i> Previous</a>
-			<?php endif;?>
-			<?php if ($nextConcept != null):?>
-				<a class="btn" href="<?php echo Yii::app()->homeUrl.'/concept/'.$nextConcept->id;?>">Next <i class="icon-chevron-right"></i></a>
-			<?php else:?>
-				<a class="btn disabled">Next <i class="icon-chevron-right"></i></a>
-			<?php endif;?>
-		</div>
 	</div>
 	<hr>
 	<div class="concept-description-panel">
@@ -62,6 +69,53 @@
 	<?php endif; ?>
 </div>
 
+<!-- Module Details -->
+<?php if ($model->isModule()) {?>
+	<?php if ($upNext != null) {?>
+	<div class="well">
+		<p class="well-title">Up Next</p>
+		<p>
+			<span class="content-title"><b><?php echo $upNext['title']?></b></span>
+			<?php echo CHtml::link('Start',array('concept/'.$upNext['id']), array('class'=>'pull-right btn', 'style'=>'width:40px;')); ?>
+		</p>
+		<p>
+		<?php echo Helpers::string_len($upNext['description']);?>
+		</p>
+  	</div><!-- /.well -->
+  	<?php } ?>
+	<div class="well">
+		<div class="well-title">Recently Learnt<span class="pull-right" style="; font-weight: normal; font-size: 14px; color: #aaa;">You've learnt <span style="fond-size: 24px; color: #666;"><?php echo $countLearntConcepts;?></span> out of <span style="fond-size: 24px; color: #666;"><?php echo $countConcepts;?></span> concepts</span></div>
+		<?php $this->widget('zii.widgets.CListView', array(
+			'dataProvider'=>$recentlyLearntConcepts,
+			'itemView'=>'/concept/_item',
+			'summaryText'=>'',
+				'emptyText'=>'No leant concept yet.',
+			'pager' => array(
+				'header' => '',
+				'prevPageLabel' => '&lt;&lt;',
+				'nextPageLabel' => '&gt;&gt;',
+			),
+			'id'=>'recent-list',
+		)); ?>
+  	</div><!-- /.well -->
+	<div class="well">
+		<div class="well-title">Quizzes<span class="pull-right" style="; font-weight: normal; font-size: 14px; color: #aaa;">You've done <span style="fond-size: 24px; color: #666;"><?php echo $countquizDone;?></span> out of <span style="fond-size: 24px; color: #666;"><?php echo $countQuizzes;?></span> quizzes</span></div>
+		<?php $this->widget('zii.widgets.CListView', array(
+				'dataProvider'=>$quizDone,
+				'itemView'=>'/quiz/_item',
+				'summaryText'=>'',
+				'emptyText'=>'Not taken quiz yet.',
+				'pager' => array(
+					'header' => '',
+					'prevPageLabel' => '&lt;&lt;',
+					'nextPageLabel' => '&gt;&gt;',
+				),
+				'id'=>'quiz-list',
+			)); ?>
+  	</div><!-- /.well -->
+<?php } ?>
+
+<!-- Social Panel -->
 <div class="well">
 	<ul id="myTab" class="nav nav-tabs">
 		<li class="active"><a id="tab-comments" href="#comments" data-toggle="tab">Comment<?php echo $model->commentCount > 1 ? 's' : '';?> (<?php echo $model->commentCount;?>)</a></li>
@@ -76,12 +130,7 @@
 			$this->renderPartial('/conceptComment/_form', array('model' => $newConceptComment));?>
 		<?php $this->widget('zii.widgets.CListView', array(
 				'id' => 'comment-list',
-				'dataProvider'=>new CArrayDataProvider($model->comments, array(
-					'keyField'=>'id',
-					'pagination' => array(
-						'pageSize' => 5,
-					),
-				)),
+				'dataProvider'=>$dataProvider_comment,
 				'itemView' => '/conceptComment/_view',
 				'summaryText' => '',
 				'emptyText' => 'No comment yet.',
@@ -155,6 +204,7 @@
 	</div>
 </div>
 
+<!-- Tag modal -->
 <div id="tag-canvas" class="modal hide fade in" style="display: none;">
 	 <div class="modal-header">
 		<button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -200,39 +250,42 @@
 	</div>
 </div>
 
-<?php $form = $this->beginWidget('GxActiveForm', array(
-	'method' => 'get',
-	'id' => 'ask-filter-form',
-)); ?>
-<input name="of" id="of" type="hidden" value="ask"/>
-<input name="concept_id" id="concept_id" type="hidden" value="<?php echo $model->id;?>"/>
-<input name="filter_by" id="filter_by" type="hidden"/>
-<input name="tag" id="tag" type="hidden"/>
-<?php $this->endWidget(); ?>
-
-<?php $form = $this->beginWidget('GxActiveForm', array(
-	'method' => 'get',
-	'id' => 'note-filter-form',
-)); ?>
-<input name="of" id="of" type="hidden" value="note"/>
-<input name="concept_id" id="concept_id" type="hidden" value="<?php echo $model->id;?>"/>
-<input name="interval" id="interval" type="hidden"/>
-<input name="tag" id="tag" type="hidden"/>
-<?php $this->endWidget(); ?>
-
-<?php $form = $this->beginWidget('GxActiveForm', array(
-	'method' => 'get',
-	'id' => 'todo-filter-form',
-)); ?>
-<input name="of" id="of" type="hidden" value="todo"/>
-<input name="concept_id" id="concept_id" type="hidden" value="<?php echo $model->id;?>"/>
-<input name="status" id="status" type="hidden" value="<?php echo Todo::STATUS_UNDONE;?>"/>
-<input name="interval" id="interval" type="hidden"/>
-<input name="tag" id="tag" type="hidden"/>
-<?php $this->endWidget(); ?>
+<!-- filter-forms -->
+<div style="display: none;">
+	<?php $form = $this->beginWidget('GxActiveForm', array(
+		'method' => 'get',
+		'id' => 'ask-filter-form',
+	)); ?>
+	<input name="of" id="of" type="hidden" value="ask"/>
+	<input name="concept_id" id="concept_id" type="hidden" value="<?php echo $model->id;?>"/>
+	<input name="filter_by" id="filter_by" type="hidden"/>
+	<input name="tag" id="tag" type="hidden"/>
+	<?php $this->endWidget(); ?>
+	
+	<?php $form = $this->beginWidget('GxActiveForm', array(
+		'method' => 'get',
+		'id' => 'note-filter-form',
+	)); ?>
+	<input name="of" id="of" type="hidden" value="note"/>
+	<input name="concept_id" id="concept_id" type="hidden" value="<?php echo $model->id;?>"/>
+	<input name="interval" id="interval" type="hidden"/>
+	<input name="tag" id="tag" type="hidden"/>
+	<?php $this->endWidget(); ?>
+	
+	<?php $form = $this->beginWidget('GxActiveForm', array(
+		'method' => 'get',
+		'id' => 'todo-filter-form',
+	)); ?>
+	<input name="of" id="of" type="hidden" value="todo"/>
+	<input name="concept_id" id="concept_id" type="hidden" value="<?php echo $model->id;?>"/>
+	<input name="status" id="status" type="hidden" value="<?php echo Todo::STATUS_UNDONE;?>"/>
+	<input name="interval" id="interval" type="hidden"/>
+	<input name="tag" id="tag" type="hidden"/>
+	<?php $this->endWidget(); ?>
+</div>
 
 <?php Yii::app()->clientScript->registerScript('concept-view-js', "
-		
+// init tagBar
 	$.ajax({
 		type: 'GET',
 		url: '".$this->createUrl('initTagBarsAjax')."/".$model->id."',
@@ -1513,17 +1566,24 @@
 		})
 	}
 
-//********* left menu: concepts-recommended(related)
-	$.ajax({
-		data: {concept_id: ".$model->id."},
-		type: 'post',
-		url: '".$this->createUrl('concept/fetchConceptsRelated')."',
-		success: function(html) {
-			$('#concept-related-content').html(html);
-			$('[rel=tooltip]').tooltip();
-		},
-	});
+//********* left menu: concepts/modules-recommended(related)
+
+	var isModule = ".($model->isModule() ? '1':'0').";
 		
+	if (isModule == 1) {
+		$('#concept-related-content').closest('.left-main-menu').find('.nav-header').text('Recommended modules');
+		// ajax -> fetch recommendate modules......
+	} else {
+		$.ajax({
+			data: {concept_id: ".$model->id."},
+			type: 'post',
+			url: '".$this->createUrl('concept/fetchConceptsRelated')."',
+			success: function(html) {
+				$('#concept-related-content').html(html);
+				$('[rel=tooltip]').tooltip();
+			},
+		});
+	}
 //********* left menu: user-ranking
 	// init
 	$.ajax({
