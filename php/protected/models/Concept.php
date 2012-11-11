@@ -34,6 +34,13 @@ class Concept extends BaseConcept
 			return false;
 	}
 	
+	public function getTagLabels() {
+		$labels=array();
+		foreach(Tag::string2array($this->tags) as $tag)
+			$labels[]=CHtml::tag('span', array('class'=>'label label-info tag selected'), CHtml::encode($tag));
+		return $labels;
+	}
+	
 	public function isModule() {
 		return $this->root == $this->id;
 	}

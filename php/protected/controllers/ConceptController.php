@@ -9,8 +9,8 @@ class ConceptController extends GxController {
 		$learnerId = Yii::app()->user->id;
 		if ($model->isModule()) {
 			$learnerModule = LearnerConcept::model()->findByPk(array('concept_id'=>$model->id, 'learner_id'=>$learnerId));
-			if ($learnerModule ==null) //has not registered
-				$this->redirect(Yii::app()->homeUrl.'/module');
+			if ($learnerModule == null) //has not registered
+				$this->redirect(Yii::app()->homeUrl.'/concept');
 			
 			$breadcrumbs = $model->title;
 			
@@ -21,15 +21,9 @@ class ConceptController extends GxController {
 			$upNext = Concept::model()->findBySql('SELECT * FROM tpl_concept WHERE root<>id AND root='.$id.' AND id NOT IN (SELECT concept_id FROM tpl_learner_concept WHERE status=2 AND learner_id='.Yii::app()->user->id.') ORDER BY lft');
 			
 			//recently learnt
-			$sql='select'
-			.' c.id,'
-			.' c.title,'
-			.' c.description,'
-			.' lc.lastaction_at'
+			$sql='select c.id as id, c.title as title, c.description as description, c.tags as tags, lc.lastaction_at as lastaction_at'
 			
-			.' from'
-			.' tpl_concept as c'
-			.' join tpl_learner_concept as lc on c.id = lc.concept_id'
+			.' from tpl_concept as c join tpl_learner_concept as lc on c.id = lc.concept_id'
 			
 			.' where'
 			.' c.root='.$id
@@ -38,27 +32,18 @@ class ConceptController extends GxController {
 			.' and lc.learner_id='.Yii::app()->user->id
 			
 			.' order by lc.lastaction_at desc';
+
+			$recentlyLearntConceptArr = Yii::app()->db->createCommand($sql)->queryAll();
+			$countRecentlyLearntConcepts = count($recentlyLearntConceptArr);
 			
-			$sql2='select count(c.id)'
+			for ($i=0;$i<$countRecentlyLearntConcepts;$i++) {
+				$tagLabels='';
+				foreach (explode(', ', $recentlyLearntConceptArr[$i]['tags']) as $tag)
+					$tagLabels.=CHtml::tag('span', array('class'=>'label label-info'), CHtml::encode($tag)).'&nbsp;';
+				$recentlyLearntConceptArr[$i]['tags'] = $tagLabels;
+			}
 			
-			.' from'
-			.' tpl_concept as c'
-			.' join tpl_learner_concept as lc on c.id = lc.concept_id'
-			
-			.' where'
-			.' c.root='.$id
-			.' and c.id<>'.$id
-			.' and lc.status='.LearnerConcept::STATUS_COMPLETED
-			.' and lc.learner_id='.Yii::app()->user->id;
-			
-			$countRecentlyLearnt=Yii::app()->db->createCommand($sql2)->queryScalar();
-			$recentlyLearntConcepts=new CSqlDataProvider($sql, array(
-					'totalItemCount'=>$countRecentlyLearnt,
-					'keyField'=>'id',
-					'pagination'=>array(
-							'pageSize'=>5,
-					),
-			));
+			$recentlyLearntConcepts=new CArrayDataProvider($recentlyLearntConceptArr, array('pagination'=>array('pageSize'=>5)));
 			
 			//quiz
 			$sql='select'
@@ -233,7 +218,7 @@ class ConceptController extends GxController {
 			$params['upNext'] = $upNext;
 			$params['recentlyLearntConcepts'] = $recentlyLearntConcepts;
 			$params['countConcepts'] = count($concepts) - 1; // without root concept
-			$params['countLearntConcepts'] = $countRecentlyLearnt;
+			$params['countLearntConcepts'] = $countRecentlyLearntConcepts;
 			$params['countquizDone'] = $countquizDone;
 			$params['countQuizzes'] = $countQuizzes;
 			$params['quizDone'] = $quizDone;
@@ -245,6 +230,75 @@ class ConceptController extends GxController {
 		}
 		
 		$this->render('view', $params);
+	}
+	
+	public function actionConceptList() {
+
+		$moduleId = $_GET['moduleId'];
+		if ($moduleId == null || null == LearnerConcept::model()->findByPk(array('concept_id'=>$moduleId, 'learner_id'=>Yii::app()->user->id)))
+			$this->redirect(Yii::app()->homeUrl.'/concept');
+		
+		$filter_by = $_GET['filter_by'];
+		
+		if ($filter_by == 'learnt') {
+
+			$sql='select c.id as id, c.title as title, c.description as description, c.tags as tags, lc.lastaction_at as lastaction_at'
+			
+			.' from tpl_concept as c join tpl_learner_concept as lc on c.id = lc.concept_id'
+			
+			.' where'
+			.' c.root='.$moduleId
+			.' and c.id<>'.$moduleId
+			.' and lc.status='.LearnerConcept::STATUS_COMPLETED // learnt
+			.' and lc.learner_id='.Yii::app()->user->id
+			
+			.' order by lc.lastaction_at desc';
+		} else if ($filter_by == 'learning'){
+			$sql='select c.id as id, c.title as title, c.description as description, c.tags as tags, lc.lastaction_at as lastaction_at'
+				
+			.' from tpl_concept as c join tpl_learner_concept as lc on c.id = lc.concept_id'
+				
+			.' where'
+			.' c.root='.$moduleId
+			.' and c.id<>'.$moduleId
+			.' and lc.status='.LearnerConcept::STATUS_INPROGRESS // learning
+			.' and lc.learner_id='.Yii::app()->user->id
+				
+			.' order by lc.lastaction_at desc';
+		} else if ($filter_by == 'upnext'){
+			$sql='select c.id as id, c.title as title, c.description as description, c.tags as tags, lc.lastaction_at as lastaction_at'
+			
+			.' from tpl_concept as c join tpl_learner_concept as lc on c.id = lc.concept_id'
+			
+			.' where'
+			.' c.root='.$moduleId
+			.' and c.id<>'.$moduleId
+			.' and lc.status='.LearnerConcept::STATUS_INPROGRESS // learning
+			.' and lc.learner_id='.Yii::app()->user->id
+			
+			.' order by c.lft';
+		} else {// $filter_by == 'all'
+			$sql='select id, title, description, tags from tpl_concept'
+			.' where root='.$moduleId.' and id<>'.$moduleId
+			.' order by lft';
+		}
+
+		$conceptArr = Yii::app()->db->createCommand($sql)->queryAll();
+		$count = count($conceptArr);
+		
+		for ($i=0;$i<$count;$i++) {
+			$tagLabels='';
+			foreach (explode(', ', $conceptArr[$i]['tags']) as $tag)
+				$tagLabels.=CHtml::tag('span', array('class'=>'label label-info'), CHtml::encode($tag)).'&nbsp;';
+			$conceptArr[$i]['tags'] = $tagLabels;
+		}
+				
+		$this->render('viewConceptList', array(
+			'moduleId' => $moduleId,
+			'moduleTitle' => Yii::app()->db->createCommand('SELECT title FROM tpl_concept WHERE id='.$moduleId)->queryScalar(),
+			'recentlyLearntConcepts' => new CArrayDataProvider($conceptArr, array('pagination'=>array('pageSize'=>20))),
+			'filter_by' => $filter_by
+		));
 	}
 	
 	public function actionCreate() {
@@ -436,7 +490,7 @@ class ConceptController extends GxController {
 		return $str.'</p>';
 	}
 	
-	public function actionPreview($id) {
+	public function actionPreview($id) { // preview for module
 		//has registered
 		$learnerConcept = LearnerConcept::model()->find('learner_id=:learnerID and concept_id=:conceptID',
 				array(':learnerID'=>Yii::app()->user->id, ':conceptID'=>$id));

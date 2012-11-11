@@ -22,7 +22,7 @@
 
 Yii::app()->clientScript->registerScript('ask-index-js', "
 
-//******** filter
+//******** order
 	$('#order-form').submit(function(){
 	    $.fn.yiiListView.update('concept-list', { 
 	        data: $(this).serialize()

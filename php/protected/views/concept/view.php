@@ -73,7 +73,7 @@
 <?php if ($model->isModule()) {?>
 	<?php if ($upNext != null) {?>
 	<div class="well">
-		<p class="well-title">Up Next</p>
+		<p class="well-title"><a class="link-title" href="<?php echo Yii::app()->homeUrl.'/concept/conceptList?filter_by=upnext&moduleId='.$model->id;?>">Up Next</a></p>
 		<p>
 			<span class="content-title"><b><?php echo $upNext['title']?></b></span>
 			<?php echo CHtml::link('Start',array('concept/'.$upNext['id']), array('class'=>'pull-right btn', 'style'=>'width:40px;')); ?>
@@ -84,7 +84,13 @@
   	</div><!-- /.well -->
   	<?php } ?>
 	<div class="well">
-		<div class="well-title">Recently Learnt<span class="pull-right" style="; font-weight: normal; font-size: 14px; color: #aaa;">You've learnt <span style="fond-size: 24px; color: #666;"><?php echo $countLearntConcepts;?></span> out of <span style="fond-size: 24px; color: #666;"><?php echo $countConcepts;?></span> concepts</span></div>
+		<div class="well-title">
+			<a class="link-title" href="<?php echo Yii::app()->homeUrl.'/concept/conceptList?filter_by=learnt&moduleId='.$model->id;?>">Recently Learnt</a>
+			<span class="pull-right" style="; font-weight: normal; font-size: 14px; color: #aaa;">
+				You've learnt <a href="<?php echo Yii::app()->homeUrl.'/concept/conceptList?filter_by=learnt&moduleId='.$model->id;?>"><span style="fond-size: 24px;"><?php echo $countLearntConcepts;?></span></a>
+				 out of <a href="<?php echo Yii::app()->homeUrl.'/concept/conceptList?filter_by=all&moduleId='.$model->id;?>"><span style="fond-size: 24px;"><?php echo $countConcepts;?></span></a> concepts
+			</span>
+		</div>
 		<?php $this->widget('zii.widgets.CListView', array(
 			'dataProvider'=>$recentlyLearntConcepts,
 			'itemView'=>'/concept/_item',
@@ -99,19 +105,19 @@
 		)); ?>
   	</div><!-- /.well -->
 	<div class="well">
-		<div class="well-title">Quizzes<span class="pull-right" style="; font-weight: normal; font-size: 14px; color: #aaa;">You've done <span style="fond-size: 24px; color: #666;"><?php echo $countquizDone;?></span> out of <span style="fond-size: 24px; color: #666;"><?php echo $countQuizzes;?></span> quizzes</span></div>
+		<div class="well-title">Quizzes<span class="pull-right" style="; font-weight: normal; font-size: 14px; color: #aaa;">You've done <a href=""><span style="fond-size: 24px;"><?php echo $countquizDone;?></span></a> out of <a href=""><span style="fond-size: 24px;"><?php echo $countQuizzes;?></span></a> quizzes</span></div>
 		<?php $this->widget('zii.widgets.CListView', array(
-				'dataProvider'=>$quizDone,
-				'itemView'=>'/quiz/_item',
-				'summaryText'=>'',
-				'emptyText'=>'Not taken quiz yet.',
-				'pager' => array(
-					'header' => '',
-					'prevPageLabel' => '&lt;&lt;',
-					'nextPageLabel' => '&gt;&gt;',
-				),
-				'id'=>'quiz-list',
-			)); ?>
+			'dataProvider'=>$quizDone,
+			'itemView'=>'/quiz/_item',
+			'summaryText'=>'',
+			'emptyText'=>'Not taken quiz yet.',
+			'pager' => array(
+				'header' => '',
+				'prevPageLabel' => '&lt;&lt;',
+				'nextPageLabel' => '&gt;&gt;',
+			),
+			'id'=>'quiz-list',
+		)); ?>
   	</div><!-- /.well -->
 <?php } ?>
 
