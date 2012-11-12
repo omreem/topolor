@@ -4,6 +4,10 @@
 	</div>
 </div><!-- form -->
 
+<div id="new-message-count" class="alert alert-info" style="display: none;">
+	<div class="btn-show-new-message btn-link" style="text-align:center;"></div>
+</div>
+
 <?php $this->widget('zii.widgets.CListView', array(
 	'dataProvider'=>$dataProvider,
 	'itemView'=>'_view',
@@ -47,6 +51,8 @@ Yii::app()->clientScript->registerScript('note-index-js', "
 					$('#message-form').find('textarea').val('');
 					$('#message-form').find('#Message_description').attr('placeholder','Send a message');
                 }, 400);
+				
+				oldCount++;
 			}
 		});
 		return false;
@@ -73,5 +79,40 @@ Yii::app()->clientScript->registerScript('note-index-js', "
 	$('.post').live('click', function() {
 		window.location = '".Yii::app()->homeUrl."/message/'+$(this).find('#data_id').val();
 	});
-		
+
+//********* if there are any new news
+
+	var oldCount = ".$dataProvider->totalItemCount.";
+	var newCount = oldCount;
+	
+	setInterval(function(){getNewMessageCount();},30000);
+	
+	function getNewMessageCount() {
+		$.ajax({
+			type: 'post',
+			url: '".$this->createUrl('messageCount')."',
+			success: function (count) {
+				newCount = count;
+				var diffCount = newCount - oldCount;
+				if (diffCount > 0) {
+					var str = diffCount + ' new message';
+					if (diffCount > 1)
+						str += 's';
+					str += '. Click to refresh the list.';
+					$('.btn-show-new-message').text(str);
+					$('#new-message-count').attr('style', 'display: block;');
+				}
+			}
+		});
+	}
+
+	$('.btn-show-new-message').click(function(){
+		oldCount = newCount;
+		setTimeout(function() {
+			$.fn.yiiListView.update('message-list', {
+				data: $(this).serialize()
+			});
+			$('#new-message-count').attr('style','display: none;');
+		}, 400);
+	});
 ");

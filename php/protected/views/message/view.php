@@ -71,4 +71,10 @@ Yii::app()->clientScript->registerScript('message-view-js', "
 	$('#message-list .post .btn-reply').live('click', function() {
 		$('#Message_description').focus();
 	});
+		
+	setInterval(function(){
+		$.fn.yiiListView.update('message-list', {
+			data: $(this).serialize()
+		});
+	}, 6000);
 ");

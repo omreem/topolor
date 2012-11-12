@@ -367,6 +367,7 @@ class ConceptController extends GxController {
 				'filter_by' => $filter_by
 		));
 	}
+	
 	public function actionCreate() {
 		$model = new Concept;
 
@@ -1232,7 +1233,7 @@ class ConceptController extends GxController {
 			throw new CHttpException(400, Yii::t('app', 'Your request is invalid.'));
 		$module_id = $_POST['module_id'];
 		
-		$sql = 'SELECT concept_id, title, c.description, FORMAT(SUBSTRING(score, 1, LENGTH(score)-LOCATE(\'/\', score))/SUBSTRING(score, LOCATE(\'/\', score)+1), 2) AS rate FROM tpl_quiz AS q, tpl_concept AS c WHERE q.concept_id=c.id AND c.root<>c.id AND c.root='.$module_id.' AND q.learner_id='.Yii::app()->user->id.' ORDER BY rate LIMIT 5';
+		$sql = 'SELECT concept_id, title, c.description, FORMAT(SUBSTRING(score, 1, LENGTH(score)-LOCATE(\'/\', score))/SUBSTRING(score, LOCATE(\'/\', score)+1), 2) AS rate FROM tpl_quiz AS q, tpl_concept AS c WHERE q.concept_id=c.id AND c.root<>c.id AND score IS NOT NULL AND c.root='.$module_id.' AND q.learner_id='.Yii::app()->user->id.' ORDER BY rate LIMIT 5';
 		$conceptArr = Yii::app()->db->createCommand($sql)->queryAll();
 		
 		$rtn = '';

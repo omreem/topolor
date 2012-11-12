@@ -48,11 +48,8 @@ class QuizController extends GxController {
 			
 		} else {
 			// generate a new quiz
-			$questionArr = $connection->createCommand()
-				->select('id, description, correct_answer')
-				->from('{{question}}')
-				->where('concept_id = :concept_id', array(':concept_id'=>$concept_id))
-				->queryAll();
+			
+			$questionArr = $connection->createCommand('SELECT * FROM tpl_question WHERE concept_id='.$concept_id.' ORDER BY RAND() LIMIT 3')->queryAll();
 			
 			$count = count($questionArr);
 			

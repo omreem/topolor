@@ -109,5 +109,14 @@ class MessageController extends GxController {
 			'model' => $model,
 		));
 	}
+	
+	public function actionMessageCount() {
+		$learner_id = Yii::app()->user->id;
+		$sql = "SELECT COUNT(*) FROM tpl_message WHERE to_user_id=$learner_id OR user_id=$learner_id";
+		$count = Yii::app()->db->createCommand($sql)->queryScalar();
+		
+		echo $count;
+		Yii::app()->end();
+	}
 
 }

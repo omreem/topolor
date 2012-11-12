@@ -295,6 +295,8 @@ Yii::app()->clientScript->registerScript('feed-index-js', "
 			$(this).next().text('A username is required!');
 			$(this).parent().parent().removeClass('success');
 			$(this).parent().parent().addClass('error');
+		} else {
+			$(this).parent().parent().removeClass('error');
 		}
 		validSignupForm();
 		
@@ -337,6 +339,11 @@ Yii::app()->clientScript->registerScript('feed-index-js', "
 		
 	$('#form-signup .input-file').change(function(){
 		$('#fake-file-input').val($(this).val());
+		if ($(this).val() == '')
+			$(this).removeClass('success');
+		else
+			$(this).addClass('success');
+		validSignupForm();
 	});
 		
 	$('#btn-signup').click(function() {
@@ -358,7 +365,7 @@ Yii::app()->clientScript->registerScript('feed-index-js', "
 	}
 		
 	function validSignupForm() {
-		if ($('#form-signup').find('.success').length == 4)
+		if ($('#form-signup').find('.success').length == 5)
 			setTimeout(function() {
 				$('#btn-signup').removeClass('disabled');
 			}, 500);

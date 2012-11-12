@@ -35,12 +35,21 @@
         </ul>
         <?php if (!Yii::app()->user->isGuest):?>
         <ul class="nav pull-right">
-          <li><a rel="tooltip" data-placement="bottom" title="My profile">
-          	<?php echo GxHtml::image(
-			Yii::app()->baseUrl.'/uploads/images/profile-avatar/'.Yii::app()->user->id,'',
-			array('style'=>'height: 20px; width: 20px;'));?>
-          	&nbsp;<?php echo Yii::app()->getModule('user')->user();?></a></li>
-          <li><a rel="tooltip" data-placement="bottom" title="Log out" href="<?php echo Yii::app()->homeUrl.'/user/logout';?>">Log out</a></li>
+          <li><a><i class="icon-bell"></i></a></li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+	            <?php echo GxHtml::image(
+				Yii::app()->baseUrl.'/uploads/images/profile-avatar/'.Yii::app()->user->id,'',
+				array('style'=>'height: 20px; width: 20px;'));?>
+	          	&nbsp;<?php echo Yii::app()->getModule('user')->user();?>
+            <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="#"><i class="icon-user"></i> Change my avatar</a></li>
+                <li><a href="#"><i class="icon-barcode"></i> Change my password</a></li>
+                <li class="divider"></li>
+                <li><a href="<?php echo Yii::app()->homeUrl.'/user/logout';?>"><i class="icon-off"></i> Sign Out</a></li>
+              </ul>
+          </li>
         </ul>
         <?php endif;?>
       </div>
