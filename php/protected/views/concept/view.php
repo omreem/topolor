@@ -1587,13 +1587,21 @@
 	}
 
 //********* left menu: concepts/modules-recommended(related)
-
 	var isModule = ".($model->isModule() ? '1':'0').";
 		
 	if (isModule == 1) {
-		$('#concept-related-content').closest('.left-main-menu').find('.nav-header').text('Recommended modules');
-		// ajax -> fetch recommendate modules......
+		$.ajax({
+			data: {order_by: 'learning', module_id: ".$model->id."},
+			type: 'post',
+			url: '".$this->createUrl('concept/fetchConceptsByLearner')."',
+			success: function(html) {
+				$('#concept-related-content').html(html);
+				$('[rel=tooltip]').tooltip();
+			},
+		});
 	} else {
+		$('#top-concepts').find('ul').children('li').eq(1).hide();
+		$('#top-concepts').find('ul').children('li').eq(0).text('Recommended concepts');
 		$.ajax({
 			data: {concept_id: ".$model->id."},
 			type: 'post',
@@ -1604,6 +1612,7 @@
 			},
 		});
 	}
+		
 //********* left menu: user-ranking
 	// init
 	$.ajax({
@@ -1639,16 +1648,28 @@
 			},
 		});
 		
-		var url = $('.user-filter-by').text() == 'Learning' ? '".$this->createUrl('concept/fetchUsersLearning')."' : '".$this->createUrl('concept/fetchUsersLearnt')."';
+		var url = $('#study-buddis .user-filter-by').text() == 'Learning' ? '".$this->createUrl('concept/fetchUsersLearning')."' : '".$this->createUrl('concept/fetchUsersLearnt')."';
 		$.ajax({
 			data: {concept_id: ".$model->id."},
 			type: 'post',
 			url: url,
 			success: function(html) {
-				$('#user-fiter-content').html(html);
+				$('#study-buddis #user-fiter-content').html(html);
 				//$('[rel=tooltip]').tooltip();
 			},
 		});
+		
+		var order_by = $('#top-concepts .user-filter-by').text() == 'Learning' ? 'learning' : 'learnt';
+		$.ajax({
+			data: {order_by: order_by, module_id: ".$model->id."},
+			type: 'post',
+			url: '".$this->createUrl('concept/fetchConceptsByLearner')."',
+			success: function(html) {
+				$('#top-concepts #concept-related-content').html(html);
+				$('[rel=tooltip]').tooltip();
+			},
+		});
+		
 	},30000);
 		
 	// change rank order by
@@ -1686,25 +1707,25 @@
 	});
 		
 	// change filter by learnt or learning
-	$('.user-filter-by-change').live('click', function() {
+	$('#study-buddis .user-filter-by-change').live('click', function() {
 		
 		$('[rel=tooltip]').tooltip('disable');
 		
 		if ($(this).text() == 'Learning') {
-			$('.user-filter-by').text('Learning');
+			$('#study-buddis .user-filter-by').text('Learning');
 			$(this).text('Learnt');
 			$.ajax({
 				data: {concept_id: ".$model->id."},
 				type: 'post',
 				url: '".$this->createUrl('concept/fetchUsersLearning')."',
 				success: function(html) {
-					$('#user-fiter-content').html(html);
+					$('#study-buddis #user-fiter-content').html(html);
 					$('[rel=tooltip]').tooltip();
 				},
 			});
 		
 		} else {
-			$('.user-filter-by').text('Learnt');
+			$('#study-buddis .user-filter-by').text('Learnt');
 			$(this).text('Learning');
 		
 			$.ajax({
@@ -1712,7 +1733,41 @@
 				type: 'post',
 				url: '".$this->createUrl('concept/fetchUsersLearnt')."',
 				success: function(html) {
-					$('#user-fiter-content').html(html);
+					$('#study-buddis #user-fiter-content').html(html);
+					$('[rel=tooltip]').tooltip();
+				},
+			});
+		}
+	});
+		
+	$('#top-concepts .user-filter-by-change').live('click', function() {
+		
+		$('[rel=tooltip]').tooltip('disable');
+		
+		if ($(this).text() == 'Learning') {
+			$('#top-concepts .user-filter-by').text('Learning');
+			$(this).text('Learnt');
+		
+			$.ajax({
+				data: {order_by: 'learning', module_id: ".$model->id."},
+				type: 'post',
+				url: '".$this->createUrl('concept/fetchConceptsByLearner')."',
+				success: function(html) {
+					$('#top-concepts #concept-related-content').html(html);
+					$('[rel=tooltip]').tooltip();
+				},
+			});
+		
+		} else {
+			$('#top-concepts .user-filter-by').text('Learnt');
+			$(this).text('Learning');
+		
+			$.ajax({
+				data: {order_by: 'learnt', module_id: ".$model->id."},
+				type: 'post',
+				url: '".$this->createUrl('concept/fetchConceptsByLearner')."',
+				success: function(html) {
+					$('#top-concepts #concept-related-content').html(html);
 					$('[rel=tooltip]').tooltip();
 				},
 			});

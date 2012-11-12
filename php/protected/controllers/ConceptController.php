@@ -279,6 +279,10 @@ class ConceptController extends GxController {
 			.' and lc.learner_id='.Yii::app()->user->id
 			
 			.' order by c.lft';
+		} else if ($filter_by == 'az') {
+			$sql='select id, title, description, tags from tpl_concept'
+			.' where root='.$moduleId.' and id<>'.$moduleId
+			.' order by title';
 		} else {// $filter_by == 'all'
 			$sql='select id, title, description, tags from tpl_concept'
 			.' where root='.$moduleId.' and id<>'.$moduleId
@@ -1151,10 +1155,96 @@ class ConceptController extends GxController {
 		Yii::app()->end();
 	}
 	
-	public function actionFetchConceptsRelated() {
+	public function actionFetchUsersByQuizScore() {
+		if (!isset($_POST['concept_id']))
+			throw new CHttpException(400, Yii::t('app', 'Your request is invalid.'));
 		
-		// if only they have same tag(s)
-		// how many tags mached
+		$concept_id = $_POST['concept_id'];
+		
+		$baseUrl = Yii::app()->baseUrl;
+		$rtn = '';
+		
+		$isRoot = $concept_id == Yii::app()->db->createCommand('SELECT root FROM tpl_concept WHERE id='.$concept_id)->queryScalar();
+		
+		if ($isRoot) {
+			// isModule
+			$sql = 'SELECT learner_id, username, score FROM tpl_quiz AS q, tpl_user AS u WHERE u.id=learner_id AND done_at IS NOT NULL AND concept_id IN (SELECT id FROM tpl_concept WHERE id<>root AND root='.$concept_id.')';
+		} else {
+			// is not module
+			$sql = 'SELECT learner_id, username, score FROM tpl_quiz AS q, tpl_user AS u WHERE u.id=learner_id AND done_at IS NOT NULL AND concept_id='.$concept_id;
+		}
+		
+		$quizArr = Yii::app()->db->createCommand($sql)->queryAll();
+		if (count($quizArr) == 0) {
+			echo '<div style="margin: 16px 16px 8px 16px;">No learner\'s taken quizs.</div>';
+			Yii::app()->end();
+		}	
+		$userArr = array();
+		foreach ($quizArr as $quiz) {
+			$s = explode('/', $quiz['score']);
+			if (array_key_exists($quiz['learner_id'], $userArr)) {
+				$userArr[$quiz['learner_id']]['correct'] += intval($s[0]);
+				$userArr[$quiz['learner_id']]['total'] += intval($s[1]);
+			} else {
+				$userArr[$quiz['learner_id']]['correct'] = intval($s[0]);
+				$userArr[$quiz['learner_id']]['total'] = intval($s[1]);
+				$userArr[$quiz['learner_id']]['username'] = $quiz['username'];
+			}
+			$userArr[$quiz['learner_id']]['score'] = $userArr[$quiz['learner_id']]['correct'] * 100 / $userArr[$quiz['learner_id']]['total'];
+		}
+		
+		uksort($userArr, function($a, $b){
+			return $a['score'] > $b['score'];
+		});
+	
+		$userId = Yii::app()->user->id;
+		
+		foreach ($userArr as $id => $attr)
+			if ($id == $userId)
+				$rtn .= '
+<div style="margin: 16px 16px 8px 16px;" class="user-rank-item" rel="tooltip" data-placement="right" title="It\'s you.">
+	<img src="'.$baseUrl.'/uploads/images/profile-avatar/'.$id.'" style="height: 44px; width: 44px;">
+	<div style="margin-left: 60px; margin-top: -44px;">
+		<div class="name-user">'.$attr['username'].'</div>
+		<div style="color: #333">Correct rate: '.round($attr['score'], 1).'%</div>
+		<input id="data_id" type="hidden" value="'.$id.'"/>
+	</div>
+</div>';
+			else
+				$rtn .= '
+<div style="margin: 16px 16px 8px 16px;" class="user-rank-item" rel="tooltip" data-placement="right" title="Send a message" data-toggle="modal" href="#message-modal">
+	<img src="'.$baseUrl.'/uploads/images/profile-avatar/'.$id.'" style="height: 44px; width: 44px;">
+	<div style="margin-left: 60px; margin-top: -44px;">
+		<div class="name-user">'.$attr['username'].'</div>
+		<div style="color: #333">Correct rate: '.round($attr['score'], 1).'%</div>
+		<input id="data_id" type="hidden" value="'.$id.'"/>
+	</div>
+</div>';
+		
+		echo $rtn;
+		Yii::app()->end();
+		
+	}
+	
+	public function actionFetchConceptsByIncorrectAnswers() {
+		// order by incorrectly answered questions
+		if (!isset($_POST['module_id']))
+			throw new CHttpException(400, Yii::t('app', 'Your request is invalid.'));
+		$module_id = $_POST['module_id'];
+		
+		$sql = 'SELECT concept_id, title, c.description, FORMAT(SUBSTRING(score, 1, LENGTH(score)-LOCATE(\'/\', score))/SUBSTRING(score, LOCATE(\'/\', score)+1), 2) AS rate FROM tpl_quiz AS q, tpl_concept AS c WHERE q.concept_id=c.id AND c.root<>c.id AND c.root='.$module_id.' AND q.learner_id='.Yii::app()->user->id.' ORDER BY rate LIMIT 5';
+		$conceptArr = Yii::app()->db->createCommand($sql)->queryAll();
+		
+		$rtn = '';
+		foreach ($conceptArr as $concept)
+			$rtn .= '<div><span style="margin: 0 0 6px 16px; line-height: 28px;" class="concepts-related-item"><a class="label label-success" rel="tooltip" data-placement="right" title="'.$concept['description'].'" href="'.Yii::app()->homeUrl.'/concept/'.$concept['concept_id'].'">'.$concept['title'].'</a></span><span class="pull-right" style="color: #333; margin-right: 16px; line-height: 28px;">Correct rate: '.$concept['rate'].'</span></div>';
+		
+		echo $rtn .'';
+		Yii::app()->end();
+	}
+	
+	public function actionFetchConceptsRelated() {
+		// order by how many tags mached
 		if (!isset($_POST['concept_id']))
 			throw new CHttpException(400, Yii::t('app', 'Your request is invalid.'));
 		
@@ -1169,7 +1259,25 @@ class ConceptController extends GxController {
 		
 		echo $rtn .'';
 		Yii::app()->end();
+	}
+	
+	public function actionFetchConceptsByLearner() {
+		// order by how many users are learning / have learnt
+		if (!isset($_POST['module_id']) || !isset($_POST['order_by']))
+			throw new CHttpException(400, Yii::t('app', 'Your request is invalid.'));
+		$module_id = $_POST['module_id'];
+		$order_by = $_POST['order_by'];
 		
+		$sql = 'SELECT id, title, description, COUNT(id) AS count FROM tpl_concept, tpl_learner_concept WHERE id=concept_id AND root<>id AND root='.$module_id.' AND status='.($order_by == 'learning' ? LearnerConcept::STATUS_INPROGRESS : LearnerConcept::STATUS_COMPLETED).' GROUP BY concept_id ORDER BY count(id) DESC LIMIT 5';
+		
+		$conceptArr = Yii::app()->db->createCommand($sql)->queryAll();
+		
+		$rtn = '';
+		foreach ($conceptArr as $concept)
+			$rtn .= '<div><span style="margin: 0 0 6px 16px; line-height: 28px;" class="concepts-related-item"><a class="label label-success" rel="tooltip" data-placement="right" title="'.$concept['description'].'" href="'.Yii::app()->homeUrl.'/concept/'.$concept['id'].'">'.$concept['title'].'</a></span><span class="pull-right" style="color: #333; margin-right: 16px; line-height: 28px;">'.$concept['count'].' learner(s)</span></div>';
+		
+		echo $rtn .'';
+		Yii::app()->end();
 	}
 
 }

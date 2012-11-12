@@ -55,13 +55,22 @@
       <div class="well sidebar-nav left-main-menu">
         user info
       </div><!--/.well -->
-      <div class="well sidebar-nav left-main-menu">
+      <div class="well sidebar-nav left-main-menu" id="top-concepts">
       	<ul class="nav nav-tabs">
-          <li class="nav-header" style="margin-bottom: 6px;">Recommended concepts</li>
+          <li class="nav-header" style="margin-bottom: 6px;">Top concepts</li>
+          <li class="dropdown pull-right" style="margin-top: -8px; margin-bottom: 2px;">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+              <span class="user-filter-by">Learning</span>
+              <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="btn-link user-filter-by-change">Learnt</a></li>
+            </ul>
+          </li>
         </ul>
         <div id="concept-related-content" style="margin-top: -8px;"></div>
       </div><!--/.well -->
-      <div class="well sidebar-nav left-main-menu">
+      <div class="well sidebar-nav left-main-menu" id="top-users">
       	<ul class="nav nav-tabs">
           <li class="nav-header">Top Users</li>
           <li class="dropdown pull-right" style="margin-top: -8px; margin-bottom: 2px;">
@@ -76,7 +85,7 @@
         </ul>
         <div id="user-ranking-content" style="margin-top: -8px;"></div>
       </div><!--/.well -->
-      <div class="well sidebar-nav left-main-menu">
+      <div class="well sidebar-nav left-main-menu" id="study-buddis">
       	<ul class="nav nav-tabs">
           <li class="nav-header">Study Buddis</li>
           <li class="dropdown pull-right" style="margin-top: -8px; margin-bottom: 2px;">
