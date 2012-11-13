@@ -455,7 +455,7 @@ class ConceptController extends GxController {
 				continue;
 				
 			$rtn .= "<tr><td class='title' style='padding-left: ".(($concept->level-1)*20)."px;'>".($concept->level==2?"<b>":"").CHtml::encode($concept->title).($concept->level==2?"</b>":"")."</td>"
-			."<td class='legend'>legend</td><td class='action'><a href='".Yii::app()->homeUrl."/concept/".$concept->id."'>Get In</a></td></tr>";
+			."<td class='action'><a href='".Yii::app()->homeUrl."/concept/".$concept->id."'>Get In</a></td></tr>";
 		}
 			
 		return $rtn.'</table>';

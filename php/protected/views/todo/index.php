@@ -372,7 +372,7 @@ Yii::app()->clientScript->registerScript('todo-index-js', "
 		$(this).parent().children('.filter-btn-done').attr('style', 'display:inline;');
 		$(this).parent().children('.filter-btn-canceled').attr('style', 'display:inline;');
 	
-		$('#filter-form #status').val('');
+		$('#filter-form #status').val('all');
 		$('#filter-form').submit();
 	});
 	

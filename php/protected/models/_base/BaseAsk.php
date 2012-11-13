@@ -104,7 +104,7 @@ abstract class BaseAsk extends GxActiveRecord {
 	
 		if ($filter_by != '') {
 			if ($filter_by == 'myquestions')
-				$this->learner_id = Yii::app()->user->id;
+				$criteria->compare('learner_id', Yii::app()->user->id);
 			elseif ($filter_by == 'myanswers') {
 				$asks = Yii::app()->db->createCommand()
 					->selectDistinct('ask_id')

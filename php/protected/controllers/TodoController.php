@@ -204,8 +204,8 @@ class TodoController extends GxController {
 		
 		$whereStatus='';
 		if (isset($_POST['status'])) {
-			if ($_POST['status'] == '')
-				$whereStatus = 'status= \'\''.$_POST['status'].' AND ';
+			if ($_POST['status'] == 'all')
+				$whereStatus = '';
 			else
 				$whereStatus = 'status='.$_POST['status'].' AND ';
 		}

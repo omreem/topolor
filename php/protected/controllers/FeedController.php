@@ -177,21 +177,20 @@ class FeedController extends GxController {
 			$rank_by = $_POST['rank_by'];
 		
 		$us = User::model()->with('countShare', 'countComment', 'countFavorite')->findAllBySql('select * from tpl_user limit 5');
-		
+
 		$userArr = array();
 		if ($rank_by == 'favorited')
 			foreach ($us as $user)
 				$userArr[$user->countFavorite] = $user;
-		else if ($rank_by == 'commented')
+		else if ($rank_by == 'commented') {
 			foreach ($us as $user)
 				$userArr[$user->countComment] = $user;
-		else // rank by shared
+		}else // rank by shared
 			foreach ($us as $user)
 				$userArr[$user->countShare] = $user;
-			
-		
+
 		krsort($userArr);
-		
+	
 		$baseUrl = Yii::app()->baseUrl;
 		$rtn = '';
 		
