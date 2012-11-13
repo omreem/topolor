@@ -82,7 +82,7 @@ Yii::app()->clientScript->registerScript('note-index-js', "
 
 //********* if there are any new news
 
-	var oldCount = ".$dataProvider->totalItemCount.";
+	var oldCount = ".$countMessage.";
 	var newCount = oldCount;
 	
 	setInterval(function(){getNewMessageCount();},30000);

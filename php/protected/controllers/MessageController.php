@@ -92,9 +92,14 @@ class MessageController extends GxController {
 		
 		$newMsg = new Message;
 		
+		$learner_id = Yii::app()->user->id;
+		$sql = "SELECT COUNT(*) FROM tpl_message WHERE to_user_id=$learner_id OR user_id=$learner_id";
+		$countMessage = Yii::app()->db->createCommand($sql)->queryScalar();
+		
 		$this->render('index', array(
 			'dataProvider' => $dataProvider,
 			'newMsg' => $newMsg,
+			'countMessage'=> $countMessage,
 		));
 	}
 

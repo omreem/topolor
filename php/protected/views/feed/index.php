@@ -1088,6 +1088,11 @@ Yii::app()->clientScript->registerScript('feed-index-js', "
 		var of_id = $(this).closest('.post').find('#of_id').val();
 		var of = $(this).closest('.post').find('#of').val();
 		
+		if (of_id == '' && of == '') {// feed
+			of_id = from_id;
+			of = 'feed';
+		}
+		
 		var str = '@' + $(this).closest('.post').find('.user-name').html() + $(this).closest('.post').find('.content-description-feed').text();
 		$.ajax({
 			type: 'POST',

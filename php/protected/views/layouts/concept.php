@@ -35,20 +35,20 @@
         </ul>
         <?php if (!Yii::app()->user->isGuest):?>
         <ul class="nav pull-right">
-          <li><a><i class="icon-bell"></i></a></li>
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
 	            <?php echo GxHtml::image(
 				Yii::app()->baseUrl.'/uploads/images/profile-avatar/'.Yii::app()->user->id,'',
 				array('style'=>'height: 20px; width: 20px;'));?>
 	          	&nbsp;<?php echo Yii::app()->getModule('user')->user();?>
-            <b class="caret"></b></a>
-              <ul class="dropdown-menu">
-                <li><a href="#"><i class="icon-user"></i> Change my avatar</a></li>
-                <li><a href="#"><i class="icon-barcode"></i> Change my password</a></li>
-                <li class="divider"></li>
-                <li><a href="<?php echo Yii::app()->homeUrl.'/user/logout';?>"><i class="icon-off"></i> Sign Out</a></li>
-              </ul>
+              <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a href="#">Change my avatar</a></li>
+              <li><a href="#">Change my password</a></li>
+              <li class="divider"></li>
+              <li><a href="<?php echo Yii::app()->homeUrl.'/user/logout';?>">Sign Out</a></li>
+            </ul>
           </li>
         </ul>
         <?php endif;?>
@@ -62,7 +62,22 @@
   <div class="row">
     <div class="span3">
       <div class="well sidebar-nav left-main-menu">
-        user info
+      	<div style="display: table;">
+	      	<div style="display: table-cell; padding: 2px 12px;">
+	        <?php echo GxHtml::image(
+					Yii::app()->baseUrl.'/uploads/images/profile-avatar/'.Yii::app()->user->id,'',
+					array(
+						'style'=>'width: 84px; height: 84px;',
+						'class'=>'img-rounded',
+					));?>
+			</div>
+			<div style="display: table-cell; vertical-align: middle;">
+				<b><span style="font-size: 18px;"><?php echo CHtml::encode(Yii::app()->user->name);?></span></b><br>
+				My modules: <span id="countMyModules"></span><br>
+				Concepts learning: <span id="countConceptsLearning"></span><br>
+				Concepts Learnt: <span id="countConceptsLearnt"></span>
+			</div>
+		</div>
       </div><!--/.well -->
       <div class="well sidebar-nav left-main-menu" id="top-concepts">
       	<ul class="nav nav-tabs">
@@ -130,3 +145,15 @@
 <script src="<?php echo Yii::app()->request->baseUrl; ?>/js/topolor.js"></script>
 </body>
 </html>
+
+<?php Yii::app()->clientScript->registerScript('qacenter-layout-js', "
+//********* left menu: stats
+	$.ajax({
+		url: '".$this->createUrl('stats/statsConcept')."',
+		success: function(stats) {
+			$('#countMyModules').html(stats.countMyModules);
+			$('#countConceptsLearning').html(stats.countConceptsLearning);
+			$('#countConceptsLearnt').html(stats.countConceptsLearnt);
+		}
+	});
+");

@@ -55,12 +55,21 @@
         </ul>
         <?php if (!Yii::app()->user->isGuest):?>
         <ul class="nav pull-right">
-          <li><a rel="tooltip" data-placement="bottom" title="My profile">
-          	<?php echo GxHtml::image(
-			Yii::app()->baseUrl.'/uploads/images/profile-avatar/'.Yii::app()->user->id,'',
-			array('style'=>'height: 20px; width: 20px;'));?>
-          	&nbsp;<?php echo Yii::app()->getModule('user')->user();?></a></li>
-          <li><a rel="tooltip" data-placement="bottom" title="Log out" href="<?php echo Yii::app()->homeUrl.'/user/logout';?>">Log out</a></li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+	            <?php echo GxHtml::image(
+				Yii::app()->baseUrl.'/uploads/images/profile-avatar/'.Yii::app()->user->id,'',
+				array('style'=>'height: 20px; width: 20px;'));?>
+	          	&nbsp;<?php echo Yii::app()->getModule('user')->user();?>
+              <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a href="#">Change my avatar</a></li>
+              <li><a href="#">Change my password</a></li>
+              <li class="divider"></li>
+              <li><a href="<?php echo Yii::app()->homeUrl.'/user/logout';?>">Sign Out</a></li>
+            </ul>
+          </li>
         </ul>
         <?php endif;?>
       </div>
@@ -73,7 +82,21 @@
   <div class="row">
     <div class="span3">
       <div class="well sidebar-nav left-main-menu">
-        user info
+      	<div style="display: table;">
+	      	<div style="display: table-cell; padding: 2px 12px;">
+	        <?php echo GxHtml::image(
+					Yii::app()->baseUrl.'/uploads/images/profile-avatar/'.Yii::app()->user->id,'',
+					array(
+						'style'=>'width: 84px; height: 84px;',
+						'class'=>'img-rounded',
+					));?>
+			</div>
+			<div style="display: table-cell; vertical-align: middle;">
+				<b><span style="font-size: 18px;"><?php echo CHtml::encode(Yii::app()->user->name);?></span></b><br>
+				My questions: <a href="<?php echo Yii::app()->createUrl('qacenter/myqa').'?filter_by=myquestions';?>"><span id="countMyQuestions"></span></a><br>
+				My answers: <a href="<?php echo Yii::app()->createUrl('qacenter/myqa').'?filter_by=myanswers';?>"><span id="countMyAnswers"></span></a><br>
+			</div>
+		</div>
       </div><!--/.well -->
       <div class="well sidebar-nav left-main-menu">
         <ul class="nav nav-list">
@@ -124,6 +147,14 @@
 </html>
 
 <?php Yii::app()->clientScript->registerScript('qacenter-layout-js', "
+//********* left menu: stats
+	$.ajax({
+		url: '".$this->createUrl('stats/statsQa')."',
+		success: function(stats) {
+			$('#countMyQuestions').html(stats.countMyQuestions);
+			$('#countMyAnswers').html(stats.countMyAnswers);
+		}
+	});
 
 //********* left menu: user-ranking
 	// init

@@ -158,6 +158,7 @@ class FeedController extends GxController {
 			echo 'fail';
 		Yii::app()->end();
 	}
+	
 	public function actionRegistration() {
 		if (isset($_POST['RegistrationForm'])) {
 			$model = new RegistrationForm;
@@ -167,6 +168,108 @@ class FeedController extends GxController {
 			$model->status = 1;
 			$model->save();
 		}
+	}
+	
+	public function actionFetchTopUsers() {
+		
+		$rank_by = 'shared'; //default
+		if (isset($_POST['rank_by']))
+			$rank_by = $_POST['rank_by'];
+		
+		$us = User::model()->with('countShare', 'countComment', 'countFavorite')->findAllBySql('select * from tpl_user limit 5');
+		
+		$userArr = array();
+		if ($rank_by == 'favorited')
+			foreach ($us as $user)
+				$userArr[$user->countFavorite] = $user;
+		else if ($rank_by == 'commented')
+			foreach ($us as $user)
+				$userArr[$user->countComment] = $user;
+		else // rank by shared
+			foreach ($us as $user)
+				$userArr[$user->countShare] = $user;
+			
+		
+		krsort($userArr);
+		
+		$baseUrl = Yii::app()->baseUrl;
+		$rtn = '';
+		
+		if ($rank_by == 'favorited')
+			foreach ($userArr as $user)
+				if ($user->id == Yii::app()->user->id)
+					$rtn .= <<<EOF
+<div style="margin: 16px 16px 8px 16px;" class="user-rank-item" rel="tooltip" data-placement="right" title="It's you.">
+	<img src="$baseUrl/uploads/images/profile-avatar/$user->id" style="height: 44px; width: 44px;">
+	<div style="margin-left: 60px; margin-top: -44px;">
+		<div class="name-user">$user</div>
+		<div style="color: #333">$user->countFavorite favorite(s)</div>
+		<input id="data_id" type="hidden" value="$user->id"/>
+	</div>
+</div>
+EOF;
+				else
+					$rtn .= <<<EOF
+<div style="margin: 16px 16px 8px 16px;" class="user-rank-item" rel="tooltip" data-placement="right" title="Send a message" data-toggle="modal" href="#message-modal">
+	<img src="$baseUrl/uploads/images/profile-avatar/$user->id" style="height: 44px; width: 44px;">
+	<div style="margin-left: 60px; margin-top: -44px;">
+		<div class="name-user">$user</div>
+		<div style="color: #333">$user->countFavorite favorite(s)</div>
+		<input id="data_id" type="hidden" value="$user->id"/>
+	</div>
+</div>
+EOF;
+		else if ($rank_by == 'commented')
+			foreach ($userArr as $user)
+				if ($user->id == Yii::app()->user->id)
+					$rtn .= <<<EOF
+<div style="margin: 16px 16px 8px 16px;" class="user-rank-item" rel="tooltip" data-placement="right" title="It's you.">
+	<img src="$baseUrl/uploads/images/profile-avatar/$user->id" style="height: 44px; width: 44px;">
+	<div style="margin-left: 60px; margin-top: -44px;">
+		<div class="name-user">$user</div>
+		<div style="color: #333">$user->countComment comment(s)</div>
+		<input id="data_id" type="hidden" value="$user->id"/>
+	</div>
+</div>
+EOF;
+				else
+					$rtn .= <<<EOF
+<div style="margin: 16px 16px 8px 16px;" class="user-rank-item" rel="tooltip" data-placement="right" title="Send a message" data-toggle="modal" href="#message-modal">
+	<img src="$baseUrl/uploads/images/profile-avatar/$user->id" style="height: 44px; width: 44px;">
+	<div style="margin-left: 60px; margin-top: -44px;">
+		<div class="name-user">$user</div>
+		<div style="color: #333">$user->countComment comment(s)</div>
+		<input id="data_id" type="hidden" value="$user->id"/>
+	</div>
+</div>
+EOF;
+		else // rank by shared
+			foreach ($userArr as $user)
+				if ($user->id == Yii::app()->user->id)
+					$rtn .= <<<EOF
+<div style="margin: 16px 16px 8px 16px;" class="user-rank-item" rel="tooltip" data-placement="right" title="It's you.">
+	<img src="$baseUrl/uploads/images/profile-avatar/$user->id" style="height: 44px; width: 44px;">
+	<div style="margin-left: 60px; margin-top: -44px;">
+		<div class="name-user">$user</div>
+		<div style="color: #333">$user->countShare share(s)</div>
+		<input id="data_id" type="hidden" value="$user->id"/>
+	</div>
+</div>
+EOF;
+				else
+					$rtn .= <<<EOF
+<div style="margin: 16px 16px 8px 16px;" class="user-rank-item" rel="tooltip" data-placement="right" title="Send a message" data-toggle="modal" href="#message-modal">
+	<img src="$baseUrl/uploads/images/profile-avatar/$user->id" style="height: 44px; width: 44px;">
+	<div style="margin-left: 60px; margin-top: -44px;">
+		<div class="name-user">$user</div>
+		<div style="color: #333">$user->countShare share(s)</div>
+		<input id="data_id" type="hidden" value="$user->id"/>
+	</div>
+</div>
+EOF;
+		
+		echo $rtn .'';
+		Yii::app()->end();
 	}
 
 }

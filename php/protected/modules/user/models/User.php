@@ -101,6 +101,10 @@ class User extends GxActiveRecord
 	
 				'countAsk' => array(self::STAT, 'Ask', 'learner_id'),
 				'countAnswer' => array(self::STAT, 'answer', 'learner_id'),
+				
+				'countShare' => array(self::STAT, 'Feed', 'user_id', 'condition'=>'of IS NOT NULL OR from_id IS NOT NULL'),
+				'countComment' => array(self::STAT, 'FeedComment', 'user_id'),
+				'countFavorite' => array(self::STAT, 'Favorite', 'user_id'),
 		);
 	}
 	

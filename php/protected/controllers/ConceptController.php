@@ -1280,5 +1280,71 @@ class ConceptController extends GxController {
 		echo $rtn .'';
 		Yii::app()->end();
 	}
+	
+	public function actionFetchModule() {
+		// order by how many users have registered
+		$filter_by = 'learning';
+		if (isset($_POST['filter_by']))
+			$filter_by = $_POST['filter_by'];
+		
+		$sql = 'SELECT c.id, title, COUNT(learner_id) AS count FROM tpl_learner_concept AS lc, tpl_concept AS c WHERE c.root=c.id AND status='.($filter_by == 'learning' ? LearnerConcept::STATUS_INPROGRESS : LearnerConcept::STATUS_COMPLETED).' AND c.id=lc.concept_id GROUP BY concept_id ORDER BY COUNT(learner_id) DESC LIMIT 5';
+		
+		$moduleArr = Yii::app()->db->createCommand($sql)->queryAll();
+		
+		if (count($moduleArr) == 0) {
+			echo '<div style="margin: 16px 16px 8px 16px;">No module is found.</div>';
+			Yii::app()->end();
+		}
+		
+		$rtn = '';
+		foreach ($moduleArr as $module)
+			$rtn .= '<div><span style="margin: 0 0 6px 16px; line-height: 28px;" class="concepts-related-item"><a class="label label-success" href="'.Yii::app()->homeUrl.'/concept/'.$module['id'].'">'.$module['title'].'</a></span><span class="pull-right" style="color: #333; margin-right: 16px; line-height: 28px;">'.$module['count'].' learner(s)</span></div>';
+								
+		echo $rtn .'';
+		Yii::app()->end();
+	}
+	
+	public function actionFetchUsersRankByModule() {
+		// order by how many modules users are learning / have learnt
+		$rank_by = 'learning';
+		if (isset($_POST['rank_by']))
+			$rank_by = $_POST['rank_by'];
+		
+		$baseUrl = Yii::app()->baseUrl;
+		$rtn = '';
+		
+		$sql = 'SELECT t.id AS id, t.username, COUNT(lc.concept_id) AS count FROM tpl_user AS t, tpl_learner_concept AS lc WHERE t.id=lc.learner_id AND lc.concept_id IN (SELECT id FROM tpl_concept AS c WHERE c.id=c.root ) AND lc.status='.($rank_by == 'learning' ? LearnerConcept::STATUS_INPROGRESS : LearnerConcept::STATUS_COMPLETED).' GROUP BY learner_id ORDER BY COUNT(concept_id) limit 5';
+		$userArr = Yii::app()->db->createCommand($sql)->queryAll();
+			
+		if (count($userArr) == 0) {
+			echo '<div style="margin: 16px 16px 8px 16px;">No learner has learnt.</div>';
+			Yii::app()->end();
+		}
+		
+		foreach ($userArr as $user)
+			if ($user['id'] == Yii::app()->user->id)
+			$rtn .= '
+<div style="margin: 16px 16px 8px 16px;" class="user-rank-item" rel="tooltip" data-placement="right" title="It\'s you.">
+	<img src="'.$baseUrl.'/uploads/images/profile-avatar/'.$user['id'].'" style="height: 44px; width: 44px;">
+	<div style="margin-left: 60px; margin-top: -44px;">
+		<div class="name-user">'.$user['username'].'</div>
+		<div style="color: #333">'.$user['count'].' module(s)</div>
+		<input id="data_id" type="hidden" value="'.$user['id'].'"/>
+	</div>
+</div>';
+		else
+			$rtn .= '
+<div style="margin: 16px 16px 8px 16px;" class="user-rank-item" rel="tooltip" data-placement="right" title="Send a message" data-toggle="modal" href="#message-modal">
+	<img src="'.$baseUrl.'/uploads/images/profile-avatar/'.$user['id'].'" style="height: 44px; width: 44px;">
+	<div style="margin-left: 60px; margin-top: -44px;">
+		<div class="name-user">'.$user['username'].'</div>
+		<div style="color: #333">'.$user['count'].' module(s)</div>
+		<input id="data_id" type="hidden" value="'.$user['id'].'"/>
+	</div>
+</div>';
+		
+		echo $rtn;
+		Yii::app()->end();
+		}
 
 }
