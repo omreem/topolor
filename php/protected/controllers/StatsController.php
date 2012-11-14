@@ -29,7 +29,7 @@ class StatsController extends GxController {
 		} else {
 			$rtn = '';
 			foreach ($myModuleArr as $myModule)
-				$rtn .= '<li><a href="'.Yii::app()->homeUrl.'/concept/'.$myModule['id'].'"><i class="icon-fire"></i> '.$myModule['title'].'</a></li>';
+				$rtn .= '<li><a href="'.Yii::app()->homeUrl.'/concept/'.$myModule['id'].'"><i class="icon-fire"></i> '.Helpers::string_len($myModule['title'], 28).'</a></li>';
 		}
 		
 		echo $rtn;

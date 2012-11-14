@@ -69,6 +69,8 @@ class Concept extends BaseConcept
 	}
 	
 	public function getNextConcept() {
+		if ($this->rgt + 1 == $this->module->rgt)
+			return null;
 		if (!$this->isLeaf()) {
 			$next = Concept::model()->find('lft=:lft and root=:root', array(':lft'=>$this->lft+1, ':root'=>$this->root));
 		} else {

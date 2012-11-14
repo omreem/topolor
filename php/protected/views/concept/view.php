@@ -58,9 +58,9 @@
 	</div>
 	<hr>
 	<div class="concept-description-panel">
-		<p><?php echo CHtml::encode($model->description);?></p>
-		<hr>
 		<p><b>Tag:</b><?php echo $this->getTags($model->id);?></p>
+		<hr>
+		<p><?php echo CHtml::encode($model->description);?></p>
 	</div>
 	<?php if (sizeof($model->resources) != 0) :?>
 	<hr>
@@ -1658,17 +1658,18 @@
 				//$('[rel=tooltip]').tooltip();
 			},
 		});
-		
-		var order_by = $('#top-concepts .user-filter-by').text() == 'Learning' ? 'learning' : 'learnt';
-		$.ajax({
-			data: {order_by: order_by, module_id: ".$model->id."},
-			type: 'post',
-			url: '".$this->createUrl('concept/fetchConceptsByLearner')."',
-			success: function(html) {
-				$('#top-concepts #concept-related-content').html(html);
-				$('[rel=tooltip]').tooltip();
-			},
-		});
+		if (isModule == 1) {
+			var order_by = $('#top-concepts .user-filter-by').text() == 'Learning' ? 'learning' : 'learnt';
+			$.ajax({
+				data: {order_by: order_by, module_id: ".$model->id."},
+				type: 'post',
+				url: '".$this->createUrl('concept/fetchConceptsByLearner')."',
+				success: function(html) {
+					$('#top-concepts #concept-related-content').html(html);
+					$('[rel=tooltip]').tooltip();
+				},
+			});
+		}
 		
 	},30000);
 		
