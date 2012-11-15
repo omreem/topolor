@@ -60,10 +60,9 @@
 	<div class="concept-description-panel">
 		<p><b>Tag:</b><?php echo $this->getTags($model->id);?></p>
 		<hr>
-		<p><?php echo CHtml::encode($model->description);?></p>
+		<p><?php echo $model->description;?></p>
 	</div>
 	<?php if (sizeof($model->resources) != 0) :?>
-	<hr>
 	<?php $this->renderPartial('/resource/view', array(
 				'resources' => $model->resources,
 		));?>

@@ -1,4 +1,4 @@
-<div class="well top-panel-fix"><a href="<?php echo $this->createUrl('concept');?>">Concepts</a> &raquo; <span class="label label-success"><?php echo $concept_title;?></span></div>
+<div class="well top-panel-fix"><a href="<?php echo $this->createUrl('concept');?>">Concepts</a> &raquo; <a href="<?php echo Yii::app()->homeUrl.'/concept/'.$newAsk->concept_id;?>"><span class="label label-success"><?php echo $concept_title;?></span></a></div>
 <div class="well top-panel-fix">
 	<div style="margin-bottom:-20px;">
 	<?php $this->renderPartial('/ask/_form', array('model' => $newAsk));?>

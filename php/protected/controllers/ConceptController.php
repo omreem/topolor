@@ -831,7 +831,7 @@ class ConceptController extends GxController {
 					break;
 				}
 				case 'week': {
-					$whereInterval = "tpl_note.create_at >= '".date('Y-m-d', strtotime('monday'))."' AND tpl_note.create_at < '".date('Y-m-d', strtotime('next monday'))."'";
+					$whereInterval = "tpl_note.create_at >= '".date('Y-m-d', strtotime('this week'))."' AND tpl_note.create_at < '".date('Y-m-d', strtotime('next week'))."'";
 					break;
 				}
 				case 'month': {
@@ -932,7 +932,7 @@ class ConceptController extends GxController {
 					break;
 				}
 				case 'week': {
-					$whereInterval = "tpl_todo.start_at >= '".date('Y-m-d', strtotime('monday'))."' AND tpl_todo.start_at < '".date('Y-m-d', strtotime('next monday'))."' AND ";
+					$whereInterval = "tpl_todo.start_at >= '".date('Y-m-d', strtotime('this week'))."' AND tpl_todo.start_at < '".date('Y-m-d', strtotime('next week'))."' AND ";
 					break;
 				}
 				case 'month': {
@@ -1256,7 +1256,7 @@ class ConceptController extends GxController {
 	
 		$rtn = '';
 		foreach ($concepts as $concept)
-			$rtn .= '<div style="margin: 0 0 6px 16px;" class="concepts-related-item"><a class="label label-success" rel="tooltip" data-placement="right" title="'.Helpers::string_len($concept->description).'" href="'.Yii::app()->homeUrl.'/concept/'.$concept->id.'">'.Helpers::string_len($concept->title, 28).'</a></div>';
+			$rtn .= '<div style="margin: 0 0 6px 16px;" class="concepts-related-item"><a class="label label-success" rel="tooltip" data-placement="right" title="'.$concept->title.'" href="'.Yii::app()->homeUrl.'/concept/'.$concept->id.'">'.Helpers::string_len($concept->title, 28).'</a></div>';
 		
 		echo $rtn .'';
 		Yii::app()->end();
@@ -1275,7 +1275,7 @@ class ConceptController extends GxController {
 		
 		$rtn = '';
 		foreach ($conceptArr as $concept)
-			$rtn .= '<div><span style="margin: 0 0 6px 16px; line-height: 28px;" class="concepts-related-item"><a class="label label-success" rel="tooltip" data-placement="right" title="'.Helpers::string_len($concept['description']).'" href="'.Yii::app()->homeUrl.'/concept/'.$concept['id'].'">'.Helpers::string_len($concept['title'], 28).'</a></span><span class="pull-right" style="color: #333; margin-right: 16px; line-height: 28px;">'.$concept['count'].' learner(s)</span></div>';
+			$rtn .= '<div><span style="margin: 0 0 6px 16px; line-height: 28px;" class="concepts-related-item"><a class="label label-success" rel="tooltip" data-placement="right" title="'.$concept['title'].'" href="'.Yii::app()->homeUrl.'/concept/'.$concept['id'].'">'.Helpers::string_len($concept['title'], 28).'</a></span><span class="pull-right" style="color: #333; margin-right: 16px; line-height: 28px;">'.$concept['count'].' learner(s)</span></div>';
 		
 		echo $rtn .'';
 		Yii::app()->end();

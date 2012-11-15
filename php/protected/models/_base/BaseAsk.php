@@ -116,7 +116,7 @@ abstract class BaseAsk extends GxActiveRecord {
 					array_push($askArr,$ask['ask_id']);
 				}
 				
-				$criteria->addInCondition('id', $askArr);
+				$criteria->addInCondition('t.id', $askArr);
 			}
 		}
 		
@@ -131,9 +131,9 @@ abstract class BaseAsk extends GxActiveRecord {
 			}
 		
 			if ($isAnswered == 'answered')
-				$criteria->addInCondition('id', $askArr);
+				$criteria->addInCondition('t.id', $askArr);
 			else if ($isAnswered == 'unanswered')
-				$criteria->addNotInCondition('id', $askArr);
+				$criteria->addNotInCondition('t.id', $askArr);
 		}
 		
 		if($tag != '')

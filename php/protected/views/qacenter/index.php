@@ -321,7 +321,7 @@ Yii::app()->clientScript->registerScript('qacenter-index-js', "
 		$(this).addClass('active');
 		
 		$('#order-filter-form #order_by').val('answered');
-		$('#order-filter-form #is_answered').val('');
+		$('#order-filter-form #is_answered').val('answered');
 		$('#order-filter-form').submit();
 	});
 		
