@@ -12,10 +12,10 @@
 	<div class="post-content well">
 		<div style="margin-bottom: 8px;">
 			<span class="user-name"><?php echo GxHtml::encode($data->learner);?>: </span>
-			<span class="content-title<?php echo $data->user_id == Yii::app()->user->id ? ' edible' : ''?>"><?php echo GxHtml::encode($data->title); ?></span>
+			<span class="content-title<?php echo $data->learner_id == Yii::app()->user->id ? ' edible' : ''?>"><?php echo GxHtml::encode($data->title); ?></span>
 		</div>
 		<div class="content-details clearfix">
-			<div class="content-description<?php echo $data->user_id == Yii::app()->user->id ? ' edible' : ''?>"><?php echo GxHtml::encode($data->description); ?></div>
+			<div class="content-description<?php echo $data->learner_id == Yii::app()->user->id ? ' edible' : ''?>"><?php echo GxHtml::encode($data->description); ?></div>
 			<div style="margin: 10px 0 0 20px;"><?php if ($data->update_at != '') echo '<p><span class="date-time">Edited at '.Helpers::datatime_trim($data->update_at).'</span></p>';?></div>
 			<?php if ($data->concept != null): ?>
 			<div class="content-metadata">
