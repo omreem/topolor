@@ -2,8 +2,7 @@
 
 Yii::import('application.models._base.BaseAnswer');
 
-class Answer extends BaseAnswer
-{
+class Answer extends BaseAnswer {
 	public static function model($className=__CLASS__) {
 		return parent::model($className);
 	}
