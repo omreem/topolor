@@ -19,7 +19,7 @@
 			<div style="margin: 10px 0 0 20px;"><?php if ($data->update_at != '') echo '<p><span class="date-time">Edited at '.Helpers::datatime_trim($data->update_at).'</span></p>';?></div>
 			<?php if ($data->concept != null): ?>
 			<div class="content-metadata">
-				<b>Module:</b> <a href="<?php echo Yii::app()->homeUrl.'/module/'.$data->concept->module->id;?>"><?php echo GxHtml::encode($data->concept->module->title);?></a><br>
+				<b>Module:</b> <a href="<?php echo Yii::app()->homeUrl.'/concept/'.$data->concept->module->id;?>"><?php echo GxHtml::encode($data->concept->module->title);?></a><br>
 				<?php if ($data->concept_id != $data->concept->module->id) {?>
 				<b>Concept:</b> <a href="<?php echo Yii::app()->homeUrl.'/concept/'.$data->concept->id;?>"><?php echo GxHtml::encode($data->concept->title);?></a>
 				<?php } ?>

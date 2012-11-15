@@ -562,7 +562,7 @@ class ConceptController extends GxController {
 		$learnerConcept = LearnerConcept::model()->find('learner_id=:learnerID and concept_id=:conceptID',
 				array(':learnerID'=>Yii::app()->user->id, ':conceptID'=>$id));
 		if ($learnerConcept !=null)
-			$this->redirect(Yii::app()->homeUrl.'/module/'.$id);
+			$this->redirect(Yii::app()->homeUrl.'/concept/'.$id);
 	
 		$concept = $this->loadModel($id, 'Concept');
 		if (!$concept->isModule())

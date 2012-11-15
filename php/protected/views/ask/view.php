@@ -23,7 +23,7 @@
 			<div class='content-description'><?php echo GxHtml::encode($model->description); ?></div>
 			<?php if ($model->concept != null): ?>
 			<p class="content-metadata">
-				Module: <a href="<?php echo Yii::app()->homeUrl.'/module/'.$model->concept->module->id;?>"><?php echo GxHtml::encode($model->concept->module->title);?></a><br>
+				Module: <a href="<?php echo Yii::app()->homeUrl.'/concept/'.$model->concept->module->id;?>"><?php echo GxHtml::encode($model->concept->module->title);?></a><br>
 				<?php if ($model->concept_id != $model->concept->module->id) {?>
 				Concept: <a href="<?php echo Yii::app()->homeUrl.'/concept/'.$model->concept->id;?>"><?php echo GxHtml::encode($model->concept->title);?></a>
 				<?php } ?>
