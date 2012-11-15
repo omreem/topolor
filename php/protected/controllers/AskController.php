@@ -316,6 +316,9 @@ class AskController extends GxController {
 						->order('frequency DESC, title')
 						->queryAll();
 				// end-for-conceptsBar
+			} else {
+				$tagArr = array();
+				$concepts = array();
 			}
 		}
 		
