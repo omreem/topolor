@@ -1,4 +1,5 @@
 <?php /* @var $this Controller */ ?>
+<?php if (Yii::app()->user->isGuest) $this->redirect(Yii::app()->baseUrl);?>
 <!DOCTYPE html>
 <html lang="en">
   <head>

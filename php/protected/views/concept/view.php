@@ -1,4 +1,3 @@
-<?php echo md5('shilei123');?>
 <div class="well top-panel-fix">
 	<div class="module-structure-panel">
 	  	<span class="module-title"><?php echo $breadcrumbs;?></span>

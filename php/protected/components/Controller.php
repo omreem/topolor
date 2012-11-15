@@ -27,15 +27,6 @@ class Controller extends CController
 	}
 	
 	protected function beforeAction($action) {
-/*		
-		if ($this->id == 'login' || $this->id == 'registration' || $action->id == 'registration') {
-			return true;
-		}
-		
-		if (Yii::app()->user->isGuest && $this->id != 'feed' && ($action->id != 'index' || $action->id != '')) {
-			$this->redirect(Yii::app()->baseUrl);
-			return true;
-		}
 		
 		if (!Yii::app()->user->isGuest
 				&& $action->id != 'initTagBarsAjax') {
@@ -49,12 +40,12 @@ class Controller extends CController
 				$monitor->type = 'post';
 //			if (isset())
 			
-			$_REQUEST;
+//			$_REQUEST;
 			
 			
 			$monitor->save();
 		}
-*/		
+	
 		return true;
 	}
 	
