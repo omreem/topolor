@@ -27,9 +27,9 @@
 			<?php endif;?>
 			<div class="content-tag">
 				<?php if ($data->tags != ''): ?>
-				<b>Tag:</b> <?php echo implode(' ', $data->tagLabels); ?> <a data-toggle="modal" href="#tag-canvas"><i class="icon-pencil transparent50 btn-tag-edit" style="display: none;"></i></a>
+				<b>Tag:</b> <?php echo implode(' ', $data->tagLabels); ?> <?php if (Yii::app()->user->id == $data->learner_id) {?><a data-toggle="modal" href="#tag-canvas"><i class="icon-pencil transparent50 btn-tag-edit" style="display: none;"></i></a><?php }?>
 				<?php else: ?>
-				<a data-toggle="modal" href="#tag-canvas" class="label label-info add-tag">+ tag</a>
+				<?php if (Yii::app()->user->id == $data->learner_id) {?><a data-toggle="modal" href="#tag-canvas" class="label label-info add-tag">+ tag</a><?php }?>
 				<?php endif; ?>
 			</div>
 		</div>
