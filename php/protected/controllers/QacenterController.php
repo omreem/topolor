@@ -185,7 +185,10 @@ class QacenterController extends GxController {
 	}
 	
 	public function actionFetchUsers() {	
-		$rank_by = 'answers';
+		
+		echo 'fuck';
+		Yii::app();
+/*		$rank_by = 'answers';
 		if (isset($_POST['rank_by']))
 			$rank_by = $_POST['rank_by'];
 		
@@ -256,6 +259,6 @@ EOF;
 		echo $rtn;
 		Yii::app()->end();
 			
-	}
+*/	}
 	
 }
