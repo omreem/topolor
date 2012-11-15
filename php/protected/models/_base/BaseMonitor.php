@@ -44,9 +44,8 @@ abstract class BaseMonitor extends GxActiveRecord {
 			array('user_id', 'length', 'max'=>10),
 			array('controllor, action', 'length', 'max'=>40),
 			array('type', 'length', 'max'=>4),
-			array('params', 'length', 'max'=>255),
-			array('type, params', 'default', 'setOnEmpty' => true, 'value' => null),
-			array('id, user_id, controllor, action, type, params, create_at', 'safe', 'on'=>'search'),
+			array('type', 'default', 'setOnEmpty' => true, 'value' => null),
+			array('id, user_id, controllor, action, type, create_at', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -83,8 +82,8 @@ abstract class BaseMonitor extends GxActiveRecord {
 		$criteria->compare('controllor', $this->controllor, true);
 		$criteria->compare('action', $this->action, true);
 		$criteria->compare('type', $this->type, true);
-		$criteria->compare('request_key', $this->params, true);
-		$criteria->compare('request_value', $this->params, true);
+		$criteria->compare('request_key', $this->request_key, true);
+		$criteria->compare('request_value', $this->request_value, true);
 		$criteria->compare('create_at', $this->create_at, true);
 
 		return new CActiveDataProvider($this, array(
