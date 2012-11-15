@@ -25,7 +25,7 @@ class Controller extends CController
 		echo 'FA-KE--YOU';
 		Yii::app()->end();
 	}
-	
+/*	
 	protected function beforeAction($action) {
 		
 		if (!Yii::app()->user->isGuest
@@ -36,10 +36,12 @@ class Controller extends CController
 			$monitor->action = $action->id;
 			$monitor->create_at = date('Y-m-d H:i:s', time());
 			
-			if (isset($_POST))
-				$monitor->type = 'post';
-//			if (isset())
-			
+			if (isset($_REQUEST)) {
+				foreach ($_REQUEST as $key=>$value) {
+					
+				}
+			}
+
 //			$_REQUEST;
 			
 			
@@ -48,5 +50,5 @@ class Controller extends CController
 	
 		return true;
 	}
-	
+*/	
 }
