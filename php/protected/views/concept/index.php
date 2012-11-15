@@ -18,7 +18,8 @@ for ($i=0;$i<$count;$i++) :
 	<?php endif;?>
 			<li class="span4">
 				<div class="thumbnail">
-					<img src="http://placehold.it/300x200" alt="">
+					<!--  <img src="http://placehold.it/300x200" alt=""> -->
+					<img src="<?php echo Yii::app()->baseUrl.'/uploads/images/cf/cf.png';?>">
 					<div class="caption">
 						<h3><?php echo $moduleArr[$i]['title'];?></h3>
 						<p style='min-height:100px; height:auto !important; height:100px;'><?php echo $descriptionShort;?></p>
