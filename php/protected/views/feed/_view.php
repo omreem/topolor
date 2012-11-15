@@ -12,7 +12,7 @@
 	<div class="post-content well">
 		<div style="margin-bottom: 8px;">
 			<span class="user-name"><?php echo GxHtml::encode($data->user);?>: </span>
-			<span class="content-description-feed" style="margin-bottom: 8px;"><?php echo GxHtml::encode($data->description); ?></span>
+			<span class="content-description-feed<?php echo $data->user_id == Yii::app()->user->id ? ' edible' : ''?>" style="margin-bottom: 8px;"><?php echo GxHtml::encode($data->description); ?></span>
 		</div>
 		<?php if ($data->of == 'feed'):?>
 		<?php
