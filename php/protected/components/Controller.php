@@ -25,30 +25,64 @@ class Controller extends CController
 		echo 'FA-KE--YOU';
 		Yii::app()->end();
 	}
-/*	
+	
+	/*!
+	 * @brief The function
+	 * @param $action does something
+	 * @return
+	 * 
+	 */
 	protected function beforeAction($action) {
-		
 		if (!Yii::app()->user->isGuest
-				&& $action->id != 'initTagBarsAjax') {
+//				&& $action->id != 'updateFiltersBar'
+				&& $action->id != 'initTagBarsAjax'
+				&& $action->id != 'askCount'
+				&& $action->id != 'updateView'
+				&& $action->id != 'validateUP'
+				&& $action->id != 'validateEmail'
+				&& $action->id != 'validateUsername'
+				&& $action->id != 'feedCount'
+				&& $action->id != 'sharePrepare'
+				&& $action->id != 'statsConcept'
+				&& $action->id != 'statsQa'
+				&& $action->id != 'stats'
+				&& $action->id != 'myModules'
+				&& $action->id != 'messageCount'
+				&& $action->id != 'createTagCanvas'
+				&& $action->id != 'updateView'
+				&& $action->id != 'getTags'
+				&& $action->id != 'fetchUsers'
+				&& $action->id != 'fetchTopUsers'
+				&& $action->id != 'fetchUsersLearning'
+				&& $action->id != 'fetchUsersLearnt'
+				&& $action->id != 'fetchConceptsByLearner'
+				&& $action->id != 'fetchUsersRankByModule'
+				&& $action->id != 'fetchModule'
+				&& $action->id != 'suggestTags'
+			) {
+			
+			$request = '';
+			
+			if (!$action->id == 'create' && isset($_REQUEST)) {
+				foreach ($_REQUEST as $key=>$value) {
+					if ($key == 'ajax')
+						return true;
+					$request .= $key.'='.$value.'&';
+				}
+			}
+			
 			$monitor = new Monitor;
 			$monitor->user_id = Yii::app()->user->id;
 			$monitor->controllor = $this->id;
 			$monitor->action = $action->id;
 			$monitor->create_at = date('Y-m-d H:i:s', time());
 			
-			if (isset($_REQUEST)) {
-				foreach ($_REQUEST as $key=>$value) {
-					
-				}
-			}
+			$monitor->request_value = $request;
 
-//			$_REQUEST;
-			
-			
 			$monitor->save();
 		}
 	
 		return true;
 	}
-*/	
+
 }

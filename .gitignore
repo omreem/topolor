@@ -43,6 +43,9 @@ assets/
 protected/runtime/
 themes/classic/views/
 
+uploads/images/
+
+
 # eclipse #
 ######################
 *.pydevproject
