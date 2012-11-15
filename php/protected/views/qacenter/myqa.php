@@ -182,6 +182,9 @@ Yii::app()->clientScript->registerScript('ask-index-js', "
 //********* update ask in the ask-list
 			
 	function titleClick() {
+		if(!$(this).hasClass('edible'))
+			return false;
+		
 		var title_ori=$(this).html();
 		$(this).html('<div id=\"wrap\" style=\"margin-right: 20px;\"><input id=\"title\" type=\"text\" style=\"width: 100%;\"></div>');
 		$(this).find('#title').val(htmlDecode(title_ori));
@@ -203,6 +206,9 @@ Yii::app()->clientScript->registerScript('ask-index-js', "
 	}
 	
 	function descriptionClick() {
+		if(!$(this).hasClass('edible'))
+			return false;
+		
 		var description_ori=$(this).html();
 		$(this).html('<div id=\"wrap\" style=\"margin-right: 20px;\"><textarea rows=\"4\" id=\"description\" style=\"width: 100%;\"></textarea></div>');
 		$(this).find('#description').text(htmlDecode(description_ori));
