@@ -31,9 +31,9 @@
 			<?php endif;?>
 			<p class="content-tag">
 				<?php if ($model->tags != ''): ?>
-				<b>Tag:</b> <?php echo implode(' ', $model->tagLabels); ?> <?php if (Yii::app()->user->id == $data->learner_id) {?><a data-toggle="modal" href="#tag-canvas"><i class="icon-pencil transparent50 btn-tag-edit" style="display: none;"></i></a><?php }?>
+				<b>Tag:</b> <?php echo implode(' ', $model->tagLabels); ?> <?php if (Yii::app()->user->id == $model->learner_id) {?><a data-toggle="modal" href="#tag-canvas"><i class="icon-pencil transparent50 btn-tag-edit" style="display: none;"></i></a><?php }?>
 				<?php else: ?>
-				<?php if (Yii::app()->user->id == $data->learner_id) {?><a data-toggle="modal" href="#tag-canvas" class="label label-info add-tag">+ tag</a><?php }?>
+				<?php if (Yii::app()->user->id == $model->learner_id) {?><a data-toggle="modal" href="#tag-canvas" class="label label-info add-tag">+ tag</a><?php }?>
 				<?php endif; ?>
 			</p>
 		</div>
