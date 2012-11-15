@@ -189,7 +189,10 @@ class QacenterController extends GxController {
 		$rank_by = 'answers';
 		if (isset($_POST['rank_by']))
 			$rank_by = $_POST['rank_by'];
+
 		
+
+/*		
 		$us = User::model()->with('countAsk', 'countAnswer')->findAllBySql('select * from tpl_user limit 5');
 		
 		$userArr = array();
@@ -201,58 +204,61 @@ class QacenterController extends GxController {
 				$userArr[$user->countAnswer] = $user;
 		
 		krsort($userArr);
-		
+*/		
 		$baseUrl = Yii::app()->baseUrl;
 		$rtn = '';
 		
-		if ($rank_by == 'questions')
+		if ($rank_by == 'questions') {
+			
+			$userArr = Yii::app()->db->createCommand('SELECT t.id, username, COUNT(t.id) AS count FROM tpl_user AS t, tpl_ask AS a WHERE t.id=a.learner_id GROUP BY t.id ORDER BY COUNT(t.id)')->queryAll();
+			
 			foreach ($userArr as $user)
-				if ($user->id == Yii::app()->user->id)
-					$rtn .= <<<EOF
-<div style="margin: 16px 16px 8px 16px;" class="user-rank-item" rel="tooltip" data-placement="right" title="It's you.">
-	<img src="$baseUrl/uploads/images/profile-avatar/$user->id" style="height: 44px; width: 44px;">
+				if ($user['id'] == Yii::app()->user->id)
+					$rtn .= '
+<div style="margin: 16px 16px 8px 16px;" class="user-rank-item" rel="tooltip" data-placement="right" title="It\'s you.">
+	<img src="'.$baseUrl.'/uploads/images/profile-avatar/'.$user['id'].'" style="height: 44px; width: 44px;">
 	<div style="margin-left: 60px; margin-top: -44px;">
-		<div class="name-user">$user</div>
-		<div style="color: #333">$user->countAsk question(s)</div>
-		<input id="data_id" type="hidden" value="$user->id"/>
+		<div class="name-user">'.$user['username'].'</div>
+		<div style="color: #333">'.$user['count'].' question(s)</div>
+		<input id="data_id" type="hidden" value="'.$user['id'].'"/>
 	</div>
-</div>
-EOF;
+</div>';
 				else
-					$rtn .= <<<EOF
+					$rtn .= '
 <div style="margin: 16px 16px 8px 16px;" class="user-rank-item" rel="tooltip" data-placement="right" title="Send a message" data-toggle="modal" href="#message-modal">
-	<img src="$baseUrl/uploads/images/profile-avatar/$user->id" style="height: 44px; width: 44px;">
+	<img src="'.$baseUrl.'/uploads/images/profile-avatar/'.$user['id'].'" style="height: 44px; width: 44px;">
 	<div style="margin-left: 60px; margin-top: -44px;">
-		<div class="name-user">$user</div>
-		<div style="color: #333">$user->countAsk question(s)</div>
-		<input id="data_id" type="hidden" value="$user->id"/>
+		<div class="name-user">'.$user['username'].'</div>
+		<div style="color: #333">'.$user['count'].' question(s)</div>
+		<input id="data_id" type="hidden" value="'.$user['id'].'"/>
 	</div>
-</div>
-EOF;
-		else 
+</div>';
+		} else {
+			
+			$userArr = Yii::app()->db->createCommand('SELECT t.id, username, COUNT(t.id) AS count FROM tpl_user AS t, tpl_answer AS a WHERE t.id=a.learner_id GROUP BY t.id ORDER BY COUNT(t.id)')->queryAll();
+							
 			foreach ($userArr as $user)
-				if ($user->id == Yii::app()->user->id)
-					$rtn .= <<<EOF
-<div style="margin: 16px 16px 8px 16px;" class="user-rank-item" rel="tooltip" data-placement="right" title="It's you.">
-	<img src="$baseUrl/uploads/images/profile-avatar/$user->id" style="height: 44px; width: 44px;">
+				if ($user['id'] == Yii::app()->user->id)
+					$rtn .= '
+<div style="margin: 16px 16px 8px 16px;" class="user-rank-item" rel="tooltip" data-placement="right" title="It\'s you.">
+	<img src="'.$baseUrl.'/uploads/images/profile-avatar/'.$user['id'].'" style="height: 44px; width: 44px;">
 	<div style="margin-left: 60px; margin-top: -44px;">
-		<div class="name-user">$user</div>
-		<div style="color: #333">$user->countAsk question(s)</div>
-		<input id="data_id" type="hidden" value="$user->id"/>
+		<div class="name-user">'.$user['username'].'</div>
+		<div style="color: #333">'.$user['count'].' answers(s)</div>
+		<input id="data_id" type="hidden" value="'.$user['id'].'"/>
 	</div>
-</div>
-EOF;
+</div>';				
 				else
-					$rtn .= <<<EOF
+					$rtn .= '
 <div style="margin: 16px 16px 8px 16px;" class="user-rank-item" rel="tooltip" data-placement="right" title="Send a message" data-toggle="modal" href="#message-modal">
-	<img src="$baseUrl/uploads/images/profile-avatar/$user->id" style="height: 44px; width: 44px;">
+	<img src="'.$baseUrl.'/uploads/images/profile-avatar/'.$user['id'].'" style="height: 44px; width: 44px;">
 	<div style="margin-left: 60px; margin-top: -44px;">
-		<div class="name-user">$user</div>
-		<div style="color: #333">$user->countAnswer question(s)</div>
-		<input id="data_id" type="hidden" value="$user->id"/>
+		<div class="name-user">'.$user['username'].'</div>
+		<div style="color: #333">'.$user['count'].' answers(s)</div>
+		<input id="data_id" type="hidden" value="'.$user['id'].'"/>
 	</div>
-</div>
-EOF;
+</div>';
+		}
 		
 		echo $rtn;
 		Yii::app()->end();
