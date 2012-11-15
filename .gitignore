@@ -43,7 +43,7 @@ assets/
 protected/runtime/
 themes/classic/views/
 
-uploads/images/
+php/uploads/images/profile-avatar/
 
 
 # eclipse #
