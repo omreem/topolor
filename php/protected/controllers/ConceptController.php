@@ -543,7 +543,7 @@ class ConceptController extends GxController {
 				->queryAll();
 			
 			foreach ($conceptArr as $concept) {
-				$content .= CHtml::tag('a', array('class'=>'label label-success', 'href'=>$this->createUrl($concept['id'])), Helpers::string_len($concept['title'], 28)).' ';
+				$content .= CHtml::tag('a', array('class'=>'label label-success', 'href'=>$this->createUrl($concept['id'])), $concept['title']).' ';
 			}
 			
 			$str .= ' '.CHtml::tag('a', array(
@@ -1238,7 +1238,7 @@ class ConceptController extends GxController {
 		
 		$rtn = '';
 		foreach ($conceptArr as $concept)
-			$rtn .= '<div><span style="margin: 0 0 6px 16px; line-height: 28px;" class="concepts-related-item"><a class="label label-success" rel="tooltip" data-placement="right" title="'.Helpers::string_len($concept['description']).'" href="'.Yii::app()->homeUrl.'/concept/'.$concept['concept_id'].'">'.Helpers::string_len($concept['title'], 28).'</a></span><span class="pull-right" style="color: #333; margin-right: 16px; line-height: 28px;">Correct rate: '.$concept['rate'].'</span></div>';
+			$rtn .= '<div><span style="margin: 0 0 6px 16px; line-height: 28px;" class="concepts-related-item"><a class="label label-success" rel="tooltip" data-placement="right" title="Correct rate: '.$concept['rate'].'" href="'.Yii::app()->homeUrl.'/concept/'.$concept['concept_id'].'">'.Helpers::string_len($concept['title'], 40).'</a></span></div>';
 		
 		echo $rtn .'';
 		Yii::app()->end();
@@ -1256,7 +1256,7 @@ class ConceptController extends GxController {
 	
 		$rtn = '';
 		foreach ($concepts as $concept)
-			$rtn .= '<div style="margin: 0 0 6px 16px;" class="concepts-related-item"><a class="label label-success" rel="tooltip" data-placement="right" title="'.$concept->title.'" href="'.Yii::app()->homeUrl.'/concept/'.$concept->id.'">'.Helpers::string_len($concept->title, 28).'</a></div>';
+			$rtn .= '<div style="margin: 0 0 6px 16px;" class="concepts-related-item"><a class="label label-success" rel="tooltip" data-placement="right" title="'.$concept->title.'" href="'.Yii::app()->homeUrl.'/concept/'.$concept->id.'">'.Helpers::string_len($concept->title, 40).'</a></div>';
 		
 		echo $rtn .'';
 		Yii::app()->end();
@@ -1275,7 +1275,7 @@ class ConceptController extends GxController {
 		
 		$rtn = '';
 		foreach ($conceptArr as $concept)
-			$rtn .= '<div><span style="margin: 0 0 6px 16px; line-height: 28px;" class="concepts-related-item"><a class="label label-success" rel="tooltip" data-placement="right" title="'.$concept['title'].'" href="'.Yii::app()->homeUrl.'/concept/'.$concept['id'].'">'.Helpers::string_len($concept['title'], 28).'</a></span><span class="pull-right" style="color: #333; margin-right: 16px; line-height: 28px;">'.$concept['count'].' learner(s)</span></div>';
+			$rtn .= '<div><span style="margin: 0 0 6px 16px; line-height: 28px;" class="concepts-related-item"><a class="label label-success" rel="tooltip" data-placement="right" title="'.$concept['count'].' learner(s)" href="'.Yii::app()->homeUrl.'/concept/'.$concept['id'].'">'.Helpers::string_len($concept['title'], 40).'</a></span></div>';
 		
 		echo $rtn .'';
 		Yii::app()->end();
@@ -1298,7 +1298,7 @@ class ConceptController extends GxController {
 		
 		$rtn = '';
 		foreach ($moduleArr as $module)
-			$rtn .= '<div><span style="margin: 0 0 6px 16px; line-height: 28px;" class="concepts-related-item"><a class="label label-success" href="'.Yii::app()->homeUrl.'/concept/'.$module['id'].'">'.Helpers::string_len($module['title'], 28).'</a></span><span class="pull-right" style="color: #333; margin-right: 16px; line-height: 28px;">'.$module['count'].' learner(s)</span></div>';
+			$rtn .= '<div><span style="margin: 0 0 6px 16px; line-height: 28px;" class="concepts-related-item" rel="tooltip" data-placement="right" title="'.$module['count'].' learner(s)"><a class="label label-success" href="'.Yii::app()->homeUrl.'/concept/'.$module['id'].'">'.Helpers::string_len($module['title'], 40).'</a></span></div>';
 								
 		echo $rtn .'';
 		Yii::app()->end();
