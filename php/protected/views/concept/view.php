@@ -27,16 +27,18 @@
 </div>
 
 <div class="well">
-	<div style="display:inline;">
-		<?php if ($model->isModule()) {?>
-			<a class="btn btn-primary">Pre-test</a>
-		<?php } else {
+	<div style="display:inline;"><?php
+		if ($model->isModule()) {
+			echo CHtml::link ("Pre-test", '', array(
+						'class' =>'btn btn-primary',
+						'submit' => $this->createUrl('/quiz/view'),
+						'params' => array('concept_id'=>$model->id, 'type'=>Quiz::TYPE_PRE_TEST),
+					));
+		} else {
 			if ($canHasQuiz == 'yes') {
-				echo CHtml::link ($quizDoneAt == '' ? 'Take a Quiz' : 'Review the Quiz', '',
-					array(
+				echo CHtml::link ($quizDoneAt == '' ? 'Take a Quiz' : 'Review the Quiz', '', array(
 							'class' =>'btn btn-primary',
-							'id' => 'lq'.uniqid(),
-							'submit' => CController::createUrl('/quiz/view'),
+							'submit' => $this->createUrl('/quiz/view'),
 							'params' => array('concept_id'=>$model->id),
 					));
 				} else { ?>

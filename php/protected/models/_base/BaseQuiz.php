@@ -13,6 +13,7 @@
  * @property string $learner_id
  * @property string $concept_id
  * @property string $score
+ * @property integer $type
  * @property string $create_at
  * @property string $done_at
  * @property string $lastaccess_at
@@ -70,6 +71,7 @@ abstract class BaseQuiz extends GxActiveRecord {
 			'learner_id' => null,
 			'concept_id' => null,
 			'score' => Yii::t('app', 'Score'),
+			'type' => Yii::t('app', 'Type'),
 			'create_at' => Yii::t('app', 'Create At'),
 			'done_at' => Yii::t('app', 'Done At'),
 			'lastaccess_at' => Yii::t('app', 'Lastaccess At'),
@@ -86,6 +88,7 @@ abstract class BaseQuiz extends GxActiveRecord {
 		$criteria->compare('learner_id', $this->learner_id);
 		$criteria->compare('concept_id', $this->concept_id);
 		$criteria->compare('score', $this->score, true);
+		$criteria->compare('type', $this->type);
 		$criteria->compare('create_at', $this->create_at, true);
 		$criteria->compare('done_at', $this->done_at, true);
 		$criteria->compare('lastaccess_at', $this->lastaccess_at, true);

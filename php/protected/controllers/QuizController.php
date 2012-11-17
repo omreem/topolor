@@ -4,7 +4,8 @@ class QuizController extends GxController {
 	
 	public $layout='//layouts/concept';
 
-	var $questionSum = 3;// 3 questions for each quiz, if the number questions for concept is enough
+	var $sumQuestionTest = 10;// 10 questions for each pre-test/mid-test/final-test, if the number of questions for 'module' is enough
+	var $sumQuestionQuiz = 3; // 3 questions for each quiz, if the number of questions for 'concept' is enough
 	
 	public function actionView() {
 		if (!Yii::app()->getRequest()->getIsPostRequest() || !isset($_POST['concept_id']))
@@ -26,7 +27,7 @@ class QuizController extends GxController {
 		$quiz = Quiz::model()->findByAttributes(array('learner_id'=>$learner_id, 'concept_id'=>$concept_id));
 		
 		if ($quiz != null) {
-			if ($quiz->done_at != null) // the learner has answered all the questions in the quiz
+			if ($quiz->done_at != null) // the learner has answered the questions in the quiz
 				$quizDoneAt = $quiz->done_at;
 			$sql = 'select'
 			.' q.id,'
@@ -47,13 +48,21 @@ class QuizController extends GxController {
 			$questionArr = $connection->createCommand($sql)->queryAll();
 			
 		} else {
-			// generate a new quiz
+			// generate a new test/quiz
+			if ($concept_id ==  Yii::app()->db->createCommand('SELECT root FROM {{concept}} WHERE id='.$concept_id)->queryScalar()) { // module
+				$conceptIdArr = Yii::app()->db->createCommand('SELECT id FROM {{concept}} WHERE root='.$concept_id)->queryAll();
+				$questionArr = array();
+				foreach ($conceptIdArr as $id) {
+					$questions = Question::model()->with('options')->findAllBySql('SELECT * FROM {{question}} WHERE concept_id = :id ORDER BY RAND() LIMIT 1', $params = array(':id'=>$id['id']));
+					$questionArr = array_merge($questionArr, $questions);
+				}
+				$count = count($questionArr);
+				$questionArr = array_slice($questionArr, 0, $this->sumQuestionTest < $count ? $this->sumQuestionTest : $count);
+			} else { // concept
+				$questionArr = $connection->createCommand('SELECT * FROM {{question}} WHERE concept_id='.$concept_id.' ORDER BY RAND() LIMIT '.$this->sumQuestionQuiz)->queryAll();
+			}
 			
-			$questionArr = $connection->createCommand('SELECT * FROM tpl_question WHERE concept_id='.$concept_id.' ORDER BY RAND() LIMIT 3')->queryAll();
-			
-			$count = count($questionArr);
-			
-			if ($count > 1)
+			if (count($questionArr) > 1)
 				shuffle($questionArr);// random order
 			
 			$transaction = $connection->beginTransaction();
@@ -64,8 +73,9 @@ class QuizController extends GxController {
 				$quiz->create_at = date('Y-m-d H:i:s', time());
 				$quiz->save();
 			
-				for($i=0;$i<$this->questionSum && $i<$count;) {
-					$sql="INSERT INTO {{quiz_question}} (quiz_id, question_id, position) VALUES(".$quiz->id.",".$questionArr[$i]['id'].",".++$i.")";
+				$i=0;
+				foreach ($questionArr as $question){
+					$sql="INSERT INTO {{quiz_question}} (quiz_id, question_id, position) VALUES(".$quiz->id.",".$question['id'].",".++$i.")";
 					$connection->createCommand($sql)->execute();
 				}
 			
@@ -94,7 +104,6 @@ class QuizController extends GxController {
 		$this->render('view', array(
 				'model' => $quiz,
 				'learnt_at' => $learnt_at,
-				'concept_id'=>$concept_id,
 				'questions'=>$questions,
 				'quizDoneAt'=>$quizDoneAt,
 		));
@@ -243,7 +252,7 @@ class QuizController extends GxController {
 				$quiz->create_at = date('Y-m-d H:i:s', time());
 				$quiz->save();
 	
-				for($i=0;$i<$this->questionSum && $i<$count;) {
+				for($i=0;$i<$this->sumQuestionQuiz && $i<$count;) {
 					$sql="INSERT INTO {{quiz_question}} (quiz_id, question_id, position) VALUES(".$quiz->id.",".$questionArr[$i]['id'].",".++$i.")";
 					$connection->createCommand($sql)->execute();
 				}
@@ -302,11 +311,15 @@ class QuizController extends GxController {
 				if (Question::model()->findByPk($qq->question_id)->correct_answer == $qq->answer)
 					$correctAnswer++;
 			}
-	
-			$questionSum = count($qqArr) < $this->questionSum ? count($qqArr) : $this->questionSum;
+			
+			$concept_id = Yii::app()->db->createCommand('SELECT concept_id FROM {{quiz}} WHERE id='.$quiz_id)->queryScalar();
+			if ($concept_id ==  Yii::app()->db->createCommand('SELECT root FROM {{concept}} WHERE id='.$concept_id)->queryScalar()) // module
+				$sumQuestion = count($qqArr) < $this->sumQuestionTest ? count($qqArr) : $this->sumQuestionTest;
+			else // concept
+				$sumQuestion = count($qqArr) < $this->sumQuestionQuiz ? count($qqArr) : $this->sumQuestionQuiz;
 	
 			$quiz = Quiz::model()->findByPk($quiz_id);
-			$quiz->score = $correctAnswer.'/'.$questionSum;
+			$quiz->score = $correctAnswer.'/'.$sumQuestion;
 			$quiz->done_at = $time_now;
 			$quiz->lastaccess_at = $time_now;
 			$quiz->save();
@@ -354,7 +367,7 @@ class QuizController extends GxController {
 			$questions[$i] = $questionArr[$i];
 			$questions[$i]['options'] = $optionArr;
 		}
-	
+
 		$this->render('view', array(
 				'model' => $quiz,
 				'concept_id'=>$questions[0]['concept_id'],

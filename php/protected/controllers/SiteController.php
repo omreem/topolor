@@ -69,4 +69,8 @@ class SiteController extends GxController {
 		Yii::app()->user->logout();
 		$this->redirect(Yii::app()->homeUrl);
 	}
+	
+	public function actionCheckPassword() {
+		
+	}
 }

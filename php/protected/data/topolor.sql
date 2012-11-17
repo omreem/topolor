@@ -173,6 +173,7 @@ CREATE TABLE IF NOT EXISTS `topolor`.`tpl_quiz` (
   `learner_id` INT(10) UNSIGNED NOT NULL,
   `concept_id` INT(10) UNSIGNED NOT NULL,
   `score` VARCHAR(5) NULL COMMENT ' x/y ',
+  `type` TINYINT(1) NOT NULL DEFAULT '0' COMMENT '0: quiz; 1: pre-test; 2: mid-test; 3: final-test',
   `create_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `done_at` TIMESTAMP NULL,
   `lastaccess_at` TIMESTAMP NULL,

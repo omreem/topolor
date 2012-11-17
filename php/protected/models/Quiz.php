@@ -2,8 +2,13 @@
 
 Yii::import('application.models._base.BaseQuiz');
 
-class Quiz extends BaseQuiz
-{
+class Quiz extends BaseQuiz {
+	
+	const TYPE_QUIZ=0;
+	const TYPE_PRE_TEST=1;
+	const TYPE_MID_TEST=1;
+	const TYPE_FINAL_TEST=1;
+	
 	public static function model($className=__CLASS__) {
 		return parent::model($className);
 	}

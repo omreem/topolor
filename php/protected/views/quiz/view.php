@@ -1,31 +1,16 @@
 <div class="well top-panel-fix">
 	<div class="module-structure-panel">
 	  	<span class="module-title">
-	  		<a href="<?php echo Yii::app()->baseUrl.'/index.php/concept/'.$model->concept->module->id;?>" class="btn-link"><?php echo $model->concept->module->title;?></a>
-  			 &raquo; <a href="<?php echo Yii::app()->baseUrl.'/index.php/concept/'.$model->concept->id;?>" class="btn-link"><?php echo $model->concept->title;?></a>
-  			 &raquo; Quiz
+	  	<?php if ($model->concept->id != $model->concept->root) {
+	  		echo '<a href="'.Yii::app()->baseUrl.'/index.php/concept/'.$model->concept->module->id.'" class="btn-link">'.$model->concept->module->title.'</a> &raquo'; 
+		}?>	 
+  			<a href="<?php echo Yii::app()->baseUrl.'/index.php/concept/'.$model->concept->id;?>" class="btn-link"><?php echo $model->concept->title;?></a>
+  			&raquo; Quiz
   		</span>
-  		<div id="learnt-info" class="pull-right">
-  		<?php if ($learnt_at != null) {?>
-  		<span class="date-time pull-right">Learnt at: <?php echo Helpers::datatime_feed($learnt_at);?></span>
-  		<?php } else { ?>
-  		<?php echo CHtml::ajaxButton ("I've learnt",
-						CController::createUrl('/concept/hasLearnt'), 
-						array('update' => '#learnt-info',
-							'type' => 'POST',
-							'data' => array(
-								'concept_id' => $model->id,
-							),
-						),
-						array('class' =>'btn pull-right',
-							'id' => 'hl'.uniqid()
-			));?>
-  		<?php } ?>
-  		</div>
   </div>
 </div>
 
-<div style="border: solid 1px #ddd; padding: 20px;">
+<div class="well">
 	<?php
 		if ($questions == null)
 			echo 'no questions for this concept!';
