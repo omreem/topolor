@@ -604,8 +604,10 @@ Yii::app()->clientScript->registerScript('feed-index-js', "
 	});
 	
 	$('#message-form .btn-cancel').click(function (){
-		$('#message-form .btn-create').addClass('disabled')
-		$('#Message_description').val('');
+		$('#message-form .form-rest').slideUp();
+		$('#message-form .btn-create').addClass('disabled');
+		$('#message-form').find('textarea').val('');
+		$('#message-form').find('#Message_description').attr('placeholder','Send a message');
 	});
 		
 //--
