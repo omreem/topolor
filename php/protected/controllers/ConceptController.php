@@ -1309,9 +1309,13 @@ class ConceptController extends GxController {
 		}
 		
 		$rtn = '';
-		foreach ($moduleArr as $module)
-			$rtn .= '<div><span style="margin: 0 0 6px 16px; line-height: 28px;" class="concepts-related-item" rel="tooltip" data-placement="right" title="'.$module['count'].' learner(s)"><a class="label label-success" href="'.Yii::app()->homeUrl.'/concept/'.$module['id'].'">'.Helpers::string_len($module['title'], 40).'</a></span></div>';
-								
+		foreach ($moduleArr as $module) {
+			// has registered?
+			if (null == Yii::app()->db->createCommand('SELECT learner_id FROM {{learner_concept}} WHERE learner_id='.Yii::app()->user->id.' AND concept_id='.$module['id'])->queryScalar())
+				$rtn .= '<div><span style="margin: 0 0 6px 16px; line-height: 28px;" class="concepts-related-item" rel="tooltip" data-placement="right" title="'.$module['count'].' learner(s)"><a class="label label-success" href="'.Yii::app()->homeUrl.'/concept/preview/'.$module['id'].'">'.Helpers::string_len($module['title'], 40).'</a></span></div>';
+			else
+				$rtn .= '<div><span style="margin: 0 0 6px 16px; line-height: 28px;" class="concepts-related-item" rel="tooltip" data-placement="right" title="'.$module['count'].' learner(s)"><a class="label label-success" href="'.Yii::app()->homeUrl.'/concept/'.$module['id'].'">'.Helpers::string_len($module['title'], 40).'</a></span></div>';
+		}						
 		echo $rtn .'';
 		Yii::app()->end();
 	}

@@ -1,3 +1,4 @@
+<div class="well top-panel-fix"><a href="<?php echo $this->createUrl('index');?>">Return back</a></div>
 <div class="well top-panel-fix module-structure-panel">
 	<span class="module-title"><?php echo $model->title;?></span><br><br>
 	<?php echo $model->description;?><br><br>
