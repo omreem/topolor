@@ -1,11 +1,18 @@
 <div class="well top-panel-fix">
 	<div class="module-structure-panel">
-	  	<span class="module-title">
-	  	<?php if ($model->concept->id != $model->concept->root) {
-	  		echo '<a href="'.Yii::app()->baseUrl.'/index.php/concept/'.$model->concept->module->id.'" class="btn-link">'.$model->concept->module->title.'</a> &raquo'; 
-		}?>	 
+	  	<span class="module-title"><?php
+	  	if ($quizType == Quiz::TYPE_PRE_TEST)
+	  		$quizTypeText = 'Pre-test';
+	  	elseif ($quizType == Quiz::TYPE_QUIZ)
+	  		$quizTypeText = 'Quiz';
+	  	else
+	  		$quizTypeText = 'Test';
+	  	
+	  		if ($model->concept->id != $model->concept->root) {
+		  		echo '<a href="'.Yii::app()->baseUrl.'/index.php/concept/'.$model->concept->module->id.'" class="btn-link">'.$model->concept->module->title.'</a> &raquo'; 
+			}?>	 
   			<a href="<?php echo Yii::app()->baseUrl.'/index.php/concept/'.$model->concept->id;?>" class="btn-link"><?php echo $model->concept->title;?></a>
-  			&raquo; Quiz
+  			&raquo; <?php echo $quizTypeText;?>
   		</span>
   </div>
 </div>
@@ -29,6 +36,7 @@
 						'questions'=>$questions,
 						'quiz_id'=>$model->id,
 						'concept_id'=>$model->concept->id,
+						'quizType' => $quizType,
 				));
 			}
 		}	

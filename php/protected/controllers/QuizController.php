@@ -8,11 +8,12 @@ class QuizController extends GxController {
 	var $sumQuestionQuiz = 3; // 3 questions for each quiz, if the number of questions for 'concept' is enough
 	
 	public function actionView() {
-		if (!Yii::app()->getRequest()->getIsPostRequest() || !isset($_POST['concept_id']))
+		if (!Yii::app()->getRequest()->getIsPostRequest() || !isset($_POST['concept_id']) || !isset($_POST['quizType']))
 			throw new CHttpException(400, Yii::t('app', 'Your request is invalid.'));
 		
 		$learner_id = Yii::app()->user->id;
 		$concept_id = $_POST['concept_id'];
+		$quizType = $_POST['quizType'];
 		
 		$connection = Yii::app()->db;
 		
@@ -24,9 +25,9 @@ class QuizController extends GxController {
 		
 		$quizDoneAt = null;
 		
-		$quiz = Quiz::model()->findByAttributes(array('learner_id'=>$learner_id, 'concept_id'=>$concept_id));
+		$quiz = Quiz::model()->findBySql('SELECT * FROM {{quiz}} WHERE learner_id='.$learner_id.' AND concept_id='.$concept_id.' ORDER BY create_at DESC LIMIT 1');
 		
-		if ($quiz != null) {
+		if (($quiz != null && $quizType == Quiz::TYPE_QUIZ) || ($quiz != null && $quiz->done_at == null)) {
 			if ($quiz->done_at != null) // the learner has answered the questions in the quiz
 				$quizDoneAt = $quiz->done_at;
 			$sql = 'select'
@@ -104,8 +105,9 @@ class QuizController extends GxController {
 		$this->render('view', array(
 				'model' => $quiz,
 				'learnt_at' => $learnt_at,
-				'questions'=>$questions,
-				'quizDoneAt'=>$quizDoneAt,
+				'questions' => $questions,
+				'quizDoneAt' => $quizDoneAt,
+				'quizType' =>$quizType,
 		));
 	}
 
@@ -294,6 +296,7 @@ class QuizController extends GxController {
 	
 		$time_now = date('Y-m-d H:i:s', time());
 		$quiz_id = $_POST['quiz_id'];
+		$quizType = $_POST['quizType'];
 		$correctAnswer = 0;
 		$connection = Yii::app()->db;
 		$transaction = $connection->beginTransaction();
@@ -374,6 +377,7 @@ class QuizController extends GxController {
 				'questions'=>$questions,
 				'quizDoneAt'=>$time_now,
 				'learnt_at'=>$time_now,
+				'quizType'=>$quizType,
 		), false, true);
 	}
 }

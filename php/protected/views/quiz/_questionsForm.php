@@ -1,5 +1,5 @@
 <div>
-	<?php echo CHtml::link ('Cancel', CController::createUrl('/concept/view/'.$concept_id), array('class'=>'btn')); ?>
+	<?php echo CHtml::link ('Cancel', CController::createUrl('/concept/'.$concept_id), array('class'=>'btn')); ?>
 </div>
 <hr>
 <form novalidate="novalidate" class="quiz-form" autocomplete="off" method="POST" action="<?php echo CController::createUrl('/quiz/quizSubmit');?>">
@@ -21,6 +21,7 @@
 	<?php endforeach;?>
 	</ol>
 	<input type="hidden" name="quiz_id" value="<?php echo $quiz_id;?>">
+	<input type="hidden" name="quizType" value="<?php echo $quizType;?>">
 	<button class="btn" type="submit" name="submit" style="margin-left: 10px;">Submit</button>
 </form>
 

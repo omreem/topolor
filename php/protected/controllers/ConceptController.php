@@ -205,6 +205,17 @@ class ConceptController extends GxController {
 			));
 		}
 		
+		// for module: pre-test? test? final-test?
+		if ($model->isModule()) {
+			$row = Yii::app()->db->createCommand('SELECT COUNT(id) AS count, MIN(done_at) AS min_done_at FROM {{quiz}} WHERE concept_id='.$model->id)->queryRow();
+			if ($row['count'] != 0 && $row['min_done_at'] != null)
+				$quizType = Quiz::TYPE_MID_TEST;
+			else
+				$quizType = Quiz::TYPE_PRE_TEST;
+		} else {
+			$quizType = Quiz::TYPE_QUIZ;
+		}
+
 		$params = array(
 			'model' => $model,
 			'breadcrumbs' => $breadcrumbs,
@@ -212,6 +223,7 @@ class ConceptController extends GxController {
 			'dataProvider_ask' => $dataProvider_ask,
 			'dataProvider_note' => $dataProvider_note,
 			'dataProvider_todo' => $dataProvider_todo,
+			'quizType' => $quizType,
 		);
 		
 		if ($model->isModule()) {

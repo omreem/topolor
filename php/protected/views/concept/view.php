@@ -28,18 +28,25 @@
 
 <div class="well">
 	<div style="display:inline;"><?php
+		if ($quizType == Quiz::TYPE_PRE_TEST)
+			$quizTypeText = 'Pre-test';
+		elseif ($quizType == Quiz::TYPE_QUIZ)
+			$quizTypeText = 'Quiz';
+		else
+			$quizTypeText = 'Take a test';
+		
 		if ($model->isModule()) {
-			echo CHtml::link ("Pre-test", '', array(
+			echo CHtml::link ($quizTypeText, '', array(
 						'class' =>'btn btn-primary',
 						'submit' => $this->createUrl('/quiz/view'),
-						'params' => array('concept_id'=>$model->id, 'type'=>Quiz::TYPE_PRE_TEST),
+						'params' => array('concept_id'=>$model->id, 'quizType'=>$quizType),
 					));
 		} else {
 			if ($canHasQuiz == 'yes') {
-				echo CHtml::link ($quizDoneAt == '' ? 'Take a Quiz' : 'Review the Quiz', '', array(
+				echo CHtml::link ($quizDoneAt == '' ? 'Take a '.$quizTypeText : 'Review the '.$quizTypeText, '', array(
 							'class' =>'btn btn-primary',
 							'submit' => $this->createUrl('/quiz/view'),
-							'params' => array('concept_id'=>$model->id),
+							'params' => array('concept_id'=>$model->id, 'quizType'=>$quizType),
 					));
 				} else { ?>
 			<button class="btn btn-primary disabled">Take a Quiz</button>

@@ -1,4 +1,7 @@
-<p class="date-time">Done at: <?php echo Helpers::datatime_feed($quizDoneAt);?></p>
+<div>
+	<?php echo CHtml::link ('Return', CController::createUrl('/concept/'.$concept_id), array('class'=>'btn')); ?>
+	<span class="date-time pull-right">Done at: <?php echo Helpers::datatime_feed($quizDoneAt);?></span>
+</div>
 <hr>
 <ol>
 <?php foreach ($questions as $question) {?>
