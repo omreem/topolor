@@ -22,9 +22,22 @@ class Controller extends CController
 	public $breadcrumbs=array();
 	
 	public function actionError() {
-		echo 'FA-KE--YOU';
+		echo 'Server is busy...';
 		Yii::app()->end();
 	}
+	
+	public function moniter($controllor, $action, $request='', $type='GET') {
+		$monitor = new Monitor;
+		$monitor->user_id = Yii::app()->user->id;
+		$monitor->controllor = $controllor;
+		$monitor->action = $action;
+		$monitor->create_at = date('Y-m-d H:i:s', time());
+		$monitor->request = $request;
+		$monitor->type = $type;
+		
+		$monitor->save();
+	}
+	
 	
 	/*!
 	 * @brief The function
@@ -32,7 +45,7 @@ class Controller extends CController
 	 * @return
 	 * 
 	 */
-	protected function beforeAction($action) {
+/*	protected function beforeAction($action) {
 		if (!Yii::app()->user->isGuest
 //				&& $action->id != 'updateFiltersBar'
 				&& $action->id != 'initTagBarsAjax'
@@ -84,5 +97,5 @@ class Controller extends CController
 	
 		return true;
 	}
-
+*/
 }

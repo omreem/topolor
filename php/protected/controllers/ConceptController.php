@@ -5,6 +5,11 @@ class ConceptController extends GxController {
 	public $layout='//layouts/concept';
 
 	public function actionView($id) {
+		
+		//monitor=begin
+		$this->moniter('concept', 'view', 'id='.$id);
+		//monitor-end
+		
 		$model = $this->loadModel($id, 'Concept');
 		$learnerId = Yii::app()->user->id;
 		if ($model->isModule()) { // is Module
@@ -257,6 +262,11 @@ class ConceptController extends GxController {
 		
 		$filter_by = $_GET['filter_by'];
 		
+		//monitor=begin
+		$this->moniter('concept', 'conceptList', 'module_id='.$moduleId.'&filter_by='.$filter_by);
+		//monitor-end
+		
+		
 		if ($filter_by == 'learnt') {
 
 			$sql='select c.id as id, c.title as title, c.description as description, c.tags as tags, lc.lastaction_at as lastaction_at'
@@ -320,6 +330,11 @@ class ConceptController extends GxController {
 		if ($moduleId == null || null == LearnerConcept::model()->findByPk(array('concept_id'=>$moduleId, 'learner_id'=>Yii::app()->user->id)))
 			$this->redirect(Yii::app()->homeUrl.'/concept');
 		
+		//monitor=begin
+		$this->moniter('concept', 'quizList', 'module_id='.$moduleId);
+		//monitor-end
+		
+		
 		$sql='select'
 		.' q.id,'
 		.' q.score,'
@@ -359,6 +374,11 @@ class ConceptController extends GxController {
 			$this->redirect(Yii::app()->homeUrl.'/concept');
 		
 		$filter_by = $_GET['filter_by'];
+		
+		//monitor=begin
+		$this->moniter('concept', 'myAnswers', 'module_id='.$moduleId.'&filter_by='.$filter_by);
+		//monitor-end
+		
 		
 		if ($filter_by == 'correct')
 			$sql='SELECT q.id, q.description, q.correct_answer, qzq.answer, qz.done_at, q.concept_id, c.title AS concept_title FROM tpl_question AS q, tpl_quiz AS qz, tpl_quiz_question AS qzq, tpl_concept AS c WHERE q.id=qzq.question_id AND qzq.quiz_id = qz.id AND qzq.answer IS NOT NULL AND q.concept_id=c.id AND qzq.answer=q.correct_answer AND qz.learner_id='.Yii::app()->user->id.' ORDER BY qz.done_at DESC';
@@ -438,6 +458,11 @@ class ConceptController extends GxController {
 	}
 
 	public function actionIndex() {
+		
+		//monitor=begin
+		$this->moniter('concept', 'index');
+		//monitor-end
+		
 		$moduleArr = Concept::model()->findAll(array("condition"=>"id = root","order"=>"create_at desc"));
 		
 		$this->render('index', array(
@@ -716,6 +741,11 @@ class ConceptController extends GxController {
 		$concept_id='';
 		if (isset($_POST['concept_id']))
 			$concept_id=$_POST['concept_id'];
+		
+		//monitor=begin
+		$this->moniter('concept', 'updateAskTagBar', 'tag='.$tag.'&filter_by='.$filter_by.'&concept_id='.$concept_id, 'POST');
+		//monitor-end
+		
 	
 		$tagsBarStr = '<b>Tag:</b> ';
 		$tagsBarStr .= $tag == '' ? CHtml::tag('span', array('class'=>'label label-info tag selected', 'id'=>'all-tag'), 'all') : CHtml::tag('span', array('class'=>'label tag', 'id'=>'all-tag'), 'all');
@@ -819,6 +849,11 @@ class ConceptController extends GxController {
 		if (isset($_POST['concept_id']))
 			$concept_id=$_POST['concept_id'];
 		
+		//monitor=begin
+		$this->moniter('concept', 'updateAskNoteTagBar', 'tag='.$tag.'&interval='.$interval.'&concept_id='.$concept_id, 'POST');
+		//monitor-end
+	
+		
 		$tagsBarStr = '<b>Tag:</b> ';
 		$tagsBarStr .= $tag == '' ? CHtml::tag('span', array('class'=>'label label-info tag selected', 'id'=>'all-tag'), 'all') : CHtml::tag('span', array('class'=>'label tag', 'id'=>'all-tag'), 'all');
 		
@@ -919,6 +954,11 @@ class ConceptController extends GxController {
 			else
 				$whereStatus = 'status='.$_POST['status'].' AND ';
 		}
+		
+		//monitor=begin
+		$this->moniter('concept', 'updateAskNoteTagBar', 'tag='.$tag.'&interval='.$interval.'&concept_id='.$concept_id.'&whereStatus='.$whereStatus, 'POST');
+		//monitor-end
+	
 		
 		$tagsBarStr = '<b>Tag:</b> ';
 		$tagsBarStr .= $tag == '' ? CHtml::tag('span', array('class'=>'label label-info tag selected', 'id'=>'all-tag'), 'all') : CHtml::tag('span', array('class'=>'label tag', 'id'=>'all-tag'), 'all');

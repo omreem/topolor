@@ -101,6 +101,11 @@ class QuizController extends GxController {
 			$questions[$i] = $questionArr[$i];
 			$questions[$i]['options'] = $optionArr;
 		}
+		
+		//monitor=begin
+		$this->moniter('quiz', 'view', 'id='.$quiz->id);
+		//monitor-end
+		
 
 		$this->render('view', array(
 				'model' => $quiz,

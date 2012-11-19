@@ -19,6 +19,11 @@ class QacenterController extends GxController {
 		$order_by = '';
 		if(isset($_GET['order_by']))
 			$order_by = $_GET['order_by'];
+		
+		//monitor=begin
+		$this->moniter('qacenter', 'index', 'filter_by='.$filter_by.'&is_answered='.$isAnswered.'&order_by='.$order_by);
+		//monitor-end
+		
 	
 		$this->render('index', array(
 			'dataProvider' => $model->search($filter_by, '', '', $isAnswered, $order_by),
@@ -57,6 +62,11 @@ class QacenterController extends GxController {
 		if (isset($_GET['order_by']))
 			$order_by = $_GET['order_by'];
 		
+		//monitor=begin
+		$this->moniter('qacenter', 'concept', 'order_by='.$order_by, 'POST');
+		//monitor-end
+		
+		
 		if ($order_by == 'users') {
 			$sql .= 'sum_user desc';
 		} else if ($order_by == 'name') {
@@ -89,6 +99,11 @@ class QacenterController extends GxController {
 		if (isset($_GET['order_by']))
 			$order_by = $_GET['order_by'];
 		
+		//monitor=begin
+		$this->moniter('qacenter', 'tag', 'order_by='.$order_by, 'POST');
+		//monitor-end
+		
+		
 		$this->render('tag', array(
 			'dataProvider' => $model->search($order_by)
 		));
@@ -99,6 +114,11 @@ class QacenterController extends GxController {
 			throw new CHttpException(400, Yii::t('app', 'Your request is invalid.'));
 		
 		$tag = $_GET['tag'];
+		
+		//monitor=begin
+		$this->moniter('qacenter', 'viewTag', 'tag='.$tag);
+		//monitor-end
+		
 		
 		$newAsk = new Ask;
 		$newAsk->tags = $tag;
@@ -118,6 +138,11 @@ class QacenterController extends GxController {
 			throw new CHttpException(400, Yii::t('app', 'Your request is invalid.'));
 		
 		$concept_id = $_GET['concept_id'];
+		
+		//monitor=begin
+		$this->moniter('qacenter', 'viewConcept', 'concept_id='.$concept_id);
+		//monitor-end
+		
 		
 		$newAsk = new Ask;
 		$newAsk->concept_id = $concept_id;
@@ -155,6 +180,11 @@ class QacenterController extends GxController {
 		$concept_id = '';
 		if (isset($_GET['concept_id']))
 			$concept_id = $_GET['concept_id'];
+		
+		//monitor=begin
+		$this->moniter('qacenter', 'myQa', 'filter_by='.$filter_by.'&is_answered='.$isAnswered.'&tag='.$tag.'&concept_id='.$concept_id);
+		//monitor-end
+		
 		
 		$this->render('myqa', array(
 			'dataProvider' => $model->search($filter_by, $tag, $concept_id, $isAnswered),

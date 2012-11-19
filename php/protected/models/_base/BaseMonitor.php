@@ -14,8 +14,7 @@
  * @property string $controllor
  * @property string $action
  * @property string $type
- * @property string $request_key
- * @property string $request_value
+ * @property string $request
  * @property string $create_at
  *
  * @property User $user
@@ -67,8 +66,7 @@ abstract class BaseMonitor extends GxActiveRecord {
 			'controllor' => Yii::t('app', 'Controllor'),
 			'action' => Yii::t('app', 'Action'),
 			'type' => Yii::t('app', 'Type'),
-			'$request_key' => Yii::t('app', 'key'),
-			'$request_value' => Yii::t('app', 'value'),
+			'request' => Yii::t('app', 'request'),
 			'create_at' => Yii::t('app', 'Create At'),
 			'user' => null,
 		);
@@ -82,8 +80,7 @@ abstract class BaseMonitor extends GxActiveRecord {
 		$criteria->compare('controllor', $this->controllor, true);
 		$criteria->compare('action', $this->action, true);
 		$criteria->compare('type', $this->type, true);
-		$criteria->compare('request_key', $this->request_key, true);
-		$criteria->compare('request_value', $this->request_value, true);
+		$criteria->compare('request', $this->request, true);
 		$criteria->compare('create_at', $this->create_at, true);
 
 		return new CActiveDataProvider($this, array(

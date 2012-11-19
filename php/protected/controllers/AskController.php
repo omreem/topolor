@@ -5,6 +5,11 @@ class AskController extends GxController {
 	public $layout='//layouts/site_column';
 		
 	public function actionView($id) {
+		
+		//monitor=begin
+		$this->moniter('ask', 'view', 'id='.$id);
+		//monitor-end
+		
 		$model = Ask::model()->findByPk($id);
 		if ($model == null) {
 			$this->redirect($this->createUrl('index'));
@@ -40,6 +45,11 @@ class AskController extends GxController {
 	}
 
 	public function actionUpdate($id) {
+		
+		//monitor=begin
+		$this->moniter('ask', 'update', 'id='.$id);
+		//monitor-end
+		
 		$model = $this->loadModel($id, 'Ask');
 
 		if (isset($_POST['Ask'])) {
@@ -58,6 +68,10 @@ class AskController extends GxController {
 		
 		$model = $this->loadModel($_POST['id'], 'Ask');
 		
+		//monitor=begin
+		$this->moniter('ask', 'update', 'id='.$_POST['id'], 'POST');
+		//monitor-end
+		
 		if (isset($_POST['title']))
 			$model->title = $_POST['title'];
 		
@@ -74,6 +88,11 @@ class AskController extends GxController {
 	public function actionDelete($id) {
 		if (Yii::app()->getRequest()->getIsPostRequest()) {
 			$this->loadModel($id, 'Ask')->delete();
+		
+		//monitor=begin
+		$this->moniter('ask', 'update', 'id='.$id);
+		//monitor-end
+		
 
 			if (!Yii::app()->getRequest()->getIsAjaxRequest())
 				$this->redirect(array('admin'));
@@ -82,6 +101,12 @@ class AskController extends GxController {
 	}
 	
 	public function actionIndex() {
+		
+		//monitor=begin
+		$this->moniter('ask', 'index');
+		//monitor-end
+		
+		
 		$newAsk = new Ask;
 
 		$model = new Ask('search');
@@ -155,6 +180,12 @@ class AskController extends GxController {
 		$isAnswered = '';
 		if (isset($_POST['is_answered']))
 			$isAnswered = $_POST['is_answered'];
+		
+		//monitor=begin
+		$this->moniter('ask', 'index', 'tag='.$tag.'&filter_by='.$filter_by.'&concept_id='.$concept_id.'&is_answered='.$isAnswered, 'POST');
+		//monitor-end
+		
+		
 		
 		$tagsBarStr = '<b>Tag:</b> ';
 		$tagsBarStr .= $tag == '' ? CHtml::tag('span', array('class'=>'label label-info tag selected', 'id'=>'all-tag'), 'all') : CHtml::tag('span', array('class'=>'label tag', 'id'=>'all-tag'), 'all');

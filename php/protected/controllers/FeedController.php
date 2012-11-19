@@ -74,6 +74,11 @@ class FeedController extends GxController {
 		
 		$model = $this->loadModel($_POST['id'], 'Feed');
 		
+		//monitor=begin
+		$this->moniter('feed', 'update', 'id='.$model->id, 'POST');
+		//monitor-end
+		
+		
 		if (isset($_POST['description']))
 			$model->description = $_POST['description'];
 		
@@ -83,7 +88,13 @@ class FeedController extends GxController {
 
 	public function actionDelete($id) {
 		if (Yii::app()->getRequest()->getIsPostRequest()) {
-			$this->loadModel($id, 'Feed')->delete();
+			$model = $this->loadModel($id, 'Feed');
+			$model->delete();
+		
+		//monitor=begin
+		$this->moniter('feed', 'delete', 'id='.$model->id);
+		//monitor-end
+		
 
 			if (!Yii::app()->getRequest()->getIsAjaxRequest())
 				$this->redirect(array('admin'));
@@ -92,6 +103,12 @@ class FeedController extends GxController {
 	}
 
 	public function actionIndex() {
+		
+		//monitor=begin
+		$this->moniter('feed', 'index');
+		//monitor-end
+		
+		
 		$newFeed = new Feed;
 		$newMessage = new Message;
 		$newAsk = new Ask;

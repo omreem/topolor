@@ -32,8 +32,6 @@ class QuestionController extends GxController {
 
 	public function actionUpdate($id) {
 		$model = $this->loadModel($id, 'Question');
-
-
 		if (isset($_POST['Question'])) {
 			$model->setAttributes($_POST['Question']);
 			$relatedData = array(
@@ -53,7 +51,7 @@ class QuestionController extends GxController {
 	public function actionDelete($id) {
 		if (Yii::app()->getRequest()->getIsPostRequest()) {
 			$this->loadModel($id, 'Question')->delete();
-
+			
 			if (!Yii::app()->getRequest()->getIsAjaxRequest())
 				$this->redirect(array('admin'));
 		} else
@@ -61,6 +59,7 @@ class QuestionController extends GxController {
 	}
 
 	public function actionIndex() {
+		
 		$dataProvider = new CActiveDataProvider('Question');
 		$this->render('index', array(
 			'dataProvider' => $dataProvider,

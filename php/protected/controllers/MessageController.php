@@ -7,6 +7,7 @@ class MessageController extends GxController {
 	public function actionView($id) {
 		$model = $this->loadModel($id, 'Message');
 		
+		
 		if (!$model->isFirst())
 			$model = Message::model()->findByPk($model->to_message_id);
 		
@@ -57,6 +58,12 @@ class MessageController extends GxController {
 	public function actionDelete($id) {
 		if (Yii::app()->getRequest()->getIsPostRequest()) {
 			$this->loadModel($id, 'Message')->delete();
+		
+		//monitor=begin
+		$this->moniter('message', 'delete', 'id='.$id);
+		//monitor-end
+		
+		
 
 			if (!Yii::app()->getRequest()->getIsAjaxRequest())
 				$this->redirect(array('admin'));
@@ -65,6 +72,12 @@ class MessageController extends GxController {
 	}
 
 	public function actionIndex() {
+		
+		//monitor=begin
+		$this->moniter('message', 'index');
+		//monitor-end
+		
+		
 		//$rawData = Message::model()->findAll('to_message_id IS NULL ORDER BY create_at DESC');
 		$rawData = Message::model()->findAll('to_user_id=:id OR user_id=:id ORDER BY create_at DESC', array(':id'=>Yii::app()->user->id));
 		$arr = array();

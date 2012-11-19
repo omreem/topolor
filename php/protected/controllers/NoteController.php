@@ -5,6 +5,12 @@ class NoteController extends GxController {
 	public $layout='//layouts/site_column';
 
 	public function actionView($id) {
+		
+		//monitor=begin
+		$this->moniter('note', 'view', 'id='.$id);
+		//monitor-end
+		
+		
 		$this->render('view', array('model' => $this->loadModel($id, 'Note')));
 	}
 
@@ -44,6 +50,11 @@ class NoteController extends GxController {
 		
 		$model = $this->loadModel($_POST['id'], 'Note');
 		
+		//monitor=begin
+		$this->moniter('note', 'update', 'id='.$model->id, 'POST');
+		//monitor-end
+		
+		
 		if (isset($_POST['title']))
 			$model->title = $_POST['title'];
 		
@@ -72,7 +83,13 @@ class NoteController extends GxController {
 	public function actionDelete($id) {
 		
 		if (Yii::app()->getRequest()->getIsPostRequest()) {
-			$this->loadModel($id, 'Note')->delete();
+			$model = $this->loadModel($id, 'Note');
+			$model->delete();
+		
+		//monitor=begin
+		$this->moniter('note', 'delete', 'id='.$model->id);
+		//monitor-end
+		
 
 			if (!Yii::app()->getRequest()->getIsAjaxRequest())
 				$this->redirect(array('admin'));
@@ -81,6 +98,11 @@ class NoteController extends GxController {
 	}
 
 	public function actionIndex() {
+		
+		//monitor=begin
+		$this->moniter('note', 'index');
+		//monitor-end
+		
 		$newNote = new Note;
 		
 		$model = new Note('search');
@@ -168,6 +190,11 @@ class NoteController extends GxController {
 		$concept_id='';
 		if (isset($_POST['concept_id']))
 			$concept_id=$_POST['concept_id'];
+		
+		//monitor=begin
+		$this->moniter('note', 'updateFilterBar', 'tag='.$tag.'&interval='.$interval.'&concept_id='.$concept_id, 'POST');
+		//monitor-end
+		
 
 		$tagsBarStr = '<b>Tag:</b> ';
 		$tagsBarStr .= $tag == '' ? CHtml::tag('span', array('class'=>'label label-info tag selected', 'id'=>'all-tag'), 'all') : CHtml::tag('span', array('class'=>'label tag', 'id'=>'all-tag'), 'all');

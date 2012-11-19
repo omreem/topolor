@@ -17,6 +17,7 @@ class FeedCommentController extends GxController {
 			$model->create_at = date('Y-m-d H:i:s', time());
 			$model->user_id = Yii::app()->user->id;
 			if ($model->save()) {
+		
 				if (Yii::app()->getRequest()->getIsAjaxRequest()) {
 					echo $model->id;
 					Yii::app()->end();
@@ -36,6 +37,7 @@ class FeedCommentController extends GxController {
 			$model->setAttributes($_POST['FeedComment']);
 
 			if ($model->save()) {
+		
 				$this->redirect(array('view', 'id' => $model->id));
 			}
 		}
@@ -53,6 +55,11 @@ class FeedCommentController extends GxController {
 		$model->description = $_POST['description'];
 		
 		$model->save();
+		
+		//monitor=begin
+		$this->moniter('feedComment', 'update', 'feed_id='.$model->feed_id.'&comment_id='.$model->id, 'POST');
+		//monitor-end
+		
 		Yii::app()->end();
 	}
 
@@ -70,7 +77,13 @@ class FeedCommentController extends GxController {
 		if (!Yii::app()->getRequest()->getIsPostRequest() || !Yii::app()->getRequest()->getIsAjaxRequest() || !isset($_POST['id']))
 			throw new CHttpException(400, Yii::t('app', 'Your request is invalid.'));
 		$id = $_POST['id'];
-		$this->loadModel($id, 'FeedComment')->delete();
+		$model = $this->loadModel($id, 'FeedComment');
+		$model->delete();
+		
+		//monitor=begin
+		$this->moniter('feedComment', 'delete', 'feed_id='.$model->feed_id.'&comment_id='.$model->id,'POST');
+		//monitor-end
+		
 		Yii::app()->end();
 	}
 

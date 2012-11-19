@@ -68,6 +68,10 @@ class TodoController extends GxController {
 		
 		$model = $this->loadModel($_POST['id'], 'Todo');
 		
+		//monitor=begin
+		$this->moniter('todo', 'update', 'id='.$model->id);
+		//monitor-end
+		
 		if (isset($_POST['status']))
 			$model->status = $_POST['status'];
 		
@@ -116,6 +120,10 @@ class TodoController extends GxController {
 	public function actionDelete($id) {
 		if (Yii::app()->getRequest()->getIsPostRequest()) {
 			$this->loadModel($id, 'Todo')->delete();
+		
+		//monitor=begin
+		$this->moniter('todo', 'delete', 'id='.$id);
+		//monitor-end
 
 			if (!Yii::app()->getRequest()->getIsAjaxRequest())
 				$this->redirect(array('admin'));
@@ -124,6 +132,11 @@ class TodoController extends GxController {
 	}
 
 	public function actionIndex() {
+		
+		//monitor=begin
+		$this->moniter('todo', 'index');
+		//monitor-end
+		
 		$newTodo=new Todo;
 		
 		$model=new Todo('search');
@@ -209,6 +222,10 @@ class TodoController extends GxController {
 			else
 				$whereStatus = 'status='.$_POST['status'].' AND ';
 		}
+		
+		//monitor=begin
+		$this->moniter('todo', 'updateFilterBar', 'tag='.$tag.'&interval='.$interval.'&concept_id='.$concept_id.'&whereStatus='.$whereStatus);
+		//monitor-end
 
 		$tagsBarStr = '<b>Tag:</b> ';
 		$tagsBarStr .= $tag == '' ? CHtml::tag('span', array('class'=>'label label-info tag selected', 'id'=>'all-tag'), 'all') : CHtml::tag('span', array('class'=>'label tag', 'id'=>'all-tag'), 'all');
