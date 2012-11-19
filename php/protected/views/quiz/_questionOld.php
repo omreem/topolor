@@ -1,8 +1,14 @@
+<?php
+if (isset($_SERVER['HTTP_REFERER'])) {
+	$returnUrl = $_SERVER['HTTP_REFERER'];
+
+?>
 <div>
-	<?php echo CHtml::link ('Return', CController::createUrl('/concept/'.$concept_id), array('class'=>'btn')); ?>
+	<?php echo CHtml::link ('Return', $returnUrl, array('class'=>'btn')); ?>
 	<span class="date-time pull-right">Done at: <?php echo Helpers::datatime_feed($quizDoneAt);?></span>
 </div>
 <hr>
+<?php }?>
 <ol>
 <?php foreach ($questions as $question) {?>
 <li>

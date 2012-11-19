@@ -320,10 +320,11 @@ class ConceptController extends GxController {
 			$this->redirect(Yii::app()->homeUrl.'/concept');
 		
 		$sql='select'
-		.' q.id as id,'
-		.' q.score as score,'
+		.' q.id,'
+		.' q.score,'
 		.' c.id as concept_id,'
 		.' c.title as concept_title,'
+		.' q.type,'
 		.' q.done_at'
 			
 		.' from'

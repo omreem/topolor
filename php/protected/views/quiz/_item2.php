@@ -3,7 +3,7 @@
 			array(
 				'class' =>'btn pull-right',
 				'submit' => CController::createUrl('/quiz/view'),
-				'params' => array('concept_id'=>$data['concept_id']),
+				'params' => array('concept_id'=>$data['concept_id'], 'quizType'=>$data['type']),
 		)); ?>
 	</div>
 	<h4>Score: <span style="color: red;"><?php echo $data['score']; ?></span></h4>
