@@ -50,6 +50,7 @@ class ConceptController extends GxController {
 			.' q.id,'
 			.' c.id as concept_id,'
 			.' c.title,'
+			.' q.type,'
 			.' q.done_at'
 			
 			.' from'
@@ -59,6 +60,7 @@ class ConceptController extends GxController {
 			.' where'
 			.' c.root='.$id
 			.' and done_at IS NOT NULL'
+			.' and c.root <>c.id'
 			.' and q.learner_id='.Yii::app()->user->id
 			.' order by q.done_at desc';
 			
