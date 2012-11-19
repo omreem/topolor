@@ -73,6 +73,7 @@ class ConceptController extends GxController {
 			.' where'
 			.' c.root='.$id
 			.' and done_at IS NOT NULL'
+			.' and c.root <>c.id'
 			.' and q.learner_id='.Yii::app()->user->id;
 			$countquizDone=Yii::app()->db->createCommand($sql2)->queryScalar();
 			$quizDone=new CSqlDataProvider($sql, array(
