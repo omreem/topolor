@@ -105,7 +105,8 @@ class FeedController extends GxController {
 	public function actionIndex() {
 		
 		//monitor=begin
-		$this->moniter('feed', 'index');
+		if (!Yii::app()->user->isGuest)
+			$this->moniter('feed', 'index');
 		//monitor-end
 		
 		
