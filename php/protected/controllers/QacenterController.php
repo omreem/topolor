@@ -21,7 +21,8 @@ class QacenterController extends GxController {
 			$order_by = $_GET['order_by'];
 		
 		//monitor=begin
-		$this->moniter('qacenter', 'index', 'filter_by='.$filter_by.'&is_answered='.$isAnswered.'&order_by='.$order_by);
+		if (!Yii::app()->user->isGuest)
+			$this->moniter('qacenter', 'index', 'filter_by='.$filter_by.'&is_answered='.$isAnswered.'&order_by='.$order_by);
 		//monitor-end
 		
 	
@@ -63,7 +64,8 @@ class QacenterController extends GxController {
 			$order_by = $_GET['order_by'];
 		
 		//monitor=begin
-		$this->moniter('qacenter', 'concept', 'order_by='.$order_by, 'POST');
+		if (!Yii::app()->user->isGuest)
+			$this->moniter('qacenter', 'concept', 'order_by='.$order_by, 'POST');
 		//monitor-end
 		
 		
@@ -100,7 +102,8 @@ class QacenterController extends GxController {
 			$order_by = $_GET['order_by'];
 		
 		//monitor=begin
-		$this->moniter('qacenter', 'tag', 'order_by='.$order_by, 'POST');
+		if (!Yii::app()->user->isGuest)
+			$this->moniter('qacenter', 'tag', 'order_by='.$order_by, 'POST');
 		//monitor-end
 		
 		
@@ -140,7 +143,8 @@ class QacenterController extends GxController {
 		$concept_id = $_GET['concept_id'];
 		
 		//monitor=begin
-		$this->moniter('qacenter', 'viewConcept', 'concept_id='.$concept_id);
+		if (!Yii::app()->user->isGuest)
+			$this->moniter('qacenter', 'viewConcept', 'concept_id='.$concept_id);
 		//monitor-end
 		
 		
@@ -182,7 +186,8 @@ class QacenterController extends GxController {
 			$concept_id = $_GET['concept_id'];
 		
 		//monitor=begin
-		$this->moniter('qacenter', 'myQa', 'filter_by='.$filter_by.'&is_answered='.$isAnswered.'&tag='.$tag.'&concept_id='.$concept_id);
+		if (!Yii::app()->user->isGuest)
+			$this->moniter('qacenter', 'myQa', 'filter_by='.$filter_by.'&is_answered='.$isAnswered.'&tag='.$tag.'&concept_id='.$concept_id);
 		//monitor-end
 		
 		

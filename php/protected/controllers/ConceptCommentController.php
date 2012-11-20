@@ -18,7 +18,8 @@ class ConceptCommentController extends GxController {
 			if ($model->save()) {
 		
 		//monitor=begin
-		$this->moniter('conceptComment', 'create', 'concept_id='.$_POST['ConceptComment']['concept_id']);
+		if (!Yii::app()->user->isGuest)
+			$this->moniter('conceptComment', 'create', 'concept_id='.$_POST['ConceptComment']['concept_id']);
 		//monitor-end
 		
 		
@@ -42,7 +43,8 @@ class ConceptCommentController extends GxController {
 			if ($model->save()) {
 		
 		//monitor=begin
-		$this->moniter('conceptComment', 'update', 'id='.$id);
+		if (!Yii::app()->user->isGuest)
+			$this->moniter('conceptComment', 'update', 'id='.$id);
 		//monitor-end
 		
 		
@@ -60,7 +62,8 @@ class ConceptCommentController extends GxController {
 			$this->loadModel($id, 'ConceptComment')->delete();
 		
 		//monitor=begin
-		$this->moniter('conceptComment', 'delete', 'id='.$id);
+		if (!Yii::app()->user->isGuest)
+			$this->moniter('conceptComment', 'delete', 'id='.$id);
 		//monitor-end
 		
 		

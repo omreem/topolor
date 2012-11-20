@@ -7,7 +7,8 @@ class AskController extends GxController {
 	public function actionView($id) {
 		
 		//monitor=begin
-		$this->moniter('ask', 'view', 'id='.$id);
+		if (!Yii::app()->user->isGuest)
+			$this->moniter('ask', 'view', 'id='.$id);
 		//monitor-end
 		
 		$model = Ask::model()->findByPk($id);
@@ -47,7 +48,8 @@ class AskController extends GxController {
 	public function actionUpdate($id) {
 		
 		//monitor=begin
-		$this->moniter('ask', 'update', 'id='.$id);
+		if (!Yii::app()->user->isGuest)
+			$this->moniter('ask', 'update', 'id='.$id);
 		//monitor-end
 		
 		$model = $this->loadModel($id, 'Ask');
@@ -69,7 +71,8 @@ class AskController extends GxController {
 		$model = $this->loadModel($_POST['id'], 'Ask');
 		
 		//monitor=begin
-		$this->moniter('ask', 'update', 'id='.$_POST['id'], 'POST');
+		if (!Yii::app()->user->isGuest)
+			$this->moniter('ask', 'update', 'id='.$_POST['id'], 'POST');
 		//monitor-end
 		
 		if (isset($_POST['title']))
@@ -90,7 +93,8 @@ class AskController extends GxController {
 			$this->loadModel($id, 'Ask')->delete();
 		
 		//monitor=begin
-		$this->moniter('ask', 'update', 'id='.$id);
+		if (!Yii::app()->user->isGuest)
+			$this->moniter('ask', 'update', 'id='.$id);
 		//monitor-end
 		
 
@@ -103,7 +107,8 @@ class AskController extends GxController {
 	public function actionIndex() {
 		
 		//monitor=begin
-		$this->moniter('ask', 'index');
+		if (!Yii::app()->user->isGuest)
+			$this->moniter('ask', 'index');
 		//monitor-end
 		
 		
@@ -182,7 +187,8 @@ class AskController extends GxController {
 			$isAnswered = $_POST['is_answered'];
 		
 		//monitor=begin
-		$this->moniter('ask', 'index', 'tag='.$tag.'&filter_by='.$filter_by.'&concept_id='.$concept_id.'&is_answered='.$isAnswered, 'POST');
+		if (!Yii::app()->user->isGuest)
+			$this->moniter('ask', 'index', 'tag='.$tag.'&filter_by='.$filter_by.'&concept_id='.$concept_id.'&is_answered='.$isAnswered, 'POST');
 		//monitor-end
 		
 		

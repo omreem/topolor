@@ -60,7 +60,8 @@ class MessageController extends GxController {
 			$this->loadModel($id, 'Message')->delete();
 		
 		//monitor=begin
-		$this->moniter('message', 'delete', 'id='.$id);
+		if (!Yii::app()->user->isGuest)
+			$this->moniter('message', 'delete', 'id='.$id);
 		//monitor-end
 		
 		
@@ -74,7 +75,8 @@ class MessageController extends GxController {
 	public function actionIndex() {
 		
 		//monitor=begin
-		$this->moniter('message', 'index');
+		if (!Yii::app()->user->isGuest)
+			$this->moniter('message', 'index');
 		//monitor-end
 		
 		

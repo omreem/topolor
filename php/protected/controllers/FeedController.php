@@ -75,7 +75,8 @@ class FeedController extends GxController {
 		$model = $this->loadModel($_POST['id'], 'Feed');
 		
 		//monitor=begin
-		$this->moniter('feed', 'update', 'id='.$model->id, 'POST');
+		if (!Yii::app()->user->isGuest)
+			$this->moniter('feed', 'update', 'id='.$model->id, 'POST');
 		//monitor-end
 		
 		
@@ -92,7 +93,8 @@ class FeedController extends GxController {
 			$model->delete();
 		
 		//monitor=begin
-		$this->moniter('feed', 'delete', 'id='.$model->id);
+		if (!Yii::app()->user->isGuest)
+			$this->moniter('feed', 'delete', 'id='.$model->id);
 		//monitor-end
 		
 

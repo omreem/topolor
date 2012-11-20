@@ -69,7 +69,8 @@ class TodoController extends GxController {
 		$model = $this->loadModel($_POST['id'], 'Todo');
 		
 		//monitor=begin
-		$this->moniter('todo', 'update', 'id='.$model->id);
+		if (!Yii::app()->user->isGuest)
+			$this->moniter('todo', 'update', 'id='.$model->id);
 		//monitor-end
 		
 		if (isset($_POST['status']))
@@ -122,7 +123,8 @@ class TodoController extends GxController {
 			$this->loadModel($id, 'Todo')->delete();
 		
 		//monitor=begin
-		$this->moniter('todo', 'delete', 'id='.$id);
+		if (!Yii::app()->user->isGuest)
+			$this->moniter('todo', 'delete', 'id='.$id);
 		//monitor-end
 
 			if (!Yii::app()->getRequest()->getIsAjaxRequest())
@@ -134,7 +136,8 @@ class TodoController extends GxController {
 	public function actionIndex() {
 		
 		//monitor=begin
-		$this->moniter('todo', 'index');
+		if (!Yii::app()->user->isGuest)
+			$this->moniter('todo', 'index');
 		//monitor-end
 		
 		$newTodo=new Todo;
@@ -224,7 +227,8 @@ class TodoController extends GxController {
 		}
 		
 		//monitor=begin
-		$this->moniter('todo', 'updateFilterBar', 'tag='.$tag.'&interval='.$interval.'&concept_id='.$concept_id.'&whereStatus='.$whereStatus);
+		if (!Yii::app()->user->isGuest)
+			$this->moniter('todo', 'updateFilterBar', 'tag='.$tag.'&interval='.$interval.'&concept_id='.$concept_id.'&whereStatus='.$whereStatus);
 		//monitor-end
 
 		$tagsBarStr = '<b>Tag:</b> ';

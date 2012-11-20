@@ -103,7 +103,8 @@ class QuizController extends GxController {
 		}
 		
 		//monitor=begin
-		$this->moniter('quiz', 'view', 'id='.$quiz->id);
+		if (!Yii::app()->user->isGuest)
+			$this->moniter('quiz', 'view', 'id='.$quiz->id);
 		//monitor-end
 		
 

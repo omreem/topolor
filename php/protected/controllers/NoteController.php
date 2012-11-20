@@ -7,7 +7,8 @@ class NoteController extends GxController {
 	public function actionView($id) {
 		
 		//monitor=begin
-		$this->moniter('note', 'view', 'id='.$id);
+		if (!Yii::app()->user->isGuest)
+			$this->moniter('note', 'view', 'id='.$id);
 		//monitor-end
 		
 		
@@ -51,7 +52,8 @@ class NoteController extends GxController {
 		$model = $this->loadModel($_POST['id'], 'Note');
 		
 		//monitor=begin
-		$this->moniter('note', 'update', 'id='.$model->id, 'POST');
+		if (!Yii::app()->user->isGuest)
+			$this->moniter('note', 'update', 'id='.$model->id, 'POST');
 		//monitor-end
 		
 		
@@ -87,7 +89,8 @@ class NoteController extends GxController {
 			$model->delete();
 		
 		//monitor=begin
-		$this->moniter('note', 'delete', 'id='.$model->id);
+		if (!Yii::app()->user->isGuest)
+			$this->moniter('note', 'delete', 'id='.$model->id);
 		//monitor-end
 		
 
@@ -100,7 +103,8 @@ class NoteController extends GxController {
 	public function actionIndex() {
 		
 		//monitor=begin
-		$this->moniter('note', 'index');
+		if (!Yii::app()->user->isGuest)
+			$this->moniter('note', 'index');
 		//monitor-end
 		
 		$newNote = new Note;
@@ -192,7 +196,8 @@ class NoteController extends GxController {
 			$concept_id=$_POST['concept_id'];
 		
 		//monitor=begin
-		$this->moniter('note', 'updateFilterBar', 'tag='.$tag.'&interval='.$interval.'&concept_id='.$concept_id, 'POST');
+		if (!Yii::app()->user->isGuest)
+			$this->moniter('note', 'updateFilterBar', 'tag='.$tag.'&interval='.$interval.'&concept_id='.$concept_id, 'POST');
 		//monitor-end
 		
 
