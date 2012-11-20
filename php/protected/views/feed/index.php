@@ -138,7 +138,7 @@ Yii::app()->clientScript->registerScript('feed-index-js', "
 //********* Sign In / Up
 	var isguest = ".Yii::app()->user->id.";
 	if (isguest == 0)
-		$('#login-modal').modal({show: true, backdrop: 'static'});
+		$('#login-modal').modal({show: true, backdrop: 'static', 'keyboard': false,});
 		
 	$('.btn-to-signup').click(function() {
 		$('.canvas-signin').fadeOut();
