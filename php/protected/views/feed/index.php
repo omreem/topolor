@@ -220,7 +220,7 @@ Yii::app()->clientScript->registerScript('feed-index-js', "
 	});
 		
 	$('#form-signup #RegistrationForm_email').focusout(function() {
-		if ($(this).next().text() != 'Email\'s format okey.')
+		if ($(this).next().text() != 'Email\'s format ok.')
 			return;
 		var email = $(this).val();
 		\$this = $(this);
@@ -230,7 +230,7 @@ Yii::app()->clientScript->registerScript('feed-index-js', "
 			url: '".$this->createUrl('validateEmail')."',
 			success: function (result) {
 				if (result == 'success') {
-					\$this.next().text('Email is okey.');
+					\$this.next().text('Email is ok.');
 					\$this.parent().parent().removeClass('error');
 					\$this.parent().parent().addClass('success');
 				} else {
@@ -260,7 +260,7 @@ Yii::app()->clientScript->registerScript('feed-index-js', "
 			url: '".$this->createUrl('validateUsername')."',
 			success: function (result) {
 				if (result == 'success') {
-					\$this.next().text('Username is okey.');
+					\$this.next().text('Username is ok.');
 					\$this.parent().parent().removeClass('error');
 					\$this.parent().parent().addClass('success');
 				} else {
@@ -283,7 +283,7 @@ Yii::app()->clientScript->registerScript('feed-index-js', "
 			$(this).parent().parent().removeClass('success');
 			$(this).parent().parent().addClass('error');
 		} else {
-			$(this).next().text('Email\'s format okey.');
+			$(this).next().text('Email\'s format ok.');
 			$(this).parent().parent().removeClass('error');
 			$(this).parent().parent().addClass('success');
 		}
@@ -308,7 +308,7 @@ Yii::app()->clientScript->registerScript('feed-index-js', "
 			$(this).parent().parent().removeClass('success');
 			$(this).parent().parent().addClass('error');
 		} else {
-			$(this).next().text('Password is okey.');
+			$(this).next().text('Password is ok.');
 			$(this).parent().parent().removeClass('error');
 			$(this).parent().parent().addClass('success');
 		}
@@ -326,13 +326,13 @@ Yii::app()->clientScript->registerScript('feed-index-js', "
 			$(this).parent().parent().removeClass('success');
 			$(this).parent().parent().addClass('error');
 		} else {
-			$(this).next().text('Re-password is okey.');
+			$(this).next().text('Re-password is ok.');
 			$(this).parent().parent().removeClass('error');
 			$(this).parent().parent().addClass('success');
 		}
 		validSignupForm();
 	});
-		
+	
 	$('#fake-file-input, #fake-file-button').click(function() {
 		$('#form-signup .input-file').trigger('click');
 	});
