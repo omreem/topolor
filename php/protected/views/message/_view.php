@@ -25,7 +25,7 @@
 			</div>
 			<div>
 				<span class="date-time"><?php echo Helpers::datatime_trim($data->create_at);?></span>
-				<a class="btn-link pull-right" href="message/<?php echo $data->id;?>" style="padding-right: 4px;"><?php echo $data->count;?> messages</a>
+				<a class="btn-link pull-right" href="message/<?php echo $data->id;?>" style="padding-right: 4px;"><?php echo $data->count;?> message<?php echo $data->count > 1?'s':'';?></a>
 			</div>
 		</div>
 	</div>
