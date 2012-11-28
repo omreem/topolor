@@ -55,7 +55,8 @@ Yii::app()->clientScript->registerScript('view-quizList-js', "
 //******** filter
 	$('#filter-form').submit(function(){
 	    $.fn.yiiListView.update('question-list', { 
-	        data: $(this).serialize()
+	        data: $(this).serialize(),
+			complete: function(){\$('.concept-tag').popover();}
 	    });
 	    return false;
 	});

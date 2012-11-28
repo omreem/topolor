@@ -110,9 +110,9 @@
         </ul>
         <div id="user-ranking-content" style="margin-top: -8px;"></div>
       </div><!--/.well -->
-      <div class="well sidebar-nav left-main-menu" id="study-buddis">
+      <div class="well sidebar-nav left-main-menu" id="study-buddies">
       	<ul class="nav nav-tabs">
-          <li class="nav-header">Study Buddis</li>
+          <li class="nav-header">Study buddies</li>
           <li class="dropdown pull-right" style="margin-top: -8px; margin-bottom: 2px;">
             <a class="dropdown-toggle" data-toggle="dropdown" href="#">
               <span class="user-filter-by">Learning</span>

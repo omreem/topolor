@@ -169,11 +169,11 @@ class ConceptController extends GxController {
 			$dataProvider_note = $note->search($interval, $tag, $id);
 			
 		} else {
-		
-			$dataProvider_note = new CArrayDataProvider($model->notes, array(
+
+			$dataProvider_note = new CArrayDataProvider($model->notesOwned, array(
 				'keyField'=>'id',
 				'pagination' => array(
-						'pageSize' => 5,
+					'pageSize' => 5,
 				),
 			));
 		}

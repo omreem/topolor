@@ -1,5 +1,7 @@
 <?php
-if (isset($_SERVER['HTTP_REFERER'])) {
+if (isset($_POST['quiz_id']))
+	$returnUrl = $this->createUrl('/concept/'.$concept_id);
+elseif (isset($_SERVER['HTTP_REFERER'])) {
 	$returnUrl = $_SERVER['HTTP_REFERER'];
 
 ?>

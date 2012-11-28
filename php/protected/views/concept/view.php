@@ -147,7 +147,7 @@
 	<ul id="myTab" class="nav nav-tabs">
 		<li class="active"><a id="tab-comments" href="#comments" data-toggle="tab">Comment<?php echo $model->commentCount > 1 ? 's' : '';?> (<?php echo $model->commentCount;?>)</a></li>
 		<li><a id="tab-asks" href="#asks" data-toggle="tab">Q&amp;A<?php echo $model->askCount > 1 ? 's' : '';?> (<?php echo $model->askCount;?>)</a></li>
-		<li><a id="tab-notes" href="#notes" data-toggle="tab">My note<?php echo $model->noteCount > 1 ? 's' : '';?> (<?php echo $model->noteCount;?>)</a></li>
+		<li><a id="tab-notes" href="#notes" data-toggle="tab">My note<?php echo $model->notesOwnedCount > 1 ? 's' : '';?> (<?php echo $model->notesOwnedCount;?>)</a></li>
 		<li><a id="tab-todos" href="#todos" data-toggle="tab">My todo<?php echo $model->todoOwnedCount > 1 ? 's' : '';?> (<?php echo $model->todosOwnedUndoneCount;?>)</a></li>
 	</ul>
 	<div id="myTabContent" class="tab-content">
@@ -330,6 +330,9 @@
 	var homeUrl = '".Yii::app()->homeUrl."';
 		
 	function titleClick() {
+		if(!$(this).hasClass('edible'))
+			return false;
+		
 		var title_ori=$(this).html();
 		\$this = $(this);
 		$(this).html('<div id=\"wrap\" style=\"margin-right: 20px;\"><input id=\"title\" type=\"text\" style=\"width: 100%;\"></div>');
@@ -362,6 +365,9 @@
 	}
 	
 	function descriptionClick() {
+		
+		if(!$(this).hasClass('edible'))
+			return false;
 		var description_ori=$(this).html();
 		\$this = $(this);
 		$(this).html('<div id=\"wrap\" style=\"margin-right: 20px;\"><textarea rows=\"4\" id=\"description\" style=\"width: 100%;\"></textarea></div>');
@@ -926,7 +932,7 @@
 					\$commentCount.addClass('btn-link');
 					\$commentCount.attr('onclick', '$(this).next().slideToggle();');
 				}
-				\$form.closest('.post-comment').find('#answer-list').children('.items').prepend('<div class=\"comment-item clearfix\" style=\"display: none;\"><div class=\"user-avatar\"><img style=\"width:48px; height:48px\" class=\"img-polaroid\" src=\"".Yii::app()->baseUrl."/uploads/images/profile-avatar/".Yii::app()->user->id."\"/></div><div class=\"content\"><span class=\"user-name\">admin</span>:<span class=\"pull-right owner\" style=\"display:none;\"><input type=\"hidden\" id=\"answer_id\" value=\"'.concat(data).concat('\"><span class=\"btn-link btn-edit\">edit</span><span style=\"color:grey;\">&nbsp;/&nbsp;</span><span class=\"btn-link btn-delete\">delete</span></span><br><span class=\"description\">').concat(newAnswerDescription).concat('</span></div></div>'));
+				\$form.closest('.post-comment').find('#answer-list').children('.items').prepend('<div class=\"comment-item clearfix\" style=\"display: none;\"><div class=\"user-avatar\"><img style=\"width:48px; height:48px\" class=\"img-polaroid\" src=\"".Yii::app()->baseUrl."/uploads/images/profile-avatar/".Yii::app()->user->id."\"/></div><div class=\"content\"><span class=\"user-name\">".CHtml::encode(Yii::app()->user->name)."</span>:<span class=\"pull-right owner\" style=\"display:none;\"><input type=\"hidden\" id=\"answer_id\" value=\"'.concat(data).concat('\"><span class=\"btn-link btn-edit\">edit</span><span style=\"color:grey;\">&nbsp;/&nbsp;</span><span class=\"btn-link btn-delete\">delete</span></span><br><span class=\"description\">').concat(newAnswerDescription).concat('</span></div></div>'));
 				\$form.closest('.post-comment').find('#answer-list div:first-child').slideDown();
 			}
 		});
@@ -1656,13 +1662,13 @@
 			},
 		});
 		
-		var url = $('#study-buddis .user-filter-by').text() == 'Learning' ? '".$this->createUrl('concept/fetchUsersLearning')."' : '".$this->createUrl('concept/fetchUsersLearnt')."';
+		var url = $('#study-buddies .user-filter-by').text() == 'Learning' ? '".$this->createUrl('concept/fetchUsersLearning')."' : '".$this->createUrl('concept/fetchUsersLearnt')."';
 		$.ajax({
 			data: {concept_id: ".$model->id."},
 			type: 'post',
 			url: url,
 			success: function(html) {
-				$('#study-buddis #user-fiter-content').html(html);
+				$('#study-buddies #user-fiter-content').html(html);
 				//$('[rel=tooltip]').tooltip();
 			},
 		});
@@ -1716,25 +1722,25 @@
 	});
 		
 	// change filter by learnt or learning
-	$('#study-buddis .user-filter-by-change').live('click', function() {
+	$('#study-buddies .user-filter-by-change').live('click', function() {
 		
 		$('[rel=tooltip]').tooltip('disable');
 		
 		if ($(this).text() == 'Learning') {
-			$('#study-buddis .user-filter-by').text('Learning');
+			$('#study-buddies .user-filter-by').text('Learning');
 			$(this).text('Learnt');
 			$.ajax({
 				data: {concept_id: ".$model->id."},
 				type: 'post',
 				url: '".$this->createUrl('concept/fetchUsersLearning')."',
 				success: function(html) {
-					$('#study-buddis #user-fiter-content').html(html);
+					$('#study-buddies #user-fiter-content').html(html);
 					$('[rel=tooltip]').tooltip();
 				},
 			});
 		
 		} else {
-			$('#study-buddis .user-filter-by').text('Learnt');
+			$('#study-buddies .user-filter-by').text('Learnt');
 			$(this).text('Learning');
 		
 			$.ajax({
@@ -1742,7 +1748,7 @@
 				type: 'post',
 				url: '".$this->createUrl('concept/fetchUsersLearnt')."',
 				success: function(html) {
-					$('#study-buddis #user-fiter-content').html(html);
+					$('#study-buddies #user-fiter-content').html(html);
 					$('[rel=tooltip]').tooltip();
 				},
 			});

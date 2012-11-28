@@ -1,9 +1,5 @@
-<div class="hero-unit top-panel-fix">
-  <h1>Module Center</h1>
-  <p>This is balabala...</p>
-  <p>Some Info</p>
-  <p>Other Instructions</p>
-  <p><a class="btn btn-primary btn-large">Learn more &raquo;</a></p>
+<div class="well top-panel-fix">
+  Register a module that you want to learn. Or, click Get In to continue.
 </div>
 <?php $count = count($moduleArr);
 
@@ -180,7 +176,7 @@ endfor;?>
 		
 
 //////////study buddies
-	$('#study-buddis').hide();
+	$('#study-buddies').hide();
 		
 	// change bg-color
 	$('.user-rank-item').live('mouseenter', function() {

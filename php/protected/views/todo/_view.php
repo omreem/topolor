@@ -25,9 +25,9 @@
 		<?php if ($data->start_at != null) :?>
 		<div class="date-time"><?php echo Helpers::datatime_trim($data->start_at);?> - <?php echo Helpers::datatime_trim($data->end_at);?></div>
 		<?php endif;?>
-		<div class="content-title"><?php echo GxHtml::encode($data->title); ?></div>
+		<div class="content-title edible"><?php echo GxHtml::encode($data->title); ?></div>
 		<div class="content-details clearfix">
-			<div class='content-description'><?php echo GxHtml::encode($data->description); ?></div>
+			<div class='content-description edible'><?php echo GxHtml::encode($data->description); ?></div>
 			<div style="margin: 10px 0 0 20px;"><?php if ($data->update_at != '') echo '<p><span class="date-time">Edited at '.Helpers::datatime_trim($data->update_at).'</span></p>';?></div>
 			<?php if ($data->concept != null): ?>
 			<div class="content-metadata">

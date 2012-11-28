@@ -31,7 +31,7 @@ class AskController extends GxController {
 				$feed->user_id = Yii::app()->user->id;
 				$feed->of = 'ask';
 				$feed->of_id = $model->id;
-				$feed->description = 'ask a question';
+				$feed->description = 'asks a question';
 				$feed->create_at = date('Y-m-d H:i:s', time());
 				$feed->save();
 				

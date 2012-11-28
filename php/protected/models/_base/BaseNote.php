@@ -112,7 +112,6 @@ abstract class BaseNote extends GxActiveRecord {
 		}
 
 		$criteria->compare('id', $this->id, true);
-		$criteria->compare('learner_id', $this->learner_id);
 		$criteria->compare('title', $this->title, true);
 		$criteria->compare('description', $this->description, true);
 		$criteria->compare('concept_id', $this->concept_id);
@@ -120,6 +119,8 @@ abstract class BaseNote extends GxActiveRecord {
 		$criteria->compare('create_at', $this->create_at, true);
 		$criteria->compare('update_at', $this->update_at, true);
 
+		$criteria->addCondition("learner_id = '".Yii::app()->user->id."'", 'AND');
+		
 		$criteria->order = 'create_at DESC';
 
 		return new CActiveDataProvider($this, array(

@@ -89,6 +89,8 @@ abstract class BaseConcept extends GxActiveRecord {
 			'asks' =>  array(self::HAS_MANY, 'Ask', 'concept_id',
 					'order' => 'asks.create_at DESC'),
 			'askCount' => array(self::STAT, 'Ask', 'concept_id'),
+			'notesOwnedCount' => array(self::STAT, 'Note', 'concept_id',
+					'condition'=>'learner_id='.Yii::app()->user->id,),
 			'notesOwned' => array(self::HAS_MANY, 'Note', 'concept_id',
 					'order' => 'notesOwned.create_at DESC',
 					'condition'=>'notesOwned.learner_id='.Yii::app()->user->id,),

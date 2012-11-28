@@ -92,13 +92,13 @@
 			},
 		});
 		
-		var url = $('#study-buddis .user-filter-by').text() == 'Learning' ? '".$this->createUrl('concept/fetchUsersLearning')."' : '".$this->createUrl('concept/fetchUsersLearnt')."';
+		var url = $('#study-buddies .user-filter-by').text() == 'Learning' ? '".$this->createUrl('concept/fetchUsersLearning')."' : '".$this->createUrl('concept/fetchUsersLearnt')."';
 		$.ajax({
 			data: {concept_id: ".$model->id."},
 			type: 'post',
 			url: url,
 			success: function(html) {
-				$('#study-buddis #user-fiter-content').html(html);
+				$('#study-buddies #user-fiter-content').html(html);
 				//$('[rel=tooltip]').tooltip();
 			},
 		});
@@ -151,25 +151,25 @@
 	});
 		
 	// change filter by learnt or learning
-	$('#study-buddis .user-filter-by-change').live('click', function() {
+	$('#study-buddies .user-filter-by-change').live('click', function() {
 		
 		$('[rel=tooltip]').tooltip('disable');
 		
 		if ($(this).text() == 'Learning') {
-			$('#study-buddis .user-filter-by').text('Learning');
+			$('#study-buddies .user-filter-by').text('Learning');
 			$(this).text('Learnt');
 			$.ajax({
 				data: {concept_id: ".$model->id."},
 				type: 'post',
 				url: '".$this->createUrl('concept/fetchUsersLearning')."',
 				success: function(html) {
-					$('#study-buddis #user-fiter-content').html(html);
+					$('#study-buddies #user-fiter-content').html(html);
 					$('[rel=tooltip]').tooltip();
 				},
 			});
 		
 		} else {
-			$('#study-buddis .user-filter-by').text('Learnt');
+			$('#study-buddies .user-filter-by').text('Learnt');
 			$(this).text('Learning');
 		
 			$.ajax({
@@ -177,7 +177,7 @@
 				type: 'post',
 				url: '".$this->createUrl('concept/fetchUsersLearnt')."',
 				success: function(html) {
-					$('#study-buddis #user-fiter-content').html(html);
+					$('#study-buddies #user-fiter-content').html(html);
 					$('[rel=tooltip]').tooltip();
 				},
 			});

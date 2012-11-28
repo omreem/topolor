@@ -245,7 +245,7 @@ class QacenterController extends GxController {
 		
 		if ($rank_by == 'questions') {
 			
-			$userArr = Yii::app()->db->createCommand('SELECT t.id, username, COUNT(t.id) AS count FROM tpl_user AS t, tpl_ask AS a WHERE t.id=a.learner_id GROUP BY t.id ORDER BY COUNT(t.id)')->queryAll();
+			$userArr = Yii::app()->db->createCommand('SELECT t.id, username, COUNT(t.id) AS count FROM tpl_user AS t, tpl_ask AS a WHERE t.id=a.learner_id GROUP BY t.id ORDER BY COUNT(t.id) DESC')->queryAll();
 			
 			foreach ($userArr as $user)
 				if ($user['id'] == Yii::app()->user->id)
@@ -270,7 +270,7 @@ class QacenterController extends GxController {
 </div>';
 		} else {
 			
-			$userArr = Yii::app()->db->createCommand('SELECT t.id, username, COUNT(t.id) AS count FROM tpl_user AS t, tpl_answer AS a WHERE t.id=a.learner_id GROUP BY t.id ORDER BY COUNT(t.id)')->queryAll();
+			$userArr = Yii::app()->db->createCommand('SELECT t.id, username, COUNT(t.id) AS count FROM tpl_user AS t, tpl_answer AS a WHERE t.id=a.learner_id GROUP BY t.id ORDER BY COUNT(t.id) DESC')->queryAll();
 							
 			foreach ($userArr as $user)
 				if ($user['id'] == Yii::app()->user->id)
