@@ -3,7 +3,7 @@
 	<li class="btn-is-answered"><a class="btn-link">Answered</a></li>
 	<li class="btn-filter-unansered"><a class="btn-link">Unanswered</a></li>
 	<li class="btn-order-shared"><a class="btn-link">Shared</a></li>
-	<li class="btn-order-favorited"><a class="btn-link">favorited</a></li>
+	<li class="btn-order-favourites"><a class="btn-link">Favourites</a></li>
 </ul>
 
 <?php $form = $this->beginWidget('GxActiveForm', array(
@@ -349,11 +349,11 @@ Yii::app()->clientScript->registerScript('qacenter-index-js', "
 		$('#order-filter-form').submit();
 	});
 		
-	$('.btn-order-favorited').click(function(){
+	$('.btn-order-favourites').click(function(){
 		$('#order-filter-bar > li').removeClass('active');
 		$(this).addClass('active');
 		
-		$('#order-filter-form #order_by').val('favorited');
+		$('#order-filter-form #order_by').val('favourites');
 		$('#order-filter-form #is_answered').val('');
 		$('#order-filter-form').submit();
 	});

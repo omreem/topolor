@@ -440,9 +440,9 @@ Yii::app()->clientScript->registerScript('ask-view-js', "
 				var len = \$this.text().length;
 				if (len > 9) {
 					\$newSum = parseInt(\$this.text().substr(11, len - 12)) + 1;
-					\$this.text('Favorited ('+\$newSum+')');
+					\$this.text('Favourited ('+\$newSum+')');
 				} else
-					\$this.text('Favorited (1)');
+					\$this.text('Favourited (1)');
 				\$this.removeClass('btn-favorite');
 				\$this.addClass('btn-unfavorite');
 				\$this.attr('title', 'click to unfavorite it');

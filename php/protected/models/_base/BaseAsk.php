@@ -63,7 +63,7 @@ abstract class BaseAsk extends GxActiveRecord {
 			'learner' => array(self::BELONGS_TO, 'User', 'learner_id'),
 
 // foreign key needed
-//			'countFavorited' => array(self::STAT, 'Favorite', 'of_id', 'condition'=>'of=\'ask\''),
+//			'countFavourites' => array(self::STAT, 'Favorite', 'of_id', 'condition'=>'of=\'ask\''),
 //			'countShared' => array(),
 //			'countAnswered' => array(),
 		);
@@ -158,7 +158,7 @@ abstract class BaseAsk extends GxActiveRecord {
 			$criteria->compare('of', 'ask');
 			$criteria->group = 't.id';
 			$criteria->order = 'count(t.id) DESC';
-		} else if ($order_by == 'favorited') {
+		} else if ($order_by == 'favourites') {
 			$criteria->select = 't.*';
 			$criteria->join = 'LEFT JOIN tpl_favorite ON t.id = tpl_favorite.of_id';
 			$criteria->compare('of', 'ask');

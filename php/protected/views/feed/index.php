@@ -62,6 +62,7 @@
 		   		<span class="btn btn-primary disabled" id="btn-signin"><?php echo UserModule::t("Sign In"); ?></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 		   		<span class="hint">New to Topolor?</span>&nbsp;&nbsp;<span class="btn-link btn-to-signup">Sign Up</span>
 		   	</div>
+		   	<div><br><p class="hint">Forget your username/password? Please email Lei.Shi@dcs.warwick.ac.uk for help.</p></div>
 		</div>
 		<div class="pull-left canvas-signup" style="display: none;">
 			<?php echo CHtml::beginForm($this->createUrl('user/registration'), 'POST', array('id'=>'form-signup', 'class'=>'form-inline', 'enctype' => 'multipart/form-data')); ?>

@@ -28,7 +28,7 @@ for ($i=0;$i<$count;$i++) :
 								<p><?php echo $description;?></p>		        
 							</div>
 							<div class="modal-footer">
-								<?php echo CHtml::ajaxLink ("Confirm",
+								<?php echo CHtml::ajaxLink ("Confirm Registration",
 									CController::createUrl('/concept/register'), 
 									array(
 											'type' => 'POST',

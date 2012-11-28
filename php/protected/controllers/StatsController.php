@@ -3,7 +3,7 @@
 class StatsController extends GxController {
 	public function actionStats() {
 		$arr = array();
-		$arr['countFavorited'] = Yii::app()->db->createCommand('SELECT COUNT(*) FROM tpl_favorite WHERE user_id='.Yii::app()->user->id)->queryScalar();
+		$arr['countFavourites'] = Yii::app()->db->createCommand('SELECT COUNT(*) FROM tpl_favorite WHERE user_id='.Yii::app()->user->id)->queryScalar();
 		$arr['countShared'] = Yii::app()->db->createCommand('SELECT COUNT(*) FROM tpl_feed WHERE (of IS NOT NULL OR from_id IS NOT NULL) AND user_id='.Yii::app()->user->id)->queryScalar();
 		$arr['countCommented'] = Yii::app()->db->createCommand('SELECT COUNT(*) FROM tpl_feed_comment WHERE user_id='.Yii::app()->user->id)->queryScalar();
 		header('Content-type: application/json');

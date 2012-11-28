@@ -75,7 +75,7 @@
 				<b><span style="font-size: 18px;"><?php echo CHtml::encode(Yii::app()->user->name);?></span></b><br>
 				Shared: <span id="countShared"></span><br>
 				Commented: <span id="countCommented"></span><br>
-				Favorited: <span id="countFavorited"></span>
+				Favourites: <span id="countFavourites"></span>
 			</div>
 		</div>
       </div><!--/.well -->
@@ -100,7 +100,7 @@
             </a>
             <ul class="dropdown-menu">
               <li><a class="btn-link user-rank-order-by-change-commented">Commented</a></li>
-              <li><a class="btn-link user-rank-order-by-change-favorited">Favorited</a></li>
+              <li><a class="btn-link user-rank-order-by-change-favourites">Favourites</a></li>
             </ul>
           </li>
         </ul>
@@ -152,7 +152,7 @@
 	$.ajax({
 		url: '".$this->createUrl('stats/stats')."',
 		success: function(stats) {
-			$('#countFavorited').html(stats.countFavorited);
+			$('#countFavourites').html(stats.countFavourites);
 			$('#countShared').html(stats.countShared);
 			$('#countCommented').html(stats.countCommented);
 		}
@@ -184,7 +184,7 @@
 		if ($('.user-rank-order-by').text() == 'Commented')
 			$(this).addClass('user-rank-order-by-change-commented');
 		else
-			$(this).addClass('user-rank-order-by-change-favorited');
+			$(this).addClass('user-rank-order-by-change-favourites');
 			
 		$('.user-rank-order-by').text('Shared');
 		
@@ -201,21 +201,21 @@
 		});
 	});
 		
-	$('.user-rank-order-by-change-favorited').live('click', function() {
+	$('.user-rank-order-by-change-favourites').live('click', function() {
 		$(this).text($('.user-rank-order-by').text());
-		$(this).removeClass('user-rank-order-by-change-favorited');
+		$(this).removeClass('user-rank-order-by-change-favourites');
 		
 		if ($('.user-rank-order-by').text() == 'Commented')
 			$(this).addClass('user-rank-order-by-change-commented');
 		else
 			$(this).addClass('user-rank-order-by-change-shared');
 		
-		$('.user-rank-order-by').text('Favorited');
+		$('.user-rank-order-by').text('Favourites');
 		
 		$('[rel=tooltip]').tooltip('disable');
 		
 		$.ajax({
-			data: {rank_by: 'favorited'},
+			data: {rank_by: 'favourites'},
 			type: 'post',
 			url: '".$this->createUrl('feed/fetchTopUsers')."',
 			success: function(html) {
@@ -229,8 +229,8 @@
 		$(this).text($('.user-rank-order-by').text());
 		$(this).removeClass('user-rank-order-by-change-commented');
 		
-		if ($('.user-rank-order-by').text() == 'Favorited')
-			$(this).addClass('user-rank-order-by-change-favorited');
+		if ($('.user-rank-order-by').text() == 'Favourites')
+			$(this).addClass('user-rank-order-by-change-favourites');
 		else
 			$(this).addClass('user-rank-order-by-change-shared');
 		

@@ -25,7 +25,7 @@
 			'multiple'=>true,
 			'htmlOptions'=>array('size'=>50),
 		)); ?>
-		<span class="hint">Please separate different tags with commas.</span>
+		<span class="hint">Please separate different tags with commas and space.</span>
 		<div>
 			<a class="btn btn-primary btn-create disabled">Submit</a>
 			<a class="btn btn-cancel">Cancel</a>
