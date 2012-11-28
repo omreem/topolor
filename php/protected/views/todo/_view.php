@@ -29,7 +29,7 @@
 		<div class="content-details clearfix">
 			<div class='content-description edible'><?php echo GxHtml::encode($data->description); ?></div>
 			<div style="margin: 10px 0 0 20px;"><?php if ($data->update_at != '') echo '<p><span class="date-time">Edited at '.Helpers::datatime_trim($data->update_at).'</span></p>';?></div>
-			<?php if ($data->concept != null): ?>
+			<?php if ($data->concept != null && $data->concept->id != 0): ?>
 			<div class="content-metadata">
 				<b>Module:</b> <a href="<?php echo Yii::app()->homeUrl.'/concept/'.$data->concept->module->id;?>"><?php echo GxHtml::encode($data->concept->module->title);?></a><br>
 				<?php if ($data->concept_id != $data->concept->module->id) {?>

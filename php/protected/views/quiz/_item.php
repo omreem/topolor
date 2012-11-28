@@ -1,7 +1,7 @@
 <div class="content-title">
 	<?php echo $data['title']?>
 </div>
-<p>qwertyuiop
+<p>
 	<span class="date-time">Done at <?php echo Helpers::datatime_feed($data['done_at']);?></span>
 	<?php echo CHtml::link ('Review', '',
 			array(

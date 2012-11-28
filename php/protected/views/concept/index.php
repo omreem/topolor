@@ -1,5 +1,5 @@
 <div class="well top-panel-fix">
-  Register a module that you want to learn. Or, click Get In to continue.
+  Register to a module that you want to learn. Or, click Get In to continue.
 </div>
 <?php $count = count($moduleArr);
 

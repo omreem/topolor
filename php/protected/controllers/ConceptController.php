@@ -463,7 +463,7 @@ class ConceptController extends GxController {
 		$this->moniter('concept', 'index');
 		//monitor-end
 		
-		$moduleArr = Concept::model()->findAll(array("condition"=>"id = root","order"=>"create_at desc"));
+		$moduleArr = Concept::model()->findAll(array("condition"=>"id=root AND id<>0 ","order"=>"create_at desc"));
 		
 		$this->render('index', array(
 			'moduleArr' => $moduleArr,
