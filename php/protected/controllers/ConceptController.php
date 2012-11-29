@@ -1343,7 +1343,7 @@ class ConceptController extends GxController {
 		if (isset($_POST['filter_by']))
 			$filter_by = $_POST['filter_by'];
 		
-		$sql = 'SELECT c.id, title, COUNT(learner_id) AS count FROM tpl_learner_concept AS lc, tpl_concept AS c WHERE c.root=c.id AND status='.($filter_by == 'learning' ? LearnerConcept::STATUS_INPROGRESS : LearnerConcept::STATUS_COMPLETED).' AND c.id=lc.concept_id GROUP BY concept_id ORDER BY COUNT(learner_id) DESC LIMIT 5';
+		$sql = 'SELECT c.id, title, COUNT(learner_id) AS count FROM tpl_learner_concept AS lc, tpl_concept AS c WHERE c.root=c.id AND c.id<>0 AND status='.($filter_by == 'learning' ? LearnerConcept::STATUS_INPROGRESS : LearnerConcept::STATUS_COMPLETED).' AND c.id=lc.concept_id GROUP BY concept_id ORDER BY COUNT(learner_id) DESC LIMIT 5';
 		
 		$moduleArr = Yii::app()->db->createCommand($sql)->queryAll();
 		
